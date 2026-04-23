@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ 第1編第1章</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --correct: #16a34a;
+    --wrong: #dc2626;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 16px; }
+
+  /* ── START ── */
+  #start { justify-content: center; gap: 24px; }
+  .start-card { background: var(--card); border-radius: var(--radius); padding: 40px 32px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .start-card h1 { font-size: 1.5rem; margin-bottom: 8px; color: var(--primary); }
+  .start-card p { color: var(--muted); font-size: .95rem; margin-bottom: 28px; line-height: 1.7; }
+  .category-list { text-align: left; margin-bottom: 28px; }
+  .category-list li { font-size: .88rem; color: var(--muted); padding: 4px 0; list-style: none; padding-left: 1.2em; position: relative; }
+  .category-list li::before { content: "●"; position: absolute; left: 0; color: var(--primary); font-size: .6em; top: 6px; }
+  .btn { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.05rem; cursor: pointer; font-weight: 700; transition: background .15s; }
+  .btn:hover { background: var(--primary-dark); }
+
+  /* ── QUIZ ── */
+  #quiz { gap: 0; }
+  .quiz-header { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .quiz-header .prog { font-size: .9rem; color: var(--muted); }
+  .progress-bar { width: 100%; max-width: 640px; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .4s; }
+  .q-card { background: var(--card); border-radius: var(--radius); padding: 28px 24px; max-width: 640px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .tag { display: inline-block; background: #dbeafe; color: var(--primary); font-size: .75rem; font-weight: 700; padding: 2px 10px; border-radius: 99px; margin-bottom: 12px; }
+  .q-text { font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice { display: flex; align-items: flex-start; gap: 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: .97rem; transition: border-color .15s, background .15s; text-align: left; width: 100%; }
+  .choice:hover:not(.disabled) { border-color: var(--primary); background: #eff6ff; }
+  .choice.correct { border-color: var(--correct); background: #f0fdf4; }
+  .choice.wrong { border-color: var(--wrong); background: #fef2f2; }
+  .choice.disabled { cursor: default; }
+  .choice-label { font-weight: 700; min-width: 1.4em; color: var(--muted); }
+  .choice.correct .choice-label { color: var(--correct); }
+  .choice.wrong .choice-label { color: var(--wrong); }
+  .exp-box { margin-top: 18px; background: #fef9c3; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; font-size: .9rem; line-height: 1.7; display: none; }
+  .exp-box.show { display: block; }
+  .next-wrap { margin-top: 20px; text-align: right; display: none; }
+  .next-wrap.show { display: block; }
+
+  /* ── RESULT ── */
+  #result { justify-content: center; gap: 20px; }
+  .result-card { background: var(--card); border-radius: var(--radius); padding: 36px 28px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .result-card h2 { font-size: 1.4rem; margin-bottom: 24px; }
+  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
+  .donut-wrap svg { transform: rotate(-90deg); }
+  .donut-bg { fill: none; stroke: var(--border); stroke-width: 14; }
+  .donut-fg { fill: none; stroke: var(--primary); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+  .score-label { font-size: 1rem; color: var(--muted); margin-bottom: 24px; }
+  .review-list { text-align: left; margin-bottom: 28px; }
+  .review-item { border-bottom: 1px solid var(--border); padding: 10px 0; font-size: .9rem; }
+  .review-item .ri-q { color: var(--text); margin-bottom: 4px; }
+  .review-item .ri-a { color: var(--muted); font-size: .85rem; }
+  .review-item .ri-a .mark { font-weight: 700; }
+  .mark.ok { color: var(--correct); }
+  .mark.ng { color: var(--wrong); }
+  .btn-retry { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="screen active">
+  <div class="start-card">
+    <h1>化学基礎クイズ</h1>
+    <p>第1編 第1章「物質の成分と構成元素」<br>全問題からランダムに <strong>10問</strong> 出題します。</p>
+    <ul class="category-list">
+      <li>純物質・混合物の分類</li>
+      <li>物質の分離・精製</li>
+    </ul>
+    <button class="btn" onclick="startQuiz()">スタート</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <span class="prog" id="progText">1 / 10</span>
+  </div>
+  <div class="progress-bar"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+  <div class="q-card" id="qCard"></div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+  <div class="result-card">
+    <h2>結果</h2>
+    <div class="donut-wrap">
+      <svg viewBox="0 0 140 140" width="140" height="140">
+        <circle class="donut-bg" cx="70" cy="70" r="58"/>
+        <circle class="donut-fg" id="donutFg" cx="70" cy="70" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
+      </svg>
+      <div class="donut-center" id="scoreNum">0/10</div>
+    </div>
+    <p class="score-label" id="scoreLabel">よく頑張りました！</p>
+    <div class="review-list" id="reviewList"></div>
+    <button class="btn btn-retry" onclick="startQuiz()">もう一度（ランダム10問）</button>
+    <br><br>
+    <button class="btn" style="background:#64748b" onclick="showOnly('start')">トップへ戻る</button>
+  </div>
+</div>
+
+<script>
+// ───────────────────────────────────────────────────────
+// 問題データ（全104問）
+// ───────────────────────────────────────────────────────
+const ALL_Q = [
+
+// ══════════════════════════════
+// A. 純物質と混合物 (14問)
+// ══════════════════════════════
+{tag:"純物質・混合物",q:"次のうち、純物質はどれか。",
+ choices:["食塩水","空気","鉄","石油"],a:2,
+ exp:"鉄（Fe）は1種類の物質のみからなるので純物質。食塩水・空気・石油はいずれも複数の物質が混ざった混合物。"},
+
+{tag:"純物質・混合物",q:"混合物はどれか。",
+ choices:["水(H₂O)","エタノール","砂糖水","塩化ナトリウム"],a:2,
+ exp:"砂糖水は砂糖（スクロース）と水が混ざった混合物。残りはすべて純物質。"},
+
+{tag:"純物質・混合物",q:"純物質について正しい説明はどれか。",
+ choices:["2種類以上の物質が混ざっている","沸点や融点が一定の値を示す","組成が場所によって異なることがある","ろ過で分離できる"],a:1,
+ exp:"純物質は1種類の物質だけからなるため、沸点・融点などの物理的性質が一定の値を示す。"},
+
+{tag:"純物質・混合物",q:"次のうち、化合物はどれか。",
+ choices:["酸素(O₂)","水素(H₂)","水(H₂O)","鉄(Fe)"],a:2,
+ exp:"化合物は2種類以上の元素からなる純物質。H₂Oは水素Hと酸素Oの2元素からなる。O₂・H₂は単体、鉄は単体。"},
+
+{tag:"純物質・混合物",q:"単体はどれか。",
+ choices:["塩化水素(HCl)","ナトリウム(Na)","二酸化炭素(CO₂)","塩化ナトリウム(NaCl)"],a:1,
+ exp:"単体は1種類の元素だけからなる純物質。ナトリウムNaは1種類の元素（Na）のみ。残りは2種類以上の元素からなる化合物。"},
+
+{tag:"純物質・混合物",q:"空気が混合物であることを示す根拠として最も適切なものはどれか。",
+ choices:["気体である","色がない","組成（成分の割合）が場所によって変化することがある","燃えない"],a:2,
+ exp:"混合物は各成分の割合が一定でなく、場所・条件によって変わりうる。空気は窒素・酸素・アルゴン等が混合している。"},
+
+{tag:"純物質・混合物",q:"物質を「純物質」と「混合物」に分類したとき、純物質にさらに分けられる2種類はどれか。",
+ choices:["固体と液体","有機物と無機物","単体と化合物","金属と非金属"],a:2,
+ exp:"純物質は、1種類の元素からなる単体と、2種類以上の元素からなる化合物に分類される。"},
+
+{tag:"純物質・混合物",q:"塩化ナトリウム（NaCl）の分類として正しいものはどれか。",
+ choices:["単体","混合物","化合物","どれにも当てはまらない"],a:2,
+ exp:"NaClはナトリウム（Na）と塩素（Cl）の2種類の元素からなる純物質なので化合物。"},
+
+{tag:"純物質・混合物",q:"牛乳は何に分類されるか。",
+ choices:["単体","化合物","混合物","どれにも当てはまらない"],a:2,
+ exp:"牛乳は水・脂肪・タンパク質・糖類など多くの物質の混合物。"},
+
+{tag:"純物質・混合物",q:"次のうち、単体と化合物の組み合わせとして正しいものはどれか。",
+ choices:["単体：HCl、化合物：O₂","単体：Cu、化合物：H₂O","単体：CO₂、化合物：Na","単体：NaCl、化合物：N₂"],a:1,
+ exp:"銅（Cu）は1元素のみの単体。水（H₂O）はHとOの2元素からなる化合物。"},
+
+{tag:"純物質・混合物",q:"融点が一定の値を示すのはどのような物質か。",
+ choices:["混合物","化合物のみ","純物質（単体・化合物）","有機物のみ"],a:2,
+ exp:"純物質は組成が一定のため、融点・沸点も一定の値を示す。混合物では成分の割合に応じて変化する。"},
+
+{tag:"純物質・混合物",q:"次の物質のうち、混合物はいくつあるか。　食塩水・鉄・エタノール・石炭・空気",
+ choices:["1つ","2つ","3つ","4つ"],a:2,
+ exp:"食塩水（NaCl+H₂O）、石炭（複数の有機物等の混合）、空気（N₂+O₂+Ar等）の3つが混合物。鉄・エタノールは純物質。"},
+
+{tag:"純物質・混合物",q:"「物質」の分類に関して、正しいものはどれか。",
+ choices:["単体は必ず金属元素からなる","化合物は分解によって単体にできる","混合物は沸点が一定である","単体と化合物はどちらも混合物の一種"],a:1,
+ exp:"化合物は電気分解・熱分解などで、より単純な物質（単体または別の化合物）に分解できる。"},
+
+{tag:"純物質・混合物",q:"次の物質のうち、純物質はいくつあるか。　酸化マグネシウム・食酢・ドライアイス・石油・牛乳",
+ choices:["1つ","2つ","3つ","4つ"],a:1,
+ exp:"食酢（酢酸+水）、石油（複数の有機物等の混合）、牛乳（タンパク質+水等）の3つが混合物。酸化マグネシウムMgO・ドライアイスCO2は純物質。"},
+
+
+// ══════════════════════════════
+// B. 物質の分離・精製 (18問)
+// ══════════════════════════════
+{tag:"分離・精製",q:"食塩水から水を取り出すのに最も適した操作はどれか。",
+ choices:["ろ過","蒸留","蒸発乾固","再結晶"],a:1,
+ exp:"蒸留は液体を加熱・蒸発させて発生した蒸気を冷却して取り出す操作。食塩水には適する。"},
+
+{tag:"分離・精製",q:"液体の混合物をそれぞれの沸点の違いを利用して分離する操作はどれか。",
+ choices:["蒸留","再結晶","分留","クロマトグラフィー"],a:2,
+ exp:"分留は沸点の差を利用して混合液を気化・冷却・凝縮することで成分を分離する操作。"},
+
+{tag:"分離・精製",q:"砂が混ざった食塩水から砂を取り除くのに適した操作はどれか。",
+ choices:["蒸留","ろ過","昇華","再結晶"],a:1,
+ exp:"ろ過はろ紙を用いて液体と固体粒子を分離する操作。砂はろ紙に残り、食塩水は通過する。"},
+
+{tag:"分離・精製",q:"石油を軽油・灯油・ガソリンなどに分けるのに使われる操作はどれか。",
+ choices:["分留","再結晶","昇華","液液抽出"],a:0,
+ exp:"分留（分別蒸留）は複数成分をもつ混合液を沸点の違いで順次分離する蒸留の一種。石油精製に利用される。"},
+
+{tag:"分離・精製",q:"固体が溶けた溶液を冷却するなどして、溶解度の差を利用して固体を析出・精製する操作はどれか。",
+ choices:["蒸留","ろ過","再結晶","昇華"],a:2,
+ exp:"再結晶は温度による溶解度の差を利用して、溶液から純粋な結晶を析出させる精製法。"},
+
+{tag:"分離・精製",q:"ヨウ素を砂から分離するのに適した操作はどれか。",
+ choices:["ろ過","再結晶","昇華","蒸発乾固"],a:2,
+ exp:"ヨウ素は加熱すると液体を経ずに気体になる（昇華）。砂は昇華しないので分離できる。"},
+
+{tag:"分離・精製",q:"次のうち、ろ過について正しい説明はどれか。",
+ choices:["液体の沸点の差を利用する","固体と液体をろ紙で分離する","物質の溶解度の差を利用する","物質を昇華させて分離する"],a:1,
+ exp:"ろ過はろ紙の細かい孔を利用して固体粒子を液体と分離する操作。"},
+
+{tag:"分離・精製",q:"水とエタノールの混合液を蒸留したとき、最初に多く出てくる成分はどれか。",
+ choices:["水（沸点100℃）","エタノール（沸点約78℃）","同時に同量出てくる","どちらも出てこない"],a:1,
+ exp:"蒸留では沸点が低い成分が先に蒸発するので、エタノール（沸点約78℃）が先に集まる。"},
+
+{tag:"分離・精製",q:"インクの色素成分を分離するのに適した操作はどれか。",
+ choices:["蒸留","ろ過","クロマトグラフィー","昇華"],a:2,
+ exp:"クロマトグラフィーは各成分が固定相と移動相に対して示す親和性の差（吸着・溶解）を利用して分離する。"},
+
+{tag:"分離・精製",q:"抽出について正しい説明はどれか。",
+ choices:["沸点の差を利用して気体を分離する","特定の溶媒に溶けやすい成分を取り出す","温度による溶解度の差で結晶を析出させる","加熱して液体を蒸発させる"],a:1,
+ exp:"抽出は混合物に適当な溶媒を加え、特定成分だけを溶かし出して分離する操作。"},
+
+{tag:"分離・精製",q:"昇華が利用できる条件として正しいものはどれか。",
+ choices:["目的物質が溶媒に溶けやすい","目的物質が加熱で直接気体になる性質を持つ","目的物質が他の成分より沸点が低い","目的物質が水に溶けない"],a:1,
+ exp:"昇華とは固体が直接気体になる変化。ナフタレン・ヨウ素など昇華性のある物質の分離に使う。"},
+
+{tag:"分離・精製",q:"分留と通常の蒸留の違いはどれか。",
+ choices:["固体を分離する点が異なる","複数の液体成分を沸点ごとに順次分離できる","圧力を利用する","再結晶を組み合わせる"],a:1,
+ exp:"分留は蒸留を応用し、沸点の異なる複数成分を順番に取り出す方法。石油精製が代表例。"},
+
+{tag:"分離・精製",q:"再結晶で硝酸カリウム（KNO₃）を精製するとき、少量の不純物を除けるのはなぜか。",
+ choices:["KNO₃だけが昇華するから","KNO₃の溶解度の温度変化が大きいから","KNO₃の沸点が不純物と異なるから","KNO₃が有機溶媒に溶けやすいから"],a:1,
+ exp:"硝酸カリウムは温度による溶解度変化が大きい。高温で溶解→冷却すると大量の結晶が析出し、少量の不純物は溶液中に残る。"},
+
+{tag:"分離・精製",q:"海水から真水を得るためにどの操作が有効か。",
+ choices:["ろ過","蒸留","再結晶","クロマトグラフィー"],a:1,
+ exp:"蒸留により水を蒸発・冷却・凝縮して回収し、塩類は残留させることで真水を得られる。"},
+
+{tag:"分離・精製",q:"ろ過で使う器具の組み合わせとして正しいものはどれか。",
+ choices:["ろ紙・ロート・ビーカー","蒸発皿・アルコールランプ・ビーカー","試験管・リービッヒ冷却器・フラスコ","蒸発皿・リービッヒ冷却器・アダプター"],a:0,
+ exp:"ろ過にはろ紙・ロート（漏斗）・ビーカーを使う。ガラス棒も液体を静かに流すために使われる。"},
+
+{tag:"分離・精製",q:"蒸留装置において、リービッヒ冷却器の冷却水はどの向きに流すか。",
+ choices:["蒸気と同じ方向（上から下）","蒸気と逆方向（下から上）","向きは関係ない","冷却水は使わない"],a:1,
+ exp:"冷却効率を上げるため、冷却水はリービッヒ冷却器の下から入れ上から出す（気体の流れと逆向き）が基本。"},
+
+{tag:"分離・精製",q:"クロマトグラフィーで物質が分離できる理由はどれか。",
+ choices:["沸点の差","各成分の移動相・固定相への親和性の差","各成分の電荷の差","各成分の融点の差"],a:1,
+ exp:"クロマトグラフィーは各成分が展開溶媒（移動相）と固定相（ろ紙など）に対する親和性の違いで異なる速度で移動する原理。"},
+
+{tag:"分離・精製",q:"次の操作のうち、「精製」（純度を上げること）に最も直接的に関係するものはどれか。",
+ choices:["ろ過","蒸発乾固","再結晶","昇華"],a:2,
+ exp:"再結晶は不純物をできるだけ溶液側に残し、目的物質の純粋な結晶を析出させるので精製を目的とした操作の代表例。"},
+
+
+]; // END ALL_Q
+
+// ───────────────────────────────────────────────────────
+const LABELS = ["ア","イ","ウ","エ"];
+let session = [], cur = 0, score = 0, answered = [];
+
+function showOnly(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  session = shuffle(ALL_Q).slice(0, 10);
+  cur = 0; score = 0; answered = [];
+  showOnly('quiz');
+  renderQ();
+}
+
+function renderQ() {
+  const q = session[cur];
+  const pct = (cur / 10) * 100;
+  document.getElementById('progText').textContent = `${cur + 1} / 10`;
+  document.getElementById('progBar').style.width = pct + '%';
+
+  const shuffled = shuffle(q.choices.map((c, i) => ({ text: c, origIdx: i })));
+  q._shuffled = shuffled;
+  q._newCorrect = shuffled.findIndex(c => c.origIdx === q.a);
+
+  const choices = shuffled.map((c, i) => `
+    <button class="choice" onclick="select(${i})" id="ch${i}">
+      <span class="choice-label">${LABELS[i]}</span>
+      <span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('qCard').innerHTML = `
+    <span class="tag">${q.tag}</span>
+    <div class="q-text">${q.q}</div>
+    <div class="choices">${choices}</div>
+    <div class="exp-box" id="expBox">${q.exp}</div>
+    <div class="next-wrap" id="nextWrap">
+      <button class="btn" onclick="next()">${cur < 9 ? '次の問題 →' : '結果を見る'}</button>
+    </div>`;
+}
+
+function select(idx) {
+  const q = session[cur];
+  const correct = q._newCorrect;
+  const shuffledTexts = q._shuffled.map(c => c.text);
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => b.classList.add('disabled'));
+  btns[idx].classList.add(idx === correct ? 'correct' : 'wrong');
+  if (idx !== correct) btns[correct].classList.add('correct');
+  if (idx === correct) score++;
+  answered.push({ q: q.q, chosen: idx, correct, ok: idx === correct, choices: shuffledTexts });
+  document.getElementById('expBox').classList.add('show');
+  document.getElementById('nextWrap').classList.add('show');
+}
+
+function next() {
+  cur++;
+  if (cur < 10) { renderQ(); }
+  else { showResult(); }
+}
+
+function showResult() {
+  showOnly('result');
+  document.getElementById('scoreNum').textContent = `${score}/10`;
+  const labels = ['もう少し頑張ろう！', 'まあまあです！', 'よく頑張りました！', '優秀です！', '満点！素晴らしい！'];
+  const idx = score <= 3 ? 0 : score <= 5 ? 1 : score <= 7 ? 2 : score <= 9 ? 3 : 4;
+  document.getElementById('scoreLabel').textContent = labels[idx];
+
+  // donut
+  const circ = 364.4;
+  const offset = circ - (score / 10) * circ;
+  setTimeout(() => { document.getElementById('donutFg').style.strokeDashoffset = offset; }, 50);
+
+  // review
+  const list = document.getElementById('reviewList');
+  list.innerHTML = answered.map((a, i) => `
+    <div class="review-item">
+      <div class="ri-q">Q${i+1}. ${a.q}</div>
+      <div class="ri-a">
+        あなたの答え：${LABELS[a.chosen]}（${a.choices[a.chosen]}）
+        <span class="mark ${a.ok ? 'ok' : 'ng'}">${a.ok ? '○' : '✕'}</span>
+        ${!a.ok ? `　正解：${LABELS[a.correct]}（${a.choices[a.correct]}）` : ''}
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

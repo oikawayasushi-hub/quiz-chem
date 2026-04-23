@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ 第1編第1章</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --correct: #16a34a;
+    --wrong: #dc2626;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 16px; }
+
+  /* ── START ── */
+  #start { justify-content: center; gap: 24px; }
+  .start-card { background: var(--card); border-radius: var(--radius); padding: 40px 32px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .start-card h1 { font-size: 1.5rem; margin-bottom: 8px; color: var(--primary); }
+  .start-card p { color: var(--muted); font-size: .95rem; margin-bottom: 28px; line-height: 1.7; }
+  .category-list { text-align: left; margin-bottom: 28px; }
+  .category-list li { font-size: .88rem; color: var(--muted); padding: 4px 0; list-style: none; padding-left: 1.2em; position: relative; }
+  .category-list li::before { content: "●"; position: absolute; left: 0; color: var(--primary); font-size: .6em; top: 6px; }
+  .btn { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.05rem; cursor: pointer; font-weight: 700; transition: background .15s; }
+  .btn:hover { background: var(--primary-dark); }
+
+  /* ── QUIZ ── */
+  #quiz { gap: 0; }
+  .quiz-header { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .quiz-header .prog { font-size: .9rem; color: var(--muted); }
+  .progress-bar { width: 100%; max-width: 640px; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .4s; }
+  .q-card { background: var(--card); border-radius: var(--radius); padding: 28px 24px; max-width: 640px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .tag { display: inline-block; background: #dbeafe; color: var(--primary); font-size: .75rem; font-weight: 700; padding: 2px 10px; border-radius: 99px; margin-bottom: 12px; }
+  .q-text { font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice { display: flex; align-items: flex-start; gap: 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: .97rem; transition: border-color .15s, background .15s; text-align: left; width: 100%; }
+  .choice:hover:not(.disabled) { border-color: var(--primary); background: #eff6ff; }
+  .choice.correct { border-color: var(--correct); background: #f0fdf4; }
+  .choice.wrong { border-color: var(--wrong); background: #fef2f2; }
+  .choice.disabled { cursor: default; }
+  .choice-label { font-weight: 700; min-width: 1.4em; color: var(--muted); }
+  .choice.correct .choice-label { color: var(--correct); }
+  .choice.wrong .choice-label { color: var(--wrong); }
+  .exp-box { margin-top: 18px; background: #fef9c3; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; font-size: .9rem; line-height: 1.7; display: none; }
+  .exp-box.show { display: block; }
+  .next-wrap { margin-top: 20px; text-align: right; display: none; }
+  .next-wrap.show { display: block; }
+
+  /* ── RESULT ── */
+  #result { justify-content: center; gap: 20px; }
+  .result-card { background: var(--card); border-radius: var(--radius); padding: 36px 28px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .result-card h2 { font-size: 1.4rem; margin-bottom: 24px; }
+  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
+  .donut-wrap svg { transform: rotate(-90deg); }
+  .donut-bg { fill: none; stroke: var(--border); stroke-width: 14; }
+  .donut-fg { fill: none; stroke: var(--primary); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+  .score-label { font-size: 1rem; color: var(--muted); margin-bottom: 24px; }
+  .review-list { text-align: left; margin-bottom: 28px; }
+  .review-item { border-bottom: 1px solid var(--border); padding: 10px 0; font-size: .9rem; }
+  .review-item .ri-q { color: var(--text); margin-bottom: 4px; }
+  .review-item .ri-a { color: var(--muted); font-size: .85rem; }
+  .review-item .ri-a .mark { font-weight: 700; }
+  .mark.ok { color: var(--correct); }
+  .mark.ng { color: var(--wrong); }
+  .btn-retry { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="screen active">
+  <div class="start-card">
+    <h1>化学基礎クイズ</h1>
+    <p>第1編 第1章「物質の成分と構成元素」<br>全問題からランダムに <strong>10問</strong> 出題します。</p>
+    <ul class="category-list">
+      <li>物質の成分・同素体</li>
+      <li>成分元素の検出</li>
+    </ul>
+    <button class="btn" onclick="startQuiz()">スタート</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <span class="prog" id="progText">1 / 10</span>
+  </div>
+  <div class="progress-bar"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+  <div class="q-card" id="qCard"></div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+  <div class="result-card">
+    <h2>結果</h2>
+    <div class="donut-wrap">
+      <svg viewBox="0 0 140 140" width="140" height="140">
+        <circle class="donut-bg" cx="70" cy="70" r="58"/>
+        <circle class="donut-fg" id="donutFg" cx="70" cy="70" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
+      </svg>
+      <div class="donut-center" id="scoreNum">0/10</div>
+    </div>
+    <p class="score-label" id="scoreLabel">よく頑張りました！</p>
+    <div class="review-list" id="reviewList"></div>
+    <button class="btn btn-retry" onclick="startQuiz()">もう一度（ランダム10問）</button>
+    <br><br>
+    <button class="btn" style="background:#64748b" onclick="showOnly('start')">トップへ戻る</button>
+  </div>
+</div>
+
+<script>
+// ───────────────────────────────────────────────────────
+// 問題データ（全41問）
+// ───────────────────────────────────────────────────────
+const ALL_Q = [
+
+// ══════════════════════════════
+// C. 物質の成分・同素体 (21問)
+// ══════════════════════════════
+{tag:"成分・同素体",q:"同素体の説明として正しいものはどれか。",
+ choices:["同じ分子式をもつが構造が異なる化合物","同じ元素からなるが性質の異なる単体","同じ化学式をもつ純物質","同じ融点をもつ物質"],a:1,
+ exp:"同素体とは、同じ元素のみからなる単体で、性質が異なるもの。例：酸素とオゾン、ダイヤモンドと黒鉛。"},
+
+{tag:"成分・同素体",q:"炭素の同素体として正しい組み合わせはどれか。",
+ choices:["黒鉛・ダイヤモンド・フラーレン","酸素・オゾン・水","硫黄・黒鉛・炭素","ダイヤモンド・一酸化炭素・二酸化炭素"],a:0,
+ exp:"炭素の同素体は黒鉛（グラファイト）・ダイヤモンド・フラーレン（C₆₀等）・カーボンナノチューブなど。"},
+
+{tag:"成分・同素体",q:"酸素の同素体として正しい組み合わせはどれか。",
+ choices:["酸素(O₂)とオゾン(O₃)","酸素と水","酸素と二酸化炭素","オゾンと窒素"],a:0,
+ exp:"酸素O₂とオゾンO₃は同じ元素（酸素原子O）からなる単体で性質が異なる同素体。"},
+
+{tag:"成分・同素体",q:"硫黄の同素体として正しいものはどれか。",
+ choices:["硫黄と硫化水素","斜方硫黄・単斜硫黄・ゴム状硫黄","硫黄と二酸化硫黄","斜方硫黄と硫酸"],a:1,
+ exp:"硫黄の同素体には斜方硫黄・単斜硫黄・ゴム状硫黄がある。いずれも元素Sのみからなる単体。"},
+
+{tag:"成分・同素体",q:"リンの同素体として知られるものはどれか。",
+ choices:["赤リンとリン酸","斜方硫黄とゴム状硫黄","ファラーレンとカーボンナノチューブ","赤リン・黄リン"],a:3,
+ exp:"リンPの同素体は黄リン・赤リンがある。黄リンは猛毒で自然発火性を持つ。"},
+
+{tag:"成分・同素体",q:"ダイヤモンドと黒鉛はいずれも炭素のみからなるが、性質が大きく異なる。この2つは何と呼ばれるか。",
+ choices:["異性体","同位体","同素体","化合物"],a:2,
+ exp:"同じ元素のみからなるが性質が異なる単体を同素体という。ダイヤモンドは最硬物質・絶縁体、黒鉛は軟らかく電気を通す。"},
+
+{tag:"成分・同素体",q:"黒鉛（グラファイト）が電気を通す理由として適切なものはどれか。",
+ choices:["金属原子を含むから","自由に動ける電子をもつ層状構造をとるから","融点が低いから","水に溶けるから"],a:1,
+ exp:"黒鉛は炭素原子が六角形の層状構造をつくり、層に沿って自由電子が存在するため電気伝導性をもつ。"},
+
+{tag:"成分・同素体",q:"フラーレン（C₆₀）について正しい説明はどれか。",
+ choices:["水素と炭素からなる化合物","炭素のみからなる単体（同素体）","窒素の同素体","金属に分類される"],a:1,
+ exp:"フラーレンC₆₀は60個の炭素原子がサッカーボール状に結合した炭素の同素体。"},
+
+{tag:"成分・同素体",q:"次の物質のうち、同素体の関係にないものはどれか。",
+ choices:["酸素とオゾン","黒鉛とダイヤモンド","赤リンと黄リン","水と氷"],a:3,
+ exp:"水（H₂O）と氷は同じ化合物の液体・固体の状態変化であり、同素体ではない。同素体は同じ元素の異なる単体。"},
+
+{tag:"成分・同素体",q:"元素と単体の違いについて正しいものはどれか。",
+ choices:["「水素」という言葉は常に単体H₂を指す","元素は物質を構成する成分の概念、単体は実際の物質","単体は常に固体で存在する","元素は混合物にしか使わない概念"],a:1,
+ exp:"「元素」は物質の成分・種類を示す概念（例：水は水素元素と酸素元素からなる）。「単体」はその元素のみからなる物質（例：H₂，O₂）。"},
+
+{tag:"成分・同素体",q:"「水（H₂O）は水素と酸素からなる」という場合の「水素」はどの意味か。",
+ choices:["単体（H₂）","元素（成分の概念）","化合物","混合物"],a:1,
+ exp:"物質の成分を述べる場合は「元素」の意味。実際の物質H₂を指す場合は「単体」。"},
+
+{tag:"成分・同素体",q:"炭素の同素体であるダイヤモンドと黒鉛で最も大きく異なる性質はどれか。",
+ choices:["色","硬さと電気伝導性","密度と融点","臭い"],a:1,
+ exp:"ダイヤモンドは非常に硬く電気を通さない。黒鉛は軟らかく電気を通す。同じ炭素でも結合の違いで性質が大きく異なる。"},
+
+{tag:"成分・同素体",q:"次の中で、炭素の同素体として誤っているものはどれか。",
+ choices:["黒鉛","ダイヤモンド","フラーレン","一酸化炭素"],a:3,
+ exp:"一酸化炭素COは炭素CとO（酸素）の化合物。同素体は単体のみ。黒鉛・ダイヤモンド・フラーレンはすべて炭素のみの単体。"},
+
+// --- 元素と単体の判別（追加7問）---
+{tag:"成分・同素体",q:"「二酸化炭素（CO₂）は炭素と酸素からなる」という文の「炭素」「酸素」はどの意味か。",
+ choices:["単体（物質）","元素（成分の種類を示す概念）","化合物","同素体"],a:1,
+ exp:"物質の「成分の種類」を述べる文では元素の意味。実際の物質C・O₂を指すのではなく、構成元素C・Oを示している。"},
+
+{tag:"成分・同素体",q:"次の文のうち、「水素」が単体（H₂という物質）の意味で使われているのはどれか。",
+ choices:["水は水素と酸素からなる化合物だ","塩酸には水素が含まれる","水素は常温・常圧で気体である","水素は生物の体内にも多く含まれる"],a:2,
+ exp:"「水素は常温・常圧で気体である」はH₂という物質の性質を述べており単体の意味。他の3つは成分の種類（元素）を示している。"},
+
+{tag:"成分・同素体",q:"次の文のうち、「酸素」が元素（成分の概念）の意味で使われているのはどれか。",
+ choices:["酸素ボンベから酸素を吸入した","液体酸素は淡青色である","水（H₂O）は水素と酸素からなる","O₂を酸素という"],a:2,
+ exp:"「水はH素と酸素からなる」は水の構成元素を述べており元素の意味。他の3つはO₂という物質（単体）を指している。"},
+
+{tag:"成分・同素体",q:"鉄(Fe)と硫黄(S)の粉末を混ぜた混合物がある。この文の「鉄」「硫黄」はどの意味か。",
+ choices:["元素（成分の概念）","単体（実際の物質）","化合物","同素体"],a:1,
+ exp:"実際に存在する物質Fe・Sを指しているので単体の意味。元素の意味なら「硫化鉄はFeとSという元素からなる」のように使う。"},
+
+{tag:"成分・同素体",q:"「元素」と「単体」の使い方について誤っているのはどれか。",
+ choices:["「水は水素元素と酸素元素からなる」は正しい使い方","元素と単体は文脈によって使い分ける必要がある","「水素を燃やすと水ができる」の水素は単体の意味","元素と単体はまったく同じ意味なので区別する必要はない"],a:3,
+ exp:"「元素」は成分の種類を示す概念、「単体」はその元素のみからなる物質を指す。文脈で使い分けが必要であり、同じ意味ではない。"},
+
+{tag:"成分・同素体",q:"原子番号1〜20の元素のうち、同素体をもつ元素の正しい組み合わせはどれか。",
+ choices:["水素(H)・炭素(C)・窒素(N)","炭素(C)・酸素(O)・硫黄(S)・リン(P)","水素(H)・酸素(O)・塩素(Cl)","ナトリウム(Na)・カルシウム(Ca)・マグネシウム(Mg)"],a:1,
+ exp:"高校化学で扱う同素体をもつ元素はC（黒鉛・ダイヤモンド・フラーレン）・O（O₂・O₃）・S（斜方・単斜・ゴム状）・P（赤・白・黒リン）の4つ。"},
+
+{tag:"成分・同素体",q:"オゾン（O₃）と酸素（O₂）の関係として正しいのはどれか。",
+ choices:["同位体","同素体","化合物と単体","異性体"],a:1,
+ exp:"O₂とO₃はいずれも酸素元素Oのみからなる単体で、性質が異なる。これを同素体という。同位体は中性子数が異なる原子の関係。"},
+
+// ══════════════════════════════
+// D. 成分元素の検出 (20問)
+// ══════════════════════════════
+{tag:"成分元素の検出",q:"有機物を燃焼させたとき、生じた気体を石灰水に通すと白濁した。この物質に含まれる元素はどれか。",
+ choices:["水素(H)","炭素(C)","酸素(O)","窒素(N)"],a:1,
+ exp:"燃焼で生じたCO₂が石灰水（Ca(OH)₂水溶液）と反応してCaCO₃の白濁を生じる。これで炭素Cの存在が確認できる。"},
+
+{tag:"成分元素の検出",q:"有機物を燃焼させたとき、生じた液体が塩化コバルト紙を青→赤（桃色）に変えた。この物質に含まれる元素はどれか。",
+ choices:["炭素(C)","窒素(N)","水素(H)","硫黄(S)"],a:2,
+ exp:"塩化コバルト紙が赤変するのは水（H₂O）が生じた証拠。燃焼で水が生じたので、もとの物質に水素Hが含まれている。"},
+
+{tag:"成分元素の検出",q:"炎色反応でナトリウムNaを含む物質を燃やすと何色の炎が見えるか。",
+ choices:["赤","黄","緑","紫（青紫）"],a:1,
+ exp:"ナトリウムの炎色反応は黄色。食塩（NaCl）を炎で燃やすと鮮やかな黄色の炎が見られる。"},
+
+{tag:"成分元素の検出",q:"炎色反応でカリウムKは何色を示すか。",
+ choices:["黄","赤","紫（青紫）","緑"],a:2,
+ exp:"カリウムKの炎色反応は紫（青紫）。ただしナトリウムが混在すると黄色に隠れるため、コバルトガラス越しに観察する。"},
+
+{tag:"成分元素の検出",q:"炎色反応で銅Cuは何色を示すか。",
+ choices:["黄","赤","緑（青緑）","紫"],a:2,
+ exp:"銅Cuの炎色反応は緑色（青緑色）。花火の緑色はこれを利用している。"},
+
+{tag:"成分元素の検出",q:"炎色反応でリチウムLiは何色を示すか。",
+ choices:["赤","黄","青緑","橙赤"],a:0,
+ exp:"リチウムLiの炎色反応は深紅（赤）色。カルシウムCaも赤橙色を示すが、リチウムはより赤みが強い。"},
+
+{tag:"成分元素の検出",q:"炎色反応でカルシウムCaは何色を示すか。",
+ choices:["黄","橙赤（赤橙）","青緑","紫"],a:1,
+ exp:"カルシウムCaの炎色反応は橙赤色。花火の赤色系はストロンチウム（深赤）やカルシウムを利用する。"},
+
+{tag:"成分元素の検出",q:"炎色反応が金属元素の検出に使えるのはなぜか。",
+ choices:["各金属が固有の沸点で蒸発するから","各金属元素固有の波長の光を放出するから","各金属が燃焼して異なる酸化物を生成するから","各金属の融点が異なるから"],a:1,
+ exp:"加熱でエネルギーを得た金属元素の電子が基底状態に戻るとき、元素固有の波長の光を出す。これが炎色反応の原理。"},
+
+{tag:"成分元素の検出",q:"有機物中の炭素を検出するために使う試薬はどれか。",
+ choices:["塩化コバルト紙","石灰水（水酸化カルシウム水溶液）","硝酸銀水溶液","フェノールフタレイン溶液"],a:1,
+ exp:"有機物を燃焼するとCO₂が生じ、石灰水を白濁（CaCO₃生成）させるので炭素の検出に使う。"},
+
+{tag:"成分元素の検出",q:"有機物中の水素を検出するために使う試薬はどれか。",
+ choices:["石灰水","フェノールフタレイン","塩化コバルト紙","BTB溶液"],a:2,
+ exp:"有機物を燃焼すると水（H₂O）が生じる。塩化コバルト紙（青）が水で桃色に変わることで水素の存在を検出できる。"},
+
+// --- 炎色反応の色↔元素（追加10問）---
+{tag:"成分元素の検出",q:"炎色反応で黄色を示す元素はどれか。",
+ choices:["カリウム(K)","ナトリウム(Na)","銅(Cu)","リチウム(Li)"],a:1,
+ exp:"ナトリウムNaは鮮やかな黄色の炎色反応を示す。食塩（NaCl）を炎に入れると確認できる。"},
+
+{tag:"成分元素の検出",q:"炎色反応で紫（青紫）色を示す元素はどれか。",
+ choices:["ナトリウム(Na)","カルシウム(Ca)","カリウム(K)","銅(Cu)"],a:2,
+ exp:"カリウムKは紫（青紫）色の炎色反応を示す。Naの黄色に隠れやすいため、コバルトガラス越しに観察する。"},
+
+{tag:"成分元素の検出",q:"炎色反応で緑（青緑）色を示す元素はどれか。",
+ choices:["リチウム(Li)","ナトリウム(Na)","カリウム(K)","銅(Cu)"],a:3,
+ exp:"銅Cuは緑色（青緑色）の炎色反応を示す。花火の緑色はCuを含む化合物を利用している。"},
+
+{tag:"成分元素の検出",q:"炎色反応で赤（深紅）色を示す元素はどれか。",
+ choices:["カルシウム(Ca)","リチウム(Li)","ナトリウム(Na)","カリウム(K)"],a:1,
+ exp:"リチウムLiは深紅色の炎色反応を示す。カルシウムCaも赤橙色を示すが、Liの方がより赤みが強い。"},
+
+{tag:"成分元素の検出",q:"炎色反応で橙赤色を示す元素はどれか。",
+ choices:["リチウム(Li)","カリウム(K)","カルシウム(Ca)","銅(Cu)"],a:2,
+ exp:"カルシウムCaは橙赤色の炎色反応を示す。花火の赤系の色にCaが使われる。"},
+
+{tag:"成分元素の検出",q:"食塩水に硝酸銀水溶液を加えたら白色沈殿を生じた。このことから食塩水に含まれている元素は何と確認できるか",
+ choices:["Na","Cl","H","O"],a:1,
+ exp:"硝酸銀AgNO3水溶液を加えて白色沈殿AgClを生じるのは、食塩水に塩素（塩化物イオン）が含まれている証拠。"},
+
+{tag:"成分元素の検出",q:"炎色反応が使えない（炎色反応で検出できない）のはどれか。",
+ choices:["ナトリウム(Na)","カルシウム(Ca)","炭素(C)","カリウム(K)"],a:2,
+ exp:"炎色反応は金属元素の検出に用いる。炭素Cは非金属元素であり、燃えてCO₂になるが特定の炎色は示さない。"},
+
+{tag:"成分元素の検出",q:"炎色反応の色と元素の組み合わせで誤っているのはどれか。",
+ choices:["Na → 黄色","K → 紫（青紫）","Cu → 赤色","Li → 赤（深紅）"],a:2,
+ exp:"銅Cuの炎色反応は緑（青緑）色であり、赤色ではない。赤系を示すのはLi（深紅）・Ca（橙赤）など。"},
+
+{tag:"成分元素の検出",q:"花火の黄色の光は、主にどの元素の炎色反応を利用しているか。",
+ choices:["カリウム(K)","カルシウム(Ca)","ナトリウム(Na)","銅(Cu)"],a:2,
+ exp:"花火の黄色はNaを含む化合物（硝酸ナトリウムなど）を利用。Naの炎色反応は非常に鮮やかな黄色。"},
+
+{tag:"成分元素の検出",q:"炎色反応について正しい説明はどれか。",
+ choices:["すべての物質が炎色反応を示す","炎色反応は非金属元素の検出に使う","同じ元素は常に同じ色の炎色反応を示す","炎色反応の色は温度が上がるほど変わる"],a:2,
+ exp:"炎色反応は元素固有の波長の光を放つため、同じ元素は常に同じ色を示す。主に金属元素の定性分析に利用される。"},
+
+]; // END ALL_Q
+
+// ───────────────────────────────────────────────────────
+const LABELS = ["ア","イ","ウ","エ"];
+let session = [], cur = 0, score = 0, answered = [];
+
+function showOnly(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  session = shuffle(ALL_Q).slice(0, 10);
+  cur = 0; score = 0; answered = [];
+  showOnly('quiz');
+  renderQ();
+}
+
+function renderQ() {
+  const q = session[cur];
+  const pct = (cur / 10) * 100;
+  document.getElementById('progText').textContent = `${cur + 1} / 10`;
+  document.getElementById('progBar').style.width = pct + '%';
+
+  const shuffled = shuffle(q.choices.map((c, i) => ({ text: c, origIdx: i })));
+  q._shuffled = shuffled;
+  q._newCorrect = shuffled.findIndex(c => c.origIdx === q.a);
+
+  const choices = shuffled.map((c, i) => `
+    <button class="choice" onclick="select(${i})" id="ch${i}">
+      <span class="choice-label">${LABELS[i]}</span>
+      <span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('qCard').innerHTML = `
+    <span class="tag">${q.tag}</span>
+    <div class="q-text">${q.q}</div>
+    <div class="choices">${choices}</div>
+    <div class="exp-box" id="expBox">${q.exp}</div>
+    <div class="next-wrap" id="nextWrap">
+      <button class="btn" onclick="next()">${cur < 9 ? '次の問題 →' : '結果を見る'}</button>
+    </div>`;
+}
+
+function select(idx) {
+  const q = session[cur];
+  const correct = q._newCorrect;
+  const shuffledTexts = q._shuffled.map(c => c.text);
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => b.classList.add('disabled'));
+  btns[idx].classList.add(idx === correct ? 'correct' : 'wrong');
+  if (idx !== correct) btns[correct].classList.add('correct');
+  if (idx === correct) score++;
+  answered.push({ q: q.q, chosen: idx, correct, ok: idx === correct, choices: shuffledTexts });
+  document.getElementById('expBox').classList.add('show');
+  document.getElementById('nextWrap').classList.add('show');
+}
+
+function next() {
+  cur++;
+  if (cur < 10) { renderQ(); }
+  else { showResult(); }
+}
+
+function showResult() {
+  showOnly('result');
+  document.getElementById('scoreNum').textContent = `${score}/10`;
+  const labels = ['もう少し頑張ろう！', 'まあまあです！', 'よく頑張りました！', '優秀です！', '満点！素晴らしい！'];
+  const idx = score <= 3 ? 0 : score <= 5 ? 1 : score <= 7 ? 2 : score <= 9 ? 3 : 4;
+  document.getElementById('scoreLabel').textContent = labels[idx];
+
+  // donut
+  const circ = 364.4;
+  const offset = circ - (score / 10) * circ;
+  setTimeout(() => { document.getElementById('donutFg').style.strokeDashoffset = offset; }, 50);
+
+  // review
+  const list = document.getElementById('reviewList');
+  list.innerHTML = answered.map((a, i) => `
+    <div class="review-item">
+      <div class="ri-q">Q${i+1}. ${a.q}</div>
+      <div class="ri-a">
+        あなたの答え：${LABELS[a.chosen]}（${a.choices[a.chosen]}）
+        <span class="mark ${a.ok ? 'ok' : 'ng'}">${a.ok ? '○' : '✕'}</span>
+        ${!a.ok ? `　正解：${LABELS[a.correct]}（${a.choices[a.correct]}）` : ''}
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
