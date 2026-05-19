@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎 思考力問題 §3 物質の三態と熱運動</title>
+<style>
+  :root {
+    --primary: #7c3aed;
+    --primary-dark: #6d28d9;
+    --correct: #16a34a;
+    --wrong: #dc2626;
+    --bg: #f5f3ff;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 16px; }
+
+  #start { justify-content: center; gap: 24px; }
+  .start-card { background: var(--card); border-radius: var(--radius); padding: 40px 32px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .start-card h1 { font-size: 1.4rem; margin-bottom: 6px; color: var(--primary); }
+  .start-card .subtitle { font-size: .85rem; color: var(--primary); font-weight: 700; background: #ede9fe; display: inline-block; padding: 3px 12px; border-radius: 99px; margin-bottom: 16px; }
+  .start-card p { color: var(--muted); font-size: .95rem; margin-bottom: 28px; line-height: 1.7; }
+  .category-list { text-align: left; margin-bottom: 28px; }
+  .category-list li { font-size: .88rem; color: var(--muted); padding: 4px 0; list-style: none; padding-left: 1.2em; position: relative; }
+  .category-list li::before { content: "●"; position: absolute; left: 0; color: var(--primary); font-size: .6em; top: 6px; }
+  .btn { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.05rem; cursor: pointer; font-weight: 700; transition: background .15s; }
+  .btn:hover { background: var(--primary-dark); }
+
+  #quiz { gap: 0; }
+  .quiz-header { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .quiz-header .prog { font-size: .9rem; color: var(--muted); }
+  .progress-bar { width: 100%; max-width: 640px; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .4s; }
+  .q-card { background: var(--card); border-radius: var(--radius); padding: 28px 24px; max-width: 640px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .tag { display: inline-block; background: #ede9fe; color: var(--primary); font-size: .75rem; font-weight: 700; padding: 2px 10px; border-radius: 99px; margin-bottom: 12px; }
+  .q-text { font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice { display: flex; align-items: flex-start; gap: 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: .97rem; transition: border-color .15s, background .15s; text-align: left; width: 100%; }
+  .choice:hover:not(.disabled) { border-color: var(--primary); background: #f5f3ff; }
+  .choice.correct { border-color: var(--correct); background: #f0fdf4; }
+  .choice.wrong { border-color: var(--wrong); background: #fef2f2; }
+  .choice.disabled { cursor: default; }
+  .choice-label { font-weight: 700; min-width: 1.4em; color: var(--muted); }
+  .choice.correct .choice-label { color: var(--correct); }
+  .choice.wrong .choice-label { color: var(--wrong); }
+  .exp-box { margin-top: 18px; background: #fef9c3; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; font-size: .9rem; line-height: 1.7; display: none; }
+  .exp-box.show { display: block; }
+  .next-wrap { margin-top: 20px; text-align: right; display: none; }
+  .next-wrap.show { display: block; }
+
+  #result { justify-content: center; gap: 20px; }
+  .result-card { background: var(--card); border-radius: var(--radius); padding: 36px 28px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .result-card h2 { font-size: 1.4rem; margin-bottom: 24px; }
+  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
+  .donut-wrap svg { transform: rotate(-90deg); }
+  .donut-bg { fill: none; stroke: var(--border); stroke-width: 14; }
+  .donut-fg { fill: none; stroke: var(--primary); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+  .score-label { font-size: 1rem; color: var(--muted); margin-bottom: 24px; }
+  .review-list { text-align: left; margin-bottom: 28px; }
+  .review-item { border-bottom: 1px solid var(--border); padding: 10px 0; font-size: .9rem; }
+  .review-item .ri-q { color: var(--text); margin-bottom: 4px; }
+  .review-item .ri-a { color: var(--muted); font-size: .85rem; }
+  .mark { font-weight: 700; }
+  .mark.ok { color: var(--correct); }
+  .mark.ng { color: var(--wrong); }
+  .btn-retry { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="screen active">
+  <div class="start-card">
+    <h1>化学基礎 思考力問題</h1>
+    <span class="subtitle">§3 物質の三態と熱運動（p.38〜41）</span>
+    <p>「なぜ？」「どちらが正しい？」を考える問題です。<br>全問題からランダムに <strong>10問</strong> 出題します。</p>
+    <ul class="category-list">
+      <li>熱運動・拡散の応用（身近な現象との結びつき）</li>
+      <li>三態・状態変化の応用（条件・理由を考える）</li>
+      <li>物理変化と化学変化の判断（根拠を説明）</li>
+      <li>融点・沸点・加熱曲線の読み取りと考察</li>
+    </ul>
+    <button class="btn" onclick="startQuiz()">スタート</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <span class="prog" id="progText">1 / 10</span>
+  </div>
+  <div class="progress-bar"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+  <div class="q-card" id="qCard"></div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+  <div class="result-card">
+    <h2>結果</h2>
+    <div class="donut-wrap">
+      <svg viewBox="0 0 140 140" width="140" height="140">
+        <circle class="donut-bg" cx="70" cy="70" r="58"/>
+        <circle class="donut-fg" id="donutFg" cx="70" cy="70" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
+      </svg>
+      <div class="donut-center" id="scoreNum">0/10</div>
+    </div>
+    <p class="score-label" id="scoreLabel">よく考えられました！</p>
+    <p id="saveStatus" style="font-size:.85rem;color:var(--muted);min-height:1.4em;margin-bottom:8px;"></p>
+    <div class="review-list" id="reviewList"></div>
+    <button class="btn btn-retry" onclick="startQuiz()">もう一度（ランダム10問）</button>
+    <br><br>
+    <button class="btn" style="background:#64748b" onclick="showOnly('start')">トップへ戻る</button>
+  </div>
+</div>
+
+<script>
+// ───────────────────────────────────────────────────────
+// 思考力問題（全30問）教科書p.38-41「物質の三態と熱運動」
+// ───────────────────────────────────────────────────────
+const ALL_Q = [
+
+// ══════════════════════════════
+// A. 熱運動・拡散の応用（6問）
+// ══════════════════════════════
+{tag:"熱運動・応用",
+ q:"冷水と温水に同時にインクを1滴ずつ垂らした。どちらが速く拡散するか、その理由と合わせて正しいものはどれか。",
+ choices:[
+  "冷水の方が速い。低温の方が粒子が安定して動くから",
+  "温水の方が速い。温度が高いほど熱運動が激しくなるから",
+  "差はない。水の量が同じなら拡散の速さも同じだから",
+  "冷水の方が速い。粒子の密度が高い方が広がりやすいから"
+ ],a:1,
+ exp:"温度が高いほど粒子の熱運動が激しくなるため、インクの粒子が速く広がる（拡散が速い）。熱運動の激しさは温度に比例する（p.38）。"},
+
+{tag:"熱運動・応用",
+ q:"香水をつけた人が部屋に入ると、しばらくして部屋全体ににおいが広がった。この現象の正しい説明はどれか。",
+ choices:[
+  "空気の流れによってにおい成分が運ばれた",
+  "香水の成分が重力で床に落ちて部屋全体に広がった",
+  "香水の成分が熱運動によって空気中へ自然に拡散した",
+  "香水が水蒸気と化学反応して気体になり広がった"
+ ],a:2,
+ exp:"においの成分（気体）が熱運動によって空気中へ自然に広がる拡散の現象。風がなくても時間とともに均一に広がる（p.38）。"},
+
+{tag:"熱運動・応用",
+ q:"気体の拡散が液体の拡散より速い理由として最も適切なものはどれか。",
+ choices:[
+  "気体の粒子は液体の粒子より重いから",
+  "気体では粒子間距離が大きく粒子間力がほぼなく、粒子が自由に飛びまわれるから",
+  "気体の粒子の方が液体の粒子より大きいから",
+  "気体の方が密度が大きいから"
+ ],a:1,
+ exp:"気体では粒子間距離が非常に大きく、粒子間力がほとんどはたらかないため、粒子が自由に高速で飛びまわる。そのため拡散が速い（図20 p.39）。"},
+
+{tag:"熱運動・応用",
+ q:"固体でも拡散は起こるにもかかわらず、固体の形が保たれる理由として正しいものはどれか。",
+ choices:[
+  "固体の粒子は熱運動を全くしないから",
+  "固体では粒子間力の方が熱運動より強く、相互の位置が変わらないから",
+  "固体の粒子は動けないほど大きいから",
+  "固体では重力が強くはたらくから"
+ ],a:1,
+ exp:"固体の粒子も熱運動しているが、粒子間力（引力）の方が強いため相互の位置は変わらない。粒子は決まった位置で振動するのみ（図20 p.39）。"},
+
+{tag:"熱運動・応用",
+ q:"温度を下げていくと物質は「気体→液体→固体」と状態が変化する。この理由として正しいものはどれか。",
+ choices:[
+  "温度が下がると粒子が小さくなるから",
+  "温度が下がると熱運動が穏やかになり、粒子間力の方が相対的に強くなって粒子が集まるようになるから",
+  "温度が下がると粒子の数が増えるから",
+  "温度が下がると重力が強くなるから"
+ ],a:1,
+ exp:"温度が下がると熱運動が弱まり、粒子間力（集まろうとする力）が相対的に勝るようになる。その結果、気体→液体→固体と粒子が集まっていく（p.39）。"},
+
+{tag:"熱運動・応用",
+ q:"洗濯物が100℃以下の常温でも乾くのはなぜか。正しい説明はどれか。",
+ choices:[
+  "常温でも洗濯物の表面で沸騰が起きているから",
+  "蒸発は沸点より低い温度でも液体表面から起こるから",
+  "常温の空気が洗濯物を100℃以上に加熱するから",
+  "洗濯物の水は特別に沸点が低いから"
+ ],a:1,
+ exp:"蒸発は沸点より低い温度でも液体表面から起こる気化現象。沸騰（液体内部からも気化）は沸点に達したときだけ起こる（p.40 解説）。"},
+
+// ══════════════════════════════
+// B. 三態・状態変化の応用（7問）
+// ══════════════════════════════
+{tag:"三態・応用",
+ q:"冬の朝、窓ガラスの内側が曇る。この現象を正しく説明しているのはどれか。",
+ choices:[
+  "窓ガラスが昇華して固体になったから",
+  "室内の水蒸気（気体）が冷えた窓ガラスに触れて凝縮（液体化）したから",
+  "外の空気が窓ガラスを通り抜けて水滴になったから",
+  "窓ガラスが融解して液体になったから"
+ ],a:1,
+ exp:"室内の暖かい空気に含まれる水蒸気（気体）が、冷えた窓ガラスで冷やされて凝縮（気体→液体）し、細かい水滴になって曇る（p.38 凝縮）。"},
+
+{tag:"三態・応用",
+ q:"ドライアイスを水の入ったビーカーに入れると白い煙が発生する。この「白い煙」の正体として正しいものはどれか。",
+ choices:[
+  "二酸化炭素ガス（CO₂）そのもの（CO₂は白色の気体）",
+  "昇華したCO₂ガスで周囲が冷やされ、空気中の水蒸気が凝縮した細かい水滴",
+  "ドライアイスが融解してできた液体CO₂",
+  "水が沸騰して生じた水蒸気"
+ ],a:1,
+ exp:"ドライアイスが昇華したCO₂ガスが周囲を冷やし、空気中の水蒸気が凝縮して細かい水滴（白煙）になる。CO₂自体は無色透明（p.41 実験4）。"},
+
+{tag:"三態・応用",
+ q:"汗をかくと体が冷える。この理由として正しいものはどれか。",
+ choices:[
+  "汗が体を濡らして熱伝導率が上がるから",
+  "汗（液体）が蒸発するときに皮膚から熱を奪うから",
+  "汗が皮膚上で凍るから",
+  "汗の成分が化学変化で熱を吸収するから"
+ ],a:1,
+ exp:"液体が気体に蒸発するとき、周囲から多くの熱を奪う（気化熱）。汗が蒸発するとき皮膚から熱を奪うため体が冷える。蒸発（物理変化）の応用（p.38）。"},
+
+{tag:"三態・応用",
+ q:"純物質と混合物を加熱したときの沸騰中の温度変化の違いとして正しいものはどれか。",
+ choices:[
+  "純物質も混合物も沸騰中は温度が一定になる",
+  "純物質は沸騰中に温度が一定になるが、混合物は沸騰中も温度が上昇し続ける",
+  "混合物は一定になるが純物質は変化し続ける",
+  "どちらも沸騰中に温度は上昇し続ける"
+ ],a:1,
+ exp:"純物質は沸点が一定なので沸騰中は温度が一定。混合物は成分によって沸点が異なるため、沸騰中も温度が変化し続ける（p.40）。"},
+
+{tag:"三態・応用",
+ q:"状態変化において「融解中は温度が一定に保たれる」理由として正しいものはどれか。",
+ choices:[
+  "融解中は加熱を止めているから",
+  "加えた熱がすべて固体→液体の状態変化（粒子間力を断ち切ること）のために使われ、粒子の運動エネルギー（温度）の上昇には使われないから",
+  "融解中は粒子が全く動かないから熱が蓄積しないから",
+  "融解中は体積が変化しないから"
+ ],a:1,
+ exp:"融解中は加えたエネルギーがすべて粒子間力を断ち切る（状態変化）のために使われる。粒子の運動エネルギーが増えないため温度は一定（図21 p.40）。"},
+
+{tag:"三態・応用",
+ q:"気体→液体（凝縮）が起こりやすくなる条件として正しいものはどれか。",
+ choices:[
+  "温度を上げるか圧力を下げると凝縮が起こる",
+  "温度を下げるか圧力を上げると、熱運動が弱まり粒子間力が勝って凝縮が起こる",
+  "電気を流すと凝縮が起こる",
+  "気体を膨張させると凝縮が起こる"
+ ],a:1,
+ exp:"温度を下げると熱運動が弱まり粒子間力が相対的に強くなるため凝縮が起こる。また圧力を上げると粒子間距離が縮まり凝縮しやすくなる（p.39）。"},
+
+{tag:"三態・応用",
+ q:"固体→液体（融解）のとき、粒子の状態の変化として正しいものはどれか（図20 p.39）。",
+ choices:[
+  "粒子の数が増える",
+  "粒子間力がなくなり粒子が自由に飛びまわる",
+  "粒子間力はまだはたらいているが、熱運動によって粒子が互いに位置を変えられるようになる",
+  "粒子の大きさが小さくなる"
+ ],a:2,
+ exp:"液体では粒子間力はまだはたらいているが、固体より熱運動が激しくなり粒子が互いに位置を変えられるようになる。粒子間力がほぼなくなるのは気体になってから（図20 p.39）。"},
+
+// ══════════════════════════════
+// C. 物理変化と化学変化の応用（5問）
+// ══════════════════════════════
+{tag:"物理・化学変化 応用",
+ q:"ろうそくが燃えるとき「ろうが溶ける（固体→液体）」と「ろうが燃えてCO₂と水が生じる」が起こる。これらの分類として正しいものはどれか。",
+ choices:[
+  "どちらも化学変化",
+  "ろうが溶ける→物理変化、ろうが燃える→化学変化",
+  "どちらも物理変化",
+  "ろうが溶ける→化学変化、ろうが燃える→物理変化"
+ ],a:1,
+ exp:"ろうが溶けるのは物質の種類が変わらない状態変化（物理変化）。ろうが燃えてCO₂・H₂Oという別の物質が生じるのは化学変化（p.39）。"},
+
+{tag:"物理・化学変化 応用",
+ q:"砂糖を水に溶かす（物理変化）と砂糖を加熱して炭にする（化学変化）を区別する根拠として最も正しいものはどれか。",
+ choices:[
+  "砂糖水は液体なので化学変化、炭は固体なので物理変化",
+  "砂糖水は蒸発させれば砂糖を取り戻せる（物理変化）が、炭になった砂糖は砂糖に戻せない（化学変化）",
+  "どちらも化学変化である",
+  "加熱を使えば化学変化、水に溶かすだけなら物理変化"
+ ],a:1,
+ exp:"物理変化は元の物質に戻すことができる（砂糖水→蒸発→砂糖）が、化学変化は新しい物質が生じ元に戻せない（炭は砂糖に戻らない）（p.39）。"},
+
+{tag:"物理・化学変化 応用",
+ q:"「鉄がさびる」（化学変化）と「鉄が融解する」（物理変化）の違いを正しく説明しているものはどれか。",
+ choices:[
+  "さびると温度が上がるから化学変化",
+  "さびると鉄（Fe）が酸化鉄（別の物質）に変わるから化学変化、融解は液体の鉄になるだけで物質の種類は変わらないから物理変化",
+  "どちらも物質が変化するので両方化学変化",
+  "さびると色が変わるから化学変化"
+ ],a:1,
+ exp:"化学変化のポイントは「別の物質が生じるか」。さびると酸化鉄（Fe₂O₃）という別の物質になる→化学変化。融解では液体の鉄（同じ物質の異なる状態）になる→物理変化（p.39）。"},
+
+{tag:"物理・化学変化 応用",
+ q:"次の組み合わせのうち「物理変化のみ」の組み合わせはどれか。",
+ choices:[
+  "水が蒸発する・鉄がさびる",
+  "紙が燃える・砂糖が水に溶ける",
+  "氷がとける・水が沸騰する・食塩が水に溶ける",
+  "水が蒸発する・木炭が燃える・砂糖が水に溶ける"
+ ],a:2,
+ exp:"氷がとける（融解）・水が沸騰する（気化）・食塩が水に溶ける（溶解）はいずれも物質の種類が変わらない物理変化。鉄がさびる・紙が燃える・木炭が燃えるは化学変化（p.39）。"},
+
+{tag:"物理・化学変化 応用",
+ q:"水の電気分解（2H₂O → 2H₂ + O₂）は物理変化か化学変化か。理由と合わせて正しいものはどれか。",
+ choices:[
+  "物理変化。水に電気を流しただけだから",
+  "化学変化。水（H₂O）という物質が水素（H₂）と酸素（O₂）という別の物質に変わるから",
+  "状態変化。水が気体になるから",
+  "物理変化。H₂とO₂はもともと水の成分だから"
+ ],a:1,
+ exp:"水（H₂O）が水素（H₂）と酸素（O₂）という全く別の物質に変わるため化学変化。「成分が含まれている」ことと「別の物質に変わる」ことは異なる（p.39）。"},
+
+// ══════════════════════════════
+// D. 融点・沸点・加熱曲線の応用（12問）
+// ══════════════════════════════
+{tag:"融点・沸点 応用",
+ q:"加熱曲線（図21 p.40）で、一般に融解中の水平部分より沸騰中の水平部分の方が長い。その理由として正しいものはどれか。",
+ choices:[
+  "沸騰の方が融解より低い温度で起こるから",
+  "気体になるためには液体になるより多くのエネルギーが必要だから",
+  "沸騰中は加熱を強くするから",
+  "沸騰中は体積が変化しないから"
+ ],a:1,
+ exp:"液体→気体の気化熱は固体→液体の融解熱より非常に大きい（水では約6.8倍）。そのため同じ加熱速度では沸騰中の水平部分が長くなる（図21 p.40）。"},
+
+{tag:"融点・沸点 応用",
+ q:"次の記述のうち、正しいものはどれか。",
+ choices:[
+  "混合物も純物質と同様に、沸騰中は温度が一定になる",
+  "純物質は融点と沸点の間の温度で液体の状態で存在する",
+  "0℃の水と0℃の氷は全く同じエネルギーをもつ",
+  "沸点が高い物質ほど必ず融点も高い"
+ ],a:1,
+ exp:"純物質は融点以上・沸点以下の温度で液体状態をとる。混合物の沸点は一定でない。0℃の水は0℃の氷より融解熱の分だけ多くエネルギーをもつ（p.40-41）。"},
+
+{tag:"融点・沸点 応用",
+ q:"ある純物質を加熱すると50℃で融解が始まり、120℃で沸騰が始まった。この物質の凝固点として正しいものはどれか。",
+ choices:[
+  "120℃",
+  "50℃",
+  "0℃",
+  "この情報だけでは決まらない"
+ ],a:1,
+ exp:"純物質では融点と凝固点は同じ温度（p.41）。融解が始まった温度50℃が、そのままこの物質の凝固点になる。"},
+
+{tag:"融点・沸点 応用",
+ q:"実験4（p.41）でドライアイスの昇華実験を行ったとき、実測の体積倍率が理論値（860倍）より小さくなった。その理由として最も適切なものはどれか。",
+ choices:[
+  "ドライアイスの密度の測定値が間違っていたから",
+  "CO₂の一部が水に溶けたり装置の接続部から漏れたりして、捕集量が少なくなったから",
+  "ドライアイスが融解して液体CO₂になったから体積が増えた",
+  "CO₂は空気より軽いので上へ逃げたから"
+ ],a:1,
+ exp:"CO₂は水に少し溶ける性質があり、また装置の接続部分から漏れることもある。捕集できたCO₂が少なくなることで、実測の体積倍率が理論値より小さくなる（p.41 Q）。"},
+
+{tag:"融点・沸点 応用",
+ q:"同じ質量のA・Bを同じ強さで加熱したとき、Aの加熱曲線の融解中の水平部分がBより長かった。これから分かることはどれか。",
+ choices:[
+  "AはBより沸点が高い",
+  "AはBより融点が高い",
+  "AはBより融解するのに必要なエネルギー（融解熱）が大きい",
+  "AはBより密度が大きい"
+ ],a:2,
+ exp:"水平部分が長いほど、同じ加熱速度でより多くの熱が状態変化のために使われたことを示す。つまりAはBより固体→液体に必要なエネルギー（融解熱）が大きい。"},
+
+{tag:"融点・沸点 応用",
+ q:"夏の暑い日、冷たい飲み物の入ったコップの外側に水滴がつく。この現象の正しい説明はどれか。",
+ choices:[
+  "コップの内側の飲み物が外側に染み出した",
+  "空気中の水蒸気がコップの冷たい表面で凝縮（液体化）した",
+  "コップの材料が化学変化して水分を生成した",
+  "空気中の酸素がコップで固体になった"
+ ],a:1,
+ exp:"暖かい空気中の水蒸気（気体）が冷えたコップの表面に触れて凝縮（気体→液体）し、水滴になる。冬の窓ガラスが曇るのと同じ現象（p.38 凝縮）。"},
+
+{tag:"融点・沸点 応用",
+ q:"純物質の沸騰中に加熱を続けても温度が変わらない。この理由として最も正しいものはどれか。",
+ choices:[
+  "沸騰中は物質が分解しているから",
+  "加えたエネルギーがすべて液体→気体の状態変化（粒子間力を断ち切ること）に使われ、粒子の運動エネルギー（温度）の上昇には使われないから",
+  "沸騰中は物質が冷却されているから",
+  "沸騰中は物質の量が変わらないから"
+ ],a:1,
+ exp:"沸騰中は加えた熱エネルギーがすべて気化熱（液体→気体の変化）に使われる。粒子の運動エネルギーが増えないため温度は沸点で一定に保たれる（図21 p.40）。"},
+
+{tag:"融点・沸点 応用",
+ q:"加熱曲線（温度－時間グラフ）で「グラフが水平な部分が2か所ある」試料がある。この試料についてわかることはどれか。",
+ choices:[
+  "2種類以上の物質が混じった混合物である",
+  "2種類以上の元素からなる物質である",
+  "融点と沸点をもつ純物質である",
+  "固体しか存在しない物質である"
+ ],a:2,
+ exp:"水平部分（温度一定）が2か所（融解中と沸騰中）あり、それぞれ一定温度で状態変化するのは純物質の特徴。混合物では沸騰中も温度が変化し続ける（p.40）。"},
+
+{tag:"融点・沸点 応用",
+ q:"温度を上げると「固体→液体→気体」と状態が変化する理由を最もよく説明しているものはどれか。",
+ choices:[
+  "温度が上がると粒子の数が増えるから",
+  "温度が上がると熱運動が激しくなり、粒子間力より熱運動が大きくなって粒子がばらばらになっていくから",
+  "温度が上がると粒子が化学変化で分解されるから",
+  "温度が上がると重力が弱くなるから"
+ ],a:1,
+ exp:"温度が上がるほど熱運動が激しくなり、粒子間力（集まろうとする力）に打ち勝ってばらばらになる。固体→液体→気体はこの変化の段階（p.39）。"},
+
+{tag:"融点・沸点 応用",
+ q:"「蒸発と沸騰は同じ現象だ」という意見の誤りを正しく指摘しているものはどれか。",
+ choices:[
+  "蒸発は液体が固体になる変化だが、沸騰は液体が気体になる変化だから",
+  "蒸発は液体表面のみで起こり沸点以下でも起こるが、沸騰は沸点で液体内部からも気体が発生する点が異なる",
+  "蒸発は化学変化だが、沸騰は物理変化だから",
+  "蒸発と沸騰に違いはなく、この意見は正しい"
+ ],a:1,
+ exp:"蒸発は沸点以下でも液体の表面から起こる気化。沸騰は温度が沸点に達したとき液体の内部からも気泡が発生する激しい気化。両者は異なる現象（p.40 解説）。"},
+
+{tag:"融点・沸点 応用",
+ q:"実験4（p.41）の考察として「固体CO₂が気体になると体積が約860倍になる」ことから、固体と気体の粒子の違いについて正しく推論しているものはどれか。",
+ choices:[
+  "気体になると粒子の数が860倍に増える",
+  "気体になると粒子そのものが860倍に大きくなる",
+  "気体では粒子間距離が固体より非常に大きく、粒子が空間を自由に飛びまわっているため体積が大幅に増加する",
+  "固体の方が粒子数が多いから体積が小さい"
+ ],a:2,
+ exp:"状態変化では粒子の数も大きさも変わらない。気体では粒子間距離が非常に大きくなり（粒子間力がほぼはたらかない）、ほぼ空間が体積を占めるため固体の860倍の体積になる（p.41、図20 p.39）。"},
+
+{tag:"融点・沸点 応用",
+ q:"次の現象を「物理変化」「化学変化」に正しく分類しているものはどれか。",
+ choices:[
+  "鉄がさびる→物理変化、氷がとける→化学変化",
+  "木が燃える→物理変化、水が蒸発する→化学変化",
+  "鉄がさびる→化学変化、氷がとける→物理変化",
+  "砂糖が水に溶ける→化学変化、紙が燃える→物理変化"
+ ],a:2,
+ exp:"鉄がさびるのは鉄が酸化鉄（別の物質）に変わる化学変化。氷がとけるのは固体の水が液体の水になるだけで物質の種類は変わらない物理変化（p.39）。"},
+
+]; // END ALL_Q
+
+// ───────────────────────────────────────────────────────
+const LABELS = ["ア","イ","ウ","エ"];
+let session = [], cur = 0, score = 0, answered = [];
+
+function showOnly(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  session = shuffle(ALL_Q).slice(0, 10);
+  cur = 0; score = 0; answered = [];
+  showOnly('quiz');
+  renderQ();
+}
+
+function renderQ() {
+  const q = session[cur];
+  const pct = (cur / 10) * 100;
+  document.getElementById('progText').textContent = `${cur + 1} / 10`;
+  document.getElementById('progBar').style.width = pct + '%';
+
+  const shuffled = shuffle(q.choices.map((c, i) => ({ text: c, origIdx: i })));
+  q._shuffled = shuffled;
+  q._newCorrect = shuffled.findIndex(c => c.origIdx === q.a);
+
+  const choices = shuffled.map((c, i) => `
+    <button class="choice" onclick="select(${i})" id="ch${i}">
+      <span class="choice-label">${LABELS[i]}</span>
+      <span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('qCard').innerHTML = `
+    <span class="tag">${q.tag}</span>
+    <div class="q-text">${q.q}</div>
+    <div class="choices">${choices}</div>
+    <div class="exp-box" id="expBox">${q.exp}</div>
+    <div class="next-wrap" id="nextWrap">
+      <button class="btn" onclick="next()">${cur < 9 ? '次の問題 →' : '結果を見る'}</button>
+    </div>`;
+}
+
+function select(idx) {
+  const q = session[cur];
+  const correct = q._newCorrect;
+  const shuffledTexts = q._shuffled.map(c => c.text);
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => b.classList.add('disabled'));
+  btns[idx].classList.add(idx === correct ? 'correct' : 'wrong');
+  if (idx !== correct) btns[correct].classList.add('correct');
+  if (idx === correct) score++;
+  answered.push({ q: q.q, chosen: idx, correct, ok: idx === correct, choices: shuffledTexts });
+  document.getElementById('expBox').classList.add('show');
+  document.getElementById('nextWrap').classList.add('show');
+}
+
+function next() {
+  cur++;
+  if (cur < 10) { renderQ(); }
+  else { showResult(); }
+}
+
+function showResult() {
+  showOnly('result');
+  document.getElementById('scoreNum').textContent = `${score}/10`;
+
+  const st = document.getElementById('saveStatus');
+  if (typeof google !== 'undefined' && google.script) {
+    st.textContent = '送信中...';
+    google.script.run
+      .withSuccessHandler(() => { st.textContent = '✓ 記録しました'; })
+      .withFailureHandler(() => { st.textContent = '⚠ 送信に失敗しました'; })
+      .saveResult(score);
+  }
+
+  const labels = ['もう少し考えてみよう！', 'まあまあです！', 'よく考えられました！', '優秀です！', '満点！素晴らしい！'];
+  const idx = score <= 3 ? 0 : score <= 5 ? 1 : score <= 7 ? 2 : score <= 9 ? 3 : 4;
+  document.getElementById('scoreLabel').textContent = labels[idx];
+
+  const circ = 364.4;
+  const offset = circ - (score / 10) * circ;
+  setTimeout(() => { document.getElementById('donutFg').style.strokeDashoffset = offset; }, 50);
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = answered.map((a, i) => `
+    <div class="review-item">
+      <div class="ri-q">Q${i+1}. ${a.q}</div>
+      <div class="ri-a">
+        あなたの答え：${LABELS[a.chosen]}（${a.choices[a.chosen]}）
+        <span class="mark ${a.ok ? 'ok' : 'ng'}">${a.ok ? '○' : '✕'}</span>
+        ${!a.ok ? `　正解：${LABELS[a.correct]}（${a.choices[a.correct]}）` : ''}
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
