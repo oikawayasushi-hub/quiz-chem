@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ 第2章§1 原子とその構造</title>
+<style>
+  :root {
+    --primary: #0891b2;
+    --primary-dark: #0e7490;
+    --correct: #16a34a;
+    --wrong: #dc2626;
+    --bg: #f0f9ff;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 16px; }
+
+  #start { justify-content: center; gap: 24px; }
+  .start-card { background: var(--card); border-radius: var(--radius); padding: 40px 32px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .start-card h1 { font-size: 1.5rem; margin-bottom: 8px; color: var(--primary); }
+  .start-card p { color: var(--muted); font-size: .95rem; margin-bottom: 28px; line-height: 1.7; }
+  .category-list { text-align: left; margin-bottom: 28px; }
+  .category-list li { font-size: .88rem; color: var(--muted); padding: 4px 0; list-style: none; padding-left: 1.2em; position: relative; }
+  .category-list li::before { content: "●"; position: absolute; left: 0; color: var(--primary); font-size: .6em; top: 6px; }
+  .btn { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.05rem; cursor: pointer; font-weight: 700; transition: background .15s; }
+  .btn:hover { background: var(--primary-dark); }
+
+  #quiz { gap: 0; }
+  .quiz-header { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .quiz-header .prog { font-size: .9rem; color: var(--muted); }
+  .progress-bar { width: 100%; max-width: 640px; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .4s; }
+  .q-card { background: var(--card); border-radius: var(--radius); padding: 28px 24px; max-width: 640px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .tag { display: inline-block; background: #cffafe; color: var(--primary); font-size: .75rem; font-weight: 700; padding: 2px 10px; border-radius: 99px; margin-bottom: 12px; }
+  .q-text { font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice { display: flex; align-items: flex-start; gap: 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: .97rem; transition: border-color .15s, background .15s; text-align: left; width: 100%; }
+  .choice:hover:not(.disabled) { border-color: var(--primary); background: #e0f7fa; }
+  .choice.correct { border-color: var(--correct); background: #f0fdf4; }
+  .choice.wrong { border-color: var(--wrong); background: #fef2f2; }
+  .choice.disabled { cursor: default; }
+  .choice-label { font-weight: 700; min-width: 1.4em; color: var(--muted); }
+  .choice.correct .choice-label { color: var(--correct); }
+  .choice.wrong .choice-label { color: var(--wrong); }
+  .exp-box { margin-top: 18px; background: #fef9c3; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; font-size: .9rem; line-height: 1.7; display: none; }
+  .exp-box.show { display: block; }
+  .next-wrap { margin-top: 20px; text-align: right; display: none; }
+  .next-wrap.show { display: block; }
+
+  #result { justify-content: center; gap: 20px; }
+  .result-card { background: var(--card); border-radius: var(--radius); padding: 36px 28px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+  .result-card h2 { font-size: 1.4rem; margin-bottom: 24px; }
+  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
+  .donut-wrap svg { transform: rotate(-90deg); }
+  .donut-bg { fill: none; stroke: var(--border); stroke-width: 14; }
+  .donut-fg { fill: none; stroke: var(--primary); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+  .score-label { font-size: 1rem; color: var(--muted); margin-bottom: 24px; }
+  .review-list { text-align: left; margin-bottom: 28px; }
+  .review-item { border-bottom: 1px solid var(--border); padding: 10px 0; font-size: .9rem; }
+  .review-item .ri-q { color: var(--text); margin-bottom: 4px; }
+  .review-item .ri-a { color: var(--muted); font-size: .85rem; }
+  .mark { font-weight: 700; }
+  .mark.ok { color: var(--correct); }
+  .mark.ng { color: var(--wrong); }
+  .btn-retry { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="screen active">
+  <div class="start-card">
+    <h1>化学基礎クイズ</h1>
+    <p>第2章「物質の構成粒子」§1 原子とその構造<br>（教科書 p.44〜47）<br>全問題からランダムに <strong>10問</strong> 出題します。</p>
+    <ul class="category-list">
+      <li>原子の構造（原子核・陽子・中性子・電子）</li>
+      <li>原子番号・質量数・粒子の電荷と計算</li>
+      <li>同位体（定義・水素の同位体・存在比）</li>
+      <li>放射性同位体・半減期</li>
+      <li>放射線の種類（α線・β線・γ線）と利用</li>
+    </ul>
+    <button class="btn" onclick="startQuiz()">スタート</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <span class="prog" id="progText">1 / 10</span>
+  </div>
+  <div class="progress-bar"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
+  <div class="q-card" id="qCard"></div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+  <div class="result-card">
+    <h2>結果</h2>
+    <div class="donut-wrap">
+      <svg viewBox="0 0 140 140" width="140" height="140">
+        <circle class="donut-bg" cx="70" cy="70" r="58"/>
+        <circle class="donut-fg" id="donutFg" cx="70" cy="70" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
+      </svg>
+      <div class="donut-center" id="scoreNum">0/10</div>
+    </div>
+    <p class="score-label" id="scoreLabel">よく頑張りました！</p>
+    <p id="saveStatus" style="font-size:.85rem;color:var(--muted);min-height:1.4em;margin-bottom:8px;"></p>
+    <div class="review-list" id="reviewList"></div>
+    <button class="btn btn-retry" onclick="startQuiz()">もう一度（ランダム10問）</button>
+    <br><br>
+    <button class="btn" style="background:#64748b" onclick="showOnly('start')">トップへ戻る</button>
+  </div>
+</div>
+
+<script>
+// ───────────────────────────────────────────────────────
+// 問題データ（全38問）教科書p.44-47「原子とその構造」
+// ───────────────────────────────────────────────────────
+const ALL_Q = [
+
+// ══════════════════════════════
+// A. 原子の構造（12問）
+// ══════════════════════════════
+{tag:"原子の構造",q:"原子の大きさ（直径）はおよそいくらか。",
+ choices:["10⁻⁵ m","10⁻¹⁰ m","10⁻¹⁵ m","10⁻²⁰ m"],a:1,
+ exp:"原子の大きさは直径およそ10⁻¹⁰ m（p.44）。一方、原子核の直径は10⁻¹⁵〜10⁻¹⁴ m程度で、原子に比べはるかに小さい（図1）。"},
+
+{tag:"原子の構造",q:"原子核の直径はおよそいくらか（図1 p.44）。",
+ choices:["10⁻¹⁰ m","10⁻¹² m","10⁻¹⁵〜10⁻¹⁴ m","10⁻⁸ m"],a:2,
+ exp:"原子核の直径は10⁻¹⁵〜10⁻¹⁴ m程度。原子（10⁻¹⁰ m）と比べると、原子核は原子に比べてはるかに小さい（図1 p.44）。"},
+
+{tag:"原子の構造",q:"原子を構成する粒子の正しい組み合わせはどれか。",
+ choices:["陽子・中性子のみ","電子・陽子・中性子","電子・中性子のみ","陽子・電子のみ"],a:1,
+ exp:"原子は中心にある原子核（陽子＋中性子）と、そのまわりを取り巻く電子からできている（p.44）。"},
+
+{tag:"原子の構造",q:"原子核はどの粒子で構成されているか。",
+ choices:["陽子のみ","中性子のみ","電子と陽子","陽子と中性子"],a:3,
+ exp:"原子核は陽子と中性子からできている。その外側を電子が取り巻いている（p.44）。"},
+
+{tag:"原子の構造",q:"原子番号（atomic number）は何の数で定義されるか。",
+ choices:["中性子の数","電子の数","原子核に含まれる陽子の数","質量数"],a:2,
+ exp:"原子番号は原子核に含まれる陽子の数。原子番号1は水素H、原子番号2はヘリウムHe（p.44）。"},
+
+{tag:"原子の構造",q:"質量数（mass number）の定義として正しいものはどれか。",
+ choices:["陽子の数","中性子の数","陽子の数＋中性子の数","電子の数＋陽子の数"],a:2,
+ exp:"質量数＝陽子の数＋中性子の数。電子の質量は非常に小さいため、原子の質量は質量数にほぼ比例する（p.45）。"},
+
+{tag:"原子の構造",q:"元素記号 ⁴₂He の「4」と「2」はそれぞれ何を表すか（図2 p.45）。",
+ choices:["4が原子番号、2が質量数","4が質量数、2が原子番号","4が電子数、2が陽子数","4が中性子数、2が電子数"],a:1,
+ exp:"元素記号の左上が質量数、左下が原子番号（陽子数）。⁴₂Heは質量数4・原子番号2のヘリウム（図2 p.45）。"},
+
+{tag:"原子の構造",q:"電子1個の質量は陽子1個の質量の約何倍か。",
+ choices:["約1/10","約1/100","約1/1840","ほぼ同じ"],a:2,
+ exp:"電子1個の質量は陽子や中性子の約1/1840。そのため原子の質量は原子核の質量にほぼ等しく、質量数にほぼ比例する（p.45）。"},
+
+{tag:"原子の構造",q:"陽子・中性子・電子それぞれの電荷の正しい組み合わせはどれか（まとめ p.45）。",
+ choices:["陽子0、中性子+1、電子−1","陽子+1、中性子0、電子−1","陽子+1、中性子−1、電子0","陽子−1、中性子0、電子+1"],a:1,
+ exp:"陽子は+1、電子は−1の電荷をもち、中性子は電気を帯びていない（0）（まとめ p.45）。"},
+
+{tag:"原子の構造",q:"原子が全体として電気的に中性である理由として正しいものはどれか。",
+ choices:["中性子が正負の電荷を打ち消すから","陽子の数と電子の数が等しく、正負の電荷を打ち消しあうから","原子核自体が中性だから","電子が存在しないから"],a:1,
+ exp:"原子に含まれる陽子の数（+1）と電子の数（−1）は等しいため、互いの電荷を打ち消しあい、原子全体は電気的に中性となる（p.45）。"},
+
+{tag:"原子の構造",q:"²⁴₁₂Mg の陽子の数・中性子の数・電子の数を正しく示しているものはどれか。",
+ choices:["陽子12、中性子12、電子12","陽子12、中性子24、電子12","陽子24、中性子12、電子12","陽子12、中性子12、電子24"],a:0,
+ exp:"原子番号12→陽子12個（電子も12個）。中性子数＝質量数−原子番号＝24−12＝12個（p.45 問1）。"},
+
+{tag:"原子の構造",q:"⁴⁰₁₈Ar の中性子の数はいくつか。",
+ choices:["18個","22個","40個","58個"],a:1,
+ exp:"中性子数＝質量数−原子番号＝40−18＝22個。陽子は18個、電子も18個（p.45 問1）。"},
+
+// ══════════════════════════════
+// B. 同位体（13問）
+// ══════════════════════════════
+{tag:"同位体",q:"同位体（isotope）の定義として正しいものはどれか。",
+ choices:["同じ質量数をもつ異なる元素の原子","同じ元素の原子で、中性子の数が異なる原子どうし","同じ陽子数と中性子数をもつ原子","異なる元素の原子で性質が似たもの"],a:1,
+ exp:"同位体は同じ元素（陽子数が同じ）で中性子の数が異なる原子どうし。同素体とは別の概念（p.46）。"},
+
+{tag:"同位体",q:"同位体どうしの性質について正しいものはどれか。",
+ choices:["化学的性質は大きく異なるが質量はほぼ同じ","質量は異なるが化学的性質はほぼ同じ","質量も化学的性質も全く同じ","質量も化学的性質も大きく異なる"],a:1,
+ exp:"同位体どうしは質量は異なるが、化学的性質はほぼ同じである（p.46）。"},
+
+{tag:"同位体",q:"水素¹Hと重水素²Hの違いとして正しいものはどれか。",
+ choices:["陽子の数が異なる","電子の数が異なる","中性子の数が異なる（¹Hは0個、²Hは1個）","元素の種類が異なる"],a:2,
+ exp:"¹H（中性子0個）と²H重水素（中性子1個）は、陽子数・電子数は同じ1個だが中性子の数が異なる同位体（表1 p.46）。"},
+
+{tag:"同位体",q:"水素の同位体として存在する原子を正しく示しているものはどれか。",
+ choices:["¹Hのみ","¹Hと²Hの2種類","¹H・²H・³Hの3種類","¹H・²H・³H・⁴Hの4種類"],a:2,
+ exp:"水素には¹H（中性子0）・²H重水素（中性子1）・³H三重水素（中性子2）の3種類の同位体がある（表1 p.46）。"},
+
+{tag:"同位体",q:"三重水素³Hの中性子の数はいくつか。",
+ choices:["0個","1個","2個","3個"],a:2,
+ exp:"三重水素³H（トリチウム）：質量数3、原子番号1。中性子数＝3−1＝2個（表1 p.46）。"},
+
+{tag:"同位体",q:"自然界における各同位体の存在割合を何というか。",
+ choices:["質量数","原子番号","存在比","半減期"],a:2,
+ exp:"各同位体が自然界にどれだけの割合で存在するかを存在比（存在割合）という（表2 p.46）。"},
+
+{tag:"同位体",q:"水素の同位体のうち、最も存在比が大きいものはどれか（表2 p.46）。",
+ choices:["¹H（存在比99.9885%）","²H（存在比0.0115%）","³H（ごく微量）","すべて同じ割合で存在する"],a:0,
+ exp:"¹Hが99.9885%と最も多い。²H（重水素）は0.0115%、³H（三重水素）はごく微量（表2 p.46）。"},
+
+{tag:"同位体",q:"塩素の同位体の組み合わせとして正しいものはどれか（表2 p.46）。",
+ choices:["³⁵Cl（75.76%）と³⁷Cl（24.24%）","³⁵Cl（50%）と³⁷Cl（50%）","³⁵Clのみ（100%）","³⁶Cl（75.76%）と³⁸Cl（24.24%）"],a:0,
+ exp:"塩素の同位体は³⁵Cl（存在比75.76%）と³⁷Cl（存在比24.24%）の2種類（表2 p.46）。"},
+
+{tag:"同位体",q:"³⁵Clと³⁷Clは同位体である。この2つの原子で異なるものはどれか。",
+ choices:["陽子の数","電子の数","中性子の数","元素の種類"],a:2,
+ exp:"どちらも塩素（原子番号17）なので陽子・電子は17個で同じ。³⁵Clの中性子は35−17＝18個、³⁷Clは37−17＝20個で、中性子の数が異なる（p.46）。"},
+
+{tag:"同位体",q:"¹²₆C（炭素12）の陽子数・中性子数・電子数として正しいものはどれか。",
+ choices:["陽子6、中性子6、電子6","陽子6、中性子12、電子6","陽子12、中性子6、電子12","陽子6、中性子8、電子6"],a:0,
+ exp:"炭素（原子番号6）→陽子6個・電子6個。中性子数＝12−6＝6個（p.44-45）。"},
+
+{tag:"同位体",q:"¹⁴₆C（炭素14）の中性子数として正しいものはどれか。",
+ choices:["6個","8個","14個","20個"],a:1,
+ exp:"中性子数＝質量数−原子番号＝14−6＝8個。¹²Cと¹⁴Cは陽子数・電子数は同じ6個だが、中性子数が異なる同位体（p.46）。"},
+
+{tag:"同位体",q:"³⁹₁₉K の陽子・中性子・電子の数として正しいものはどれか。",
+ choices:["陽子20、中性子19、電子19","陽子19、中性子20、電子19","陽子19、中性子39、電子19","陽子39、中性子19、電子19"],a:1,
+ exp:"原子番号19→陽子19個・電子19個。中性子数＝39−19＝20個（p.45 問1）。"},
+
+{tag:"同位体",q:"F（フッ素）・Na（ナトリウム）・Al（アルミニウム）は地球上に安定同位体が1種類しかない（p.46 脚注）。これはどういう意味か。",
+ choices:["これらの元素は同位体を一切もたない","これらの元素は原子番号が1種類しかない","自然界で安定して存在する（放射性崩壊しない）同位体がそれぞれ1つしかない","これらの元素の原子は中性子をもたない"],a:2,
+ exp:"安定同位体が1種類とは、自然界で安定して存在する（放射性崩壊しない）同位体がその元素に1つしかないということ（p.46 脚注）。"},
+
+// ══════════════════════════════
+// C. 放射性同位体・放射線（13問）
+// ══════════════════════════════
+{tag:"放射性同位体",q:"放射性同位体（radioisotope）とはどのような同位体か。",
+ choices:["質量が特に大きい同位体","原子核が不安定で、放射線を放出して別の原子核に変わる同位体","化学的性質が他と大きく異なる同位体","人工的にのみ作られる同位体"],a:1,
+ exp:"放射性同位体は原子核が不安定で、放射線（粒子や電磁波）を放出して別の原子核に変わる（放射性崩壊）同位体（p.47）。"},
+
+{tag:"放射性同位体",q:"半減期（half-life）の定義として正しいものはどれか。",
+ choices:["放射性同位体がすべて崩壊するのに要する時間","放射性同位体が放射性崩壊して元の量の半分になるのに要する時間","放射線の強さが半分になるのに要する時間","同位体の存在比が半分になる時間"],a:1,
+ exp:"半減期は放射性同位体が放射性崩壊して元の量の半分になるのに要する時間。放射性同位体ごとに決まっている（p.47）。"},
+
+{tag:"放射性同位体",q:"¹⁴Cの半減期として正しいものはどれか（表3 p.47）。",
+ choices:["約12年","約5700年","約8日","約1600年"],a:1,
+ exp:"¹⁴C（炭素14）の半減期は約5700年。この性質を利用して遺物などの年代測定に用いられる（表3 p.47）。"},
+
+{tag:"放射性同位体",q:"³Hの半減期として正しいものはどれか（表3 p.47）。",
+ choices:["約12年","約5700年","約8日","約1600年"],a:0,
+ exp:"三重水素（³H）の半減期は約12年（表3 p.47）。"},
+
+{tag:"放射性同位体",q:"α線の本体として正しいものはどれか（表4 p.47）。",
+ choices:["電子の流れ","電磁波","⁴Heの原子核の流れ","陽子の流れ"],a:2,
+ exp:"α線は⁴He（ヘリウム4）の原子核の流れ。α崩壊では原子番号が2減少、質量数が4減少した原子になる（表4 p.47）。"},
+
+{tag:"放射性同位体",q:"β線の本体として正しいものはどれか（表4 p.47）。",
+ choices:["⁴Heの原子核の流れ","電子の流れ","電磁波","中性子の流れ"],a:1,
+ exp:"β線は電子の流れ。β崩壊では中性子が陽子に変化して電子が放出され、原子番号が1増加した原子になる（表4 p.47）。"},
+
+{tag:"放射性同位体",q:"γ線の本体として正しいものはどれか（表4 p.47）。",
+ choices:["陽子の流れ","電子の流れ","⁴Heの原子核の流れ","電磁波"],a:3,
+ exp:"γ線は電磁波。原子核がエネルギーの高い状態（励起状態）から低い状態になるときに放出される（表4 p.47）。"},
+
+{tag:"放射性同位体",q:"α線・β線・γ線の透過力を弱い順に並べたものとして正しいものはどれか（表4 p.47）。",
+ choices:["α線 < β線 < γ線","γ線 < β線 < α線","β線 < α線 < γ線","α線 < γ線 < β線"],a:0,
+ exp:"透過力はα線（弱）< β線（中）< γ線（強）。α線は紙でも止められるが、γ線は厚い鉛板でないと止められない（表4 p.47）。"},
+
+{tag:"放射性同位体",q:"α崩壊が起こると、原子番号と質量数はどのように変化するか（表4 p.47）。",
+ choices:["原子番号が2減少、質量数が4減少","原子番号が1増加、質量数は変化しない","原子番号が2増加、質量数が4増加","原子番号・質量数ともに変化しない"],a:0,
+ exp:"α崩壊では⁴Heの原子核が放出されるため、原子番号が2減少・質量数が4減少した原子になる（表4 p.47）。"},
+
+{tag:"放射性同位体",q:"β崩壊が起こると、原子番号と質量数はどのように変化するか（表4 p.47）。",
+ choices:["原子番号が2減少、質量数が4減少","原子番号が1増加、質量数は変化しない","原子番号が1減少、質量数は変化しない","原子番号・質量数ともに変化しない"],a:1,
+ exp:"β崩壊では中性子が陽子に変化して電子（β線）が放出される。原子番号が1増加するが質量数は変化しない（表4 p.47）。"},
+
+{tag:"放射性同位体",q:"放射性同位体を目印として利用し、化学反応のしくみや生体内の物質の動きを調べる方法を何というか（p.47）。",
+ choices:["非破壊検査","トレーサー法","半減期法","放射線治療"],a:1,
+ exp:"放射性同位体を目印（トレーサー）として使い、化学反応や生体内での物質の動きを追跡する方法をトレーサー法という（p.47）。"},
+
+{tag:"放射性同位体",q:"放射線を扱う際に十分な注意が必要な理由として教科書（p.47）に記されているものはどれか。",
+ choices:["放射線は非常に臭いから","放射線は細胞や遺伝子を変化させることがあるから","放射線は目に見えないから","放射線は熱を発生させるから"],a:1,
+ exp:"放射線は細胞や遺伝子を変化させることがあるため、扱いには十分な注意が必要。一方でこの性質をがんの治療などに活用する（p.47）。"},
+
+{tag:"放射性同位体",q:"放射線の利用として正しいものをすべて含む組み合わせはどれか（p.47）。",
+ choices:["がんの治療のみ","非破壊検査・がんの治療・殺菌・品種改良・トレーサー法","天気予報・通信・がんの治療","殺菌・通信・品種改良"],a:1,
+ exp:"教科書p.47に記載されている放射線の利用は、非破壊検査・がんの治療（放射線治療）・殺菌・品種改良・トレーサー法など。"},
+
+]; // END ALL_Q
+
+// ───────────────────────────────────────────────────────
+const LABELS = ["ア","イ","ウ","エ"];
+let session = [], cur = 0, score = 0, answered = [];
+
+function showOnly(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  session = shuffle(ALL_Q).slice(0, 10);
+  cur = 0; score = 0; answered = [];
+  showOnly('quiz');
+  renderQ();
+}
+
+function renderQ() {
+  const q = session[cur];
+  const pct = (cur / 10) * 100;
+  document.getElementById('progText').textContent = `${cur + 1} / 10`;
+  document.getElementById('progBar').style.width = pct + '%';
+
+  const shuffled = shuffle(q.choices.map((c, i) => ({ text: c, origIdx: i })));
+  q._shuffled = shuffled;
+  q._newCorrect = shuffled.findIndex(c => c.origIdx === q.a);
+
+  const choices = shuffled.map((c, i) => `
+    <button class="choice" onclick="select(${i})" id="ch${i}">
+      <span class="choice-label">${LABELS[i]}</span>
+      <span>${c.text}</span>
+    </button>`).join('');
+
+  document.getElementById('qCard').innerHTML = `
+    <span class="tag">${q.tag}</span>
+    <div class="q-text">${q.q}</div>
+    <div class="choices">${choices}</div>
+    <div class="exp-box" id="expBox">${q.exp}</div>
+    <div class="next-wrap" id="nextWrap">
+      <button class="btn" onclick="next()">${cur < 9 ? '次の問題 →' : '結果を見る'}</button>
+    </div>`;
+}
+
+function select(idx) {
+  const q = session[cur];
+  const correct = q._newCorrect;
+  const shuffledTexts = q._shuffled.map(c => c.text);
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => b.classList.add('disabled'));
+  btns[idx].classList.add(idx === correct ? 'correct' : 'wrong');
+  if (idx !== correct) btns[correct].classList.add('correct');
+  if (idx === correct) score++;
+  answered.push({ q: q.q, chosen: idx, correct, ok: idx === correct, choices: shuffledTexts });
+  document.getElementById('expBox').classList.add('show');
+  document.getElementById('nextWrap').classList.add('show');
+}
+
+function next() {
+  cur++;
+  if (cur < 10) { renderQ(); }
+  else { showResult(); }
+}
+
+function showResult() {
+  showOnly('result');
+  document.getElementById('scoreNum').textContent = `${score}/10`;
+
+  const st = document.getElementById('saveStatus');
+  if (typeof google !== 'undefined' && google.script) {
+    st.textContent = '送信中...';
+    google.script.run
+      .withSuccessHandler(() => { st.textContent = '✓ 記録しました'; })
+      .withFailureHandler(() => { st.textContent = '⚠ 送信に失敗しました'; })
+      .saveResult(score);
+  }
+
+  const labels = ['もう少し頑張ろう！', 'まあまあです！', 'よく頑張りました！', '優秀です！', '満点！素晴らしい！'];
+  const idx = score <= 3 ? 0 : score <= 5 ? 1 : score <= 7 ? 2 : score <= 9 ? 3 : 4;
+  document.getElementById('scoreLabel').textContent = labels[idx];
+
+  const circ = 364.4;
+  const offset = circ - (score / 10) * circ;
+  setTimeout(() => { document.getElementById('donutFg').style.strokeDashoffset = offset; }, 50);
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = answered.map((a, i) => `
+    <div class="review-item">
+      <div class="ri-q">Q${i+1}. ${a.q}</div>
+      <div class="ri-a">
+        あなたの答え：${LABELS[a.chosen]}（${a.choices[a.chosen]}）
+        <span class="mark ${a.ok ? 'ok' : 'ng'}">${a.ok ? '○' : '✕'}</span>
+        ${!a.ok ? `　正解：${LABELS[a.correct]}（${a.choices[a.correct]}）` : ''}
+      </div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
