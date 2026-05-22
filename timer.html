@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アナログタイマー</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1c1610;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            user-select: none;
+        }
+        h1 {
+            color: #c8a96e;
+            font-size: 1.3rem;
+            letter-spacing: 0.3em;
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+        #display {
+            color: #e8dcc8;
+            font-size: 2.8rem;
+            font-weight: 200;
+            letter-spacing: 0.12em;
+            margin-top: 18px;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        button {
+            padding: 11px 28px;
+            border: 1px solid #c8a96e;
+            background: transparent;
+            color: #c8a96e;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 3px;
+            letter-spacing: 0.15em;
+            transition: background 0.15s, color 0.15s;
+            font-family: inherit;
+        }
+        button:hover { background: rgba(200, 169, 110, 0.15); }
+        button.active { background: #c8a96e; color: #1c1610; }
+        #status {
+            color: #c8a96e;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            margin-top: 14px;
+            min-height: 1.5em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>アナログタイマー</h1>
+    <canvas id="canvas" width="380" height="380"></canvas>
+    <div id="display">0:00</div>
+    <div class="controls">
+        <button id="startBtn">スタート</button>
+        <button id="resetBtn">リセット</button>
+    </div>
+    <div id="status"></div>
+
+    <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const displayEl = document.getElementById('display');
+    const statusEl = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const TOTAL = 300; // 5分 = 300秒
+
+    let audioCtx = null;
+    let elapsed = 0, running = false, startTime = null, animId = null;
+    let bells = { start: false, mid: false, end: false };
+
+    function getAC() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+    }
+
+    function ding(delay = 0) {
+        const a = getAC();
+        const t = a.currentTime + delay;
+        // 倍音を重ねてベル音を合成
+        [[820, 0.55, 3.5], [1230, 0.28, 2.5], [1800, 0.18, 1.8], [2460, 0.10, 1.2]].forEach(([freq, gain, dur]) => {
+            const osc = a.createOscillator();
+            const gainNode = a.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(a.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, t);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.97, t + dur);
+            gainNode.gain.setValueAtTime(gain, t);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.start(t);
+            osc.stop(t + dur);
+        });
+    }
+
+    function rings(n) {
+        for (let i = 0; i < n; i++) ding(i * 1.1);
+    }
+
+    // 秒数→canvas角度（上=0s、時計回り）
+    function angle(sec) {
+        return -Math.PI / 2 + (sec / TOTAL) * Math.PI * 2;
+    }
+
+    function draw(sec) {
+        const W = canvas.width, H = canvas.height;
+        const cx = W / 2, cy = H / 2, R = 172;
+        ctx.clearRect(0, 0, W, H);
+
+        // ベゼル（金属リング）
+        const bz = ctx.createRadialGradient(cx - 50, cy - 50, 10, cx, cy, R + 15);
+        bz.addColorStop(0, '#edd890');
+        bz.addColorStop(0.4, '#c8a95e');
+        bz.addColorStop(0.75, '#9a7840');
+        bz.addColorStop(1, '#5a3c10');
+        ctx.beginPath();
+        ctx.arc(cx, cy, R + 14, 0, Math.PI * 2);
+        ctx.fillStyle = bz;
+        ctx.fill();
+
+        // 文字盤
+        const fc = ctx.createRadialGradient(cx - 25, cy - 25, 5, cx, cy, R);
+        fc.addColorStop(0, '#faf6ee');
+        fc.addColorStop(1, '#e2d8be');
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.fillStyle = fc;
+        ctx.fill();
+
+        // 警告ゾーン（4:30〜5:00）薄い赤
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, R, angle(270), angle(300));
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(210, 65, 25, 0.10)';
+        ctx.fill();
+
+        // 経過時間アーク（緑：0〜4:30）
+        if (sec > 0) {
+            const end = Math.min(sec, 270);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, R, angle(0), angle(end));
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(45, 148, 75, 0.22)';
+            ctx.fill();
+        }
+
+        // 経過時間アーク（赤：4:30〜現在）
+        if (sec > 270) {
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, R, angle(270), angle(sec));
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(195, 55, 20, 0.30)';
+            ctx.fill();
+        }
+
+        // 目盛り（5分で60本 → 5秒ごと）
+        for (let i = 0; i < 60; i++) {
+            const a = -Math.PI / 2 + (i / 60) * Math.PI * 2;
+            const isMin = i % 12 === 0; // 1分ごと
+            const isHalf = i % 6 === 0; // 30秒ごと
+            const len = isMin ? 18 : (isHalf ? 11 : 5);
+            const lw  = isMin ? 2.5 : (isHalf ? 1.5 : 0.8);
+            ctx.beginPath();
+            ctx.moveTo(cx + (R - len) * Math.cos(a), cy + (R - len) * Math.sin(a));
+            ctx.lineTo(cx + (R - 1) * Math.cos(a), cy + (R - 1) * Math.sin(a));
+            ctx.strokeStyle = '#5a4028';
+            ctx.lineWidth = lw;
+            ctx.stroke();
+        }
+
+        // 4:30 マーカー（オレンジ丸）
+        const a430 = angle(270);
+        ctx.beginPath();
+        ctx.arc(cx + (R - 24) * Math.cos(a430), cy + (R - 24) * Math.sin(a430), 6.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#d96020';
+        ctx.fill();
+
+        // 分ラベル（1〜5）
+        ctx.font = 'bold 16px "Helvetica Neue", Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let m = 1; m <= 5; m++) {
+            const a = angle(m * 60);
+            ctx.fillStyle = '#3a2a18';
+            ctx.fillText(String(m), cx + (R - 30) * Math.cos(a), cy + (R - 30) * Math.sin(a));
+        }
+
+        // 針（影付き）
+        const ha = angle(sec);
+        const hl = R - 18;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.35)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + hl * Math.cos(ha), cy + hl * Math.sin(ha));
+        ctx.strokeStyle = '#b51c1c';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.restore();
+
+        // カウンターウェイト（反対側の短い部分）
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + 24 * Math.cos(ha + Math.PI), cy + 24 * Math.sin(ha + Math.PI));
+        ctx.strokeStyle = '#b51c1c';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // 中心キャップ
+        ctx.beginPath();
+        ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+        ctx.fillStyle = '#6e1212';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#c02828';
+        ctx.fill();
+    }
+
+    function fmt(s) {
+        return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+    }
+
+    function tick() {
+        if (!running) return;
+        elapsed = Math.min((Date.now() - startTime) / 1000, TOTAL);
+
+        // 4分30秒でベル1回
+        if (!bells.mid && elapsed >= 270) {
+            bells.mid = true;
+            rings(1);
+            statusEl.textContent = '4分30秒';
+        }
+
+        // 5分でベル3回
+        if (!bells.end && elapsed >= TOTAL) {
+            bells.end = true;
+            rings(3);
+            statusEl.textContent = '5分 — 完了！';
+            running = false;
+            startBtn.textContent = 'スタート';
+            startBtn.classList.remove('active');
+            draw(TOTAL);
+            displayEl.textContent = '5:00';
+            return;
+        }
+
+        draw(elapsed);
+        displayEl.textContent = fmt(elapsed);
+        animId = requestAnimationFrame(tick);
+    }
+
+    startBtn.addEventListener('click', () => {
+        if (running) {
+            // 一時停止
+            running = false;
+            cancelAnimationFrame(animId);
+            startBtn.textContent = 'スタート';
+            startBtn.classList.remove('active');
+        } else {
+            // 完了後に再スタートする場合はリセット
+            if (elapsed >= TOTAL) {
+                elapsed = 0;
+                bells = { start: false, mid: false, end: false };
+                statusEl.textContent = '';
+            }
+            getAC(); // オーディオコンテキストを確実に有効化
+            // スタート時にベル1回（最初の1回のみ）
+            if (!bells.start) {
+                bells.start = true;
+                rings(1);
+                statusEl.textContent = 'スタート！';
+            }
+            startTime = Date.now() - elapsed * 1000;
+            running = true;
+            startBtn.textContent = '一時停止';
+            startBtn.classList.add('active');
+            animId = requestAnimationFrame(tick);
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        running = false;
+        cancelAnimationFrame(animId);
+        elapsed = 0;
+        bells = { start: false, mid: false, end: false };
+        statusEl.textContent = '';
+        startBtn.textContent = 'スタート';
+        startBtn.classList.remove('active');
+        draw(0);
+        displayEl.textContent = '0:00';
+    });
+
+    // 初期描画
+    draw(0);
+    </script>
+</body>
+</html>
