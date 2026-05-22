@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アナログタイマー</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1c1610;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            user-select: none;
+        }
+        h1 {
+            color: #c8a96e;
+            font-size: 1.3rem;
+            letter-spacing: 0.3em;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        #display {
+            color: #e8dcc8;
+            font-size: 2.8rem;
+            font-weight: 200;
+            letter-spacing: 0.12em;
+            margin-top: 14px;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+        }
+
+        /* ── 時間設定 ───────────────────── */
+        .setter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+        }
+        .setter-label {
+            color: #5a4830;
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            margin-right: 2px;
+        }
+        .set-time {
+            color: #c8a96e;
+            font-size: 1.25rem;
+            min-width: 5ch;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            padding: 0 6px;
+        }
+
+        /* ── 汎用ボタン ─────────────────── */
+        button {
+            padding: 8px 14px;
+            border: 1px solid #c8a96e;
+            background: transparent;
+            color: #c8a96e;
+            font-size: 0.82rem;
+            cursor: pointer;
+            border-radius: 3px;
+            letter-spacing: 0.05em;
+            transition: background 0.15s, color 0.15s;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        button:hover:not(:disabled) { background: rgba(200, 169, 110, 0.15); }
+        button:disabled { opacity: 0.28; cursor: default; }
+        button.main {
+            padding: 11px 28px;
+            font-size: 0.95rem;
+            letter-spacing: 0.15em;
+        }
+        button.main.active { background: #c8a96e; color: #1c1610; }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 14px;
+        }
+        #status {
+            color: #c8a96e;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            margin-top: 12px;
+            min-height: 1.5em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>アナログタイマー</h1>
+    <canvas id="canvas" width="380" height="380"></canvas>
+    <div id="display">0:00</div>
+
+    <div class="setter">
+        <span class="setter-label">設定</span>
+        <button id="minDec">−1分</button>
+        <button id="secDec">−30秒</button>
+        <span class="set-time" id="setTime">5:00</span>
+        <button id="secInc">+30秒</button>
+        <button id="minInc">+1分</button>
+    </div>
+
+    <div class="controls">
+        <button class="main" id="startBtn">スタート</button>
+        <button class="main" id="resetBtn">リセット</button>
+    </div>
+    <div id="status"></div>
+
+    <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const displayEl  = document.getElementById('display');
+    const statusEl   = document.getElementById('status');
+    const startBtn   = document.getElementById('startBtn');
+    const resetBtn   = document.getElementById('resetBtn');
+    const setTimeEl  = document.getElementById('setTime');
+
+    // ── 設定値 (30秒刻み、30秒〜10分) ──────────────────
+    let setMin = 5, setSec = 0; // setSec は 0 または 30
+
+    function getTotal()  { return setMin * 60 + setSec; }
+    function getWarnAt() { const t = getTotal(); return t > 30 ? t - 30 : -1; }
+
+    // ── タイマー状態 ─────────────────────────────────
+    let audioCtx = null;
+    let elapsed = 0, running = false, startTime = null, animId = null;
+    let bells = { start: false, warn: false, end: false };
+
+    // ── Web Audio ────────────────────────────────────
+    function getAC() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+    }
+
+    function ding(delay = 0) {
+        const a = getAC(), t = a.currentTime + delay;
+        [[820, 0.55, 3.5], [1230, 0.28, 2.5], [1800, 0.18, 1.8], [2460, 0.10, 1.2]].forEach(([f, g, d]) => {
+            const osc = a.createOscillator(), gn = a.createGain();
+            osc.connect(gn); gn.connect(a.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, t);
+            osc.frequency.exponentialRampToValueAtTime(f * 0.97, t + d);
+            gn.gain.setValueAtTime(g, t);
+            gn.gain.exponentialRampToValueAtTime(0.0001, t + d);
+            osc.start(t); osc.stop(t + d);
+        });
+    }
+
+    function rings(n) { for (let i = 0; i < n; i++) ding(i * 1.1); }
+
+    // ── 角度変換 (秒 → canvas角度) ───────────────────
+    function ang(sec) {
+        return -Math.PI / 2 + (sec / getTotal()) * Math.PI * 2;
+    }
+
+    // ── 描画 ─────────────────────────────────────────
+    function draw(sec) {
+        const total  = getTotal();
+        const warnAt = getWarnAt();
+        const cx = canvas.width / 2, cy = canvas.height / 2, R = 172;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // ベゼル
+        const bz = ctx.createRadialGradient(cx - 50, cy - 50, 10, cx, cy, R + 15);
+        bz.addColorStop(0, '#edd890'); bz.addColorStop(0.4, '#c8a95e');
+        bz.addColorStop(0.75, '#9a7840'); bz.addColorStop(1, '#5a3c10');
+        ctx.beginPath(); ctx.arc(cx, cy, R + 14, 0, Math.PI * 2);
+        ctx.fillStyle = bz; ctx.fill();
+
+        // 文字盤
+        const fc = ctx.createRadialGradient(cx - 25, cy - 25, 5, cx, cy, R);
+        fc.addColorStop(0, '#faf6ee'); fc.addColorStop(1, '#e2d8be');
+        ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.fillStyle = fc; ctx.fill();
+
+        // 警告ゾーン（残り30秒）薄い赤扇
+        if (warnAt > 0) {
+            ctx.beginPath(); ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, R, ang(warnAt), ang(total));
+            ctx.closePath(); ctx.fillStyle = 'rgba(210, 65, 25, 0.10)'; ctx.fill();
+        }
+
+        // 経過アーク — 緑 (0 〜 warnAt)
+        if (sec > 0) {
+            const greenEnd = warnAt >= 0 ? Math.min(sec, warnAt) : Math.min(sec, total);
+            if (greenEnd > 0) {
+                ctx.beginPath(); ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, R, ang(0), ang(greenEnd));
+                ctx.closePath(); ctx.fillStyle = 'rgba(45, 148, 75, 0.22)'; ctx.fill();
+            }
+        }
+
+        // 経過アーク — 赤 (warnAt 〜 現在)
+        if (warnAt >= 0 && sec > warnAt) {
+            ctx.beginPath(); ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, R, ang(warnAt), ang(Math.min(sec, total)));
+            ctx.closePath(); ctx.fillStyle = 'rgba(195, 55, 20, 0.30)'; ctx.fill();
+        }
+
+        // 細かい目盛（60本均等）
+        for (let i = 0; i < 60; i++) {
+            const a = -Math.PI / 2 + (i / 60) * Math.PI * 2;
+            ctx.beginPath();
+            ctx.moveTo(cx + (R - 5) * Math.cos(a), cy + (R - 5) * Math.sin(a));
+            ctx.lineTo(cx + (R - 1) * Math.cos(a), cy + (R - 1) * Math.sin(a));
+            ctx.strokeStyle = '#5a4028'; ctx.lineWidth = 0.8; ctx.stroke();
+        }
+
+        // 分目盛・ラベル
+        // setSec=0 のとき setMin 分目は 0 分と同じ位置（最上部）なのでラベルは省く
+        const labelMax = setSec > 0 ? setMin : setMin - 1;
+        ctx.font = 'bold 15px "Helvetica Neue", Arial';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        for (let m = 1; m <= setMin; m++) {
+            const a = ang(m * 60);
+            ctx.beginPath();
+            ctx.moveTo(cx + (R - 17) * Math.cos(a), cy + (R - 17) * Math.sin(a));
+            ctx.lineTo(cx + (R - 1)  * Math.cos(a), cy + (R - 1)  * Math.sin(a));
+            ctx.strokeStyle = '#3a2816'; ctx.lineWidth = 2.5; ctx.stroke();
+            if (m <= labelMax) {
+                ctx.fillStyle = '#3a2a18';
+                ctx.fillText(String(m), cx + (R - 30) * Math.cos(a), cy + (R - 30) * Math.sin(a));
+            }
+        }
+
+        // 警告ベル位置マーカー（オレンジ丸）
+        if (warnAt > 0) {
+            const a = ang(warnAt);
+            ctx.beginPath();
+            ctx.arc(cx + (R - 24) * Math.cos(a), cy + (R - 24) * Math.sin(a), 6.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#d96020'; ctx.fill();
+        }
+
+        // 針（影付き）
+        const ha = ang(Math.min(sec, total)), hl = R - 18;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 3;
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + hl * Math.cos(ha), cy + hl * Math.sin(ha));
+        ctx.strokeStyle = '#b51c1c'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.stroke();
+        ctx.restore();
+
+        // カウンターウェイト
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + 24 * Math.cos(ha + Math.PI), cy + 24 * Math.sin(ha + Math.PI));
+        ctx.strokeStyle = '#b51c1c'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.stroke();
+
+        // 中心キャップ
+        ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.fillStyle = '#6e1212'; ctx.fill();
+        ctx.beginPath(); ctx.arc(cx, cy, 5.5, 0, Math.PI * 2); ctx.fillStyle = '#c02828'; ctx.fill();
+    }
+
+    function fmt(s) {
+        return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+    }
+
+    // ── 設定UI ───────────────────────────────────────
+    function updateSetTime() {
+        setTimeEl.textContent = fmt(getTotal());
+    }
+
+    function updateSetterButtons() {
+        const cur = getTotal();
+        document.getElementById('minDec').disabled = running || cur - 60 < 30;
+        document.getElementById('secDec').disabled = running || cur - 30 < 30;
+        document.getElementById('secInc').disabled = running || cur + 30 > 600;
+        document.getElementById('minInc').disabled = running || cur + 60 > 600;
+    }
+
+    function applyTimeChange() {
+        // 設定変更時はタイマーをリセット
+        elapsed = 0; bells = { start: false, warn: false, end: false };
+        statusEl.textContent = '';
+        startBtn.textContent = 'スタート'; startBtn.classList.remove('active');
+        updateSetTime();
+        updateSetterButtons();
+        draw(0); displayEl.textContent = '0:00';
+    }
+
+    function changeTotal(delta) {
+        const next = getTotal() + delta;
+        if (next < 30 || next > 600) return;
+        setMin = Math.floor(next / 60);
+        setSec  = next % 60; // 常に 0 か 30
+        applyTimeChange();
+    }
+
+    document.getElementById('minDec').addEventListener('click', () => changeTotal(-60));
+    document.getElementById('secDec').addEventListener('click', () => changeTotal(-30));
+    document.getElementById('secInc').addEventListener('click', () => changeTotal(+30));
+    document.getElementById('minInc').addEventListener('click', () => changeTotal(+60));
+
+    // ── タイマーループ ───────────────────────────────
+    function tick() {
+        if (!running) return;
+        const total  = getTotal();
+        const warnAt = getWarnAt();
+        elapsed = Math.min((Date.now() - startTime) / 1000, total);
+
+        if (warnAt >= 0 && !bells.warn && elapsed >= warnAt) {
+            bells.warn = true; rings(1);
+            statusEl.textContent = fmt(warnAt);
+        }
+        if (!bells.end && elapsed >= total) {
+            bells.end = true; rings(3);
+            statusEl.textContent = fmt(total) + ' — 完了！';
+            running = false;
+            startBtn.textContent = 'スタート'; startBtn.classList.remove('active');
+            updateSetterButtons();
+            draw(total); displayEl.textContent = fmt(total);
+            return;
+        }
+
+        draw(elapsed); displayEl.textContent = fmt(elapsed);
+        animId = requestAnimationFrame(tick);
+    }
+
+    // ── ボタン操作 ───────────────────────────────────
+    startBtn.addEventListener('click', () => {
+        if (running) {
+            running = false; cancelAnimationFrame(animId);
+            startBtn.textContent = 'スタート'; startBtn.classList.remove('active');
+            updateSetterButtons();
+        } else {
+            if (elapsed >= getTotal()) {
+                elapsed = 0; bells = { start: false, warn: false, end: false };
+                statusEl.textContent = '';
+            }
+            getAC();
+            if (!bells.start) { bells.start = true; rings(1); statusEl.textContent = 'スタート！'; }
+            startTime = Date.now() - elapsed * 1000;
+            running = true;
+            startBtn.textContent = '一時停止'; startBtn.classList.add('active');
+            updateSetterButtons();
+            animId = requestAnimationFrame(tick);
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        running = false; cancelAnimationFrame(animId);
+        elapsed = 0; bells = { start: false, warn: false, end: false };
+        statusEl.textContent = '';
+        startBtn.textContent = 'スタート'; startBtn.classList.remove('active');
+        updateSetterButtons();
+        draw(0); displayEl.textContent = '0:00';
+    });
+
+    // ── 初期化 ───────────────────────────────────────
+    updateSetTime();
+    updateSetterButtons();
+    draw(0);
+    </script>
+</body>
+</html>
