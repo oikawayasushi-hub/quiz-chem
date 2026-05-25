@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原子と原子核のスケール比較シミュレーター</title>
+    <!-- Tailwind CSS for rich modern UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons for clean look -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Anti-aliasing helper for scales */
+        #atom-shell {
+            will-change: transform;
+            transform-origin: center center;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-950 p-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600 rounded-lg text-white">
+                    <i data-lucide="orbit" class="w-6 h-6 animate-spin-slow"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">原子構造スケールシミュレーター</h1>
+                    <p class="text-xs text-slate-400">化学基礎 p.44 授業補助用インタラクティブ教材</p>
+                </div>
+            </div>
+            <div class="text-xs text-right bg-slate-900 px-3 py-1.5 rounded-full border border-slate-800 text-indigo-400 font-mono">
+                原子の大きさ : 原子核 ＝ 100,000 : 1
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left panel: Controls & Explanations -->
+        <div class="lg:col-span-4 flex flex-col gap-4">
+            
+            <!-- Scale Mode Selector -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> スケールモデル of 選択
+                </h2>
+                <div class="grid grid-cols-1 gap-2" id="mode-buttons">
+                    <button onclick="changeMode('real')" id="btn-real" class="mode-btn w-full text-left px-3 py-2.5 rounded-lg border text-sm transition-all bg-indigo-950/40 border-indigo-500 text-white font-medium">
+                        <div class="font-bold">🔬 実際の極小スケール</div>
+                        <div class="text-xs text-indigo-300 mt-0.5">原子: 0.1 nm ($10^{-10}$ m) / 原子核: $10^{-15}$ m</div>
+                    </button>
+                    <button onclick="changeMode('dome')" id="btn-dome" class="mode-btn w-full text-left px-3 py-2.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-900 transition-all text-sm">
+                        <div class="font-bold">⚾ 東京ドームの例え</div>
+                        <div class="text-xs text-slate-500 mt-0.5">原子: ドーム (200 m) / 原子核: 米粒 (2 mm)</div>
+                    </button>
+                    <button onclick="changeMode('track')" id="btn-track" class="mode-btn w-full text-left px-3 py-2.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-900 transition-all text-sm">
+                        <div class="font-bold">🏃 陸上競技場の例え</div>
+                        <div class="text-xs text-slate-500 mt-0.5">原子: 競技場 (150 m) / 原子核: ピンの頭 (1.5 mm)</div>
+                    </button>
+                    <button onclick="changeMode('fuji')" id="btn-fuji" class="mode-btn w-full text-left px-3 py-2.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-900 transition-all text-sm">
+                        <div class="font-bold">🗻 富士山の例え</div>
+                        <div class="text-xs text-slate-500 mt-0.5">原子: 山頂エリア (3 km) / 原子核: ゴルフボール (3 cm)</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive 100-Trillion Logarithmic Zoom Slider (0 to 14 represents 10^0 to 10^14 zoom) -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col gap-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                        <i data-lucide="zoom-in" class="w-4 h-4 text-indigo-400"></i> 超ロング対数ズーム (100兆倍)
+                    </span>
+                    <span id="zoom-value" class="text-xs font-mono bg-indigo-950 px-2 py-0.5 rounded text-indigo-300">x 1</span>
+                </div>
+                <!-- 10^x scaling slider from 10^0 to 10^14 -->
+                <input type="range" id="zoom-slider" min="0" max="14" value="0" step="0.01" class="w-full accent-indigo-500 bg-slate-800 h-2 rounded-lg appearance-none cursor-pointer">
+                <div class="flex justify-between text-[9px] text-slate-500 font-mono px-0.5">
+                    <span>x1</span>
+                    <span>x1万</span>
+                    <span>x100万</span>
+                    <span>x1億</span>
+                    <span>x1兆</span>
+                    <span>x100兆</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                    <button onclick="setZoom(0)" class="py-1 px-2 bg-slate-900 hover:bg-slate-800 text-xs rounded border border-slate-800 transition text-slate-300">全体 (1倍)へ</button>
+                    <button onclick="animateTo(1e14)" class="py-1 px-2 bg-indigo-600 hover:bg-indigo-500 text-xs rounded transition font-medium text-white col-span-2 flex items-center justify-center gap-1">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>原子核(10cm)へ一撃ズーム</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Teacher's Note (Mini explanation) -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex-1 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i> 授業での解説ポイント
+                    </h3>
+                    <div id="explanation-text" class="text-xs text-slate-300 leading-relaxed space-y-2">
+                        <!-- Dynamic text injected here -->
+                    </div>
+                </div>
+                <div class="mt-4 p-2.5 bg-slate-900 rounded-lg border border-slate-800">
+                    <div class="text-[10px] text-slate-500">原子の体積における空間 of 割合</div>
+                    <div class="text-lg font-bold text-emerald-400 font-mono">99.9999999999999 %</div>
+                    <div class="text-[10px] text-slate-400">が「完全なスカスカの真空」です。</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right panel: Interactive Canvas/Diagram -->
+        <div class="lg:col-span-8 flex flex-col gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800 relative overflow-hidden min-h-[500px]">
+            
+            <!-- Visual Canvas Header -->
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3 z-10">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="canvas-title" class="text-sm font-semibold text-slate-200">原子全体を捉えた視野</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs text-slate-400">
+                    <div class="flex items-center gap-1">
+                        <span class="w-3 h-3 rounded-full border border-dashed border-indigo-400 bg-indigo-950/20 inline-block"></span>
+                        <span>原子の境界（最外殻）</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                        <span>原子核</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Visualization Area -->
+            <div class="flex-1 relative flex items-center justify-center overflow-hidden border border-slate-900 rounded-lg bg-slate-950" id="view-viewport">
+                
+                <!-- Atom Circle representing outer shell (Fixed container size, scaled via CSS to protect browser limits) -->
+                <div id="atom-shell" class="absolute rounded-full border-2 border-indigo-500/80 bg-indigo-950/10 flex items-center justify-center transition-transform duration-75 ease-out" style="width: 450px; height: 450px;">
+                    
+                    <!-- Label for Shell -->
+                    <div id="shell-label" class="absolute -top-6 text-xs text-indigo-400 bg-slate-950 px-2 py-0.5 rounded border border-indigo-800 transition-opacity">
+                        最外殻（電子が飛び回る空間）
+                    </div>
+
+                    <!-- Inner Electron Path representation -->
+                    <div class="absolute w-4/5 h-4/5 rounded-full border border-dashed border-indigo-500/20 animate-spin-slow"></div>
+                    <div class="absolute w-2/3 h-2/3 rounded-full border border-dashed border-indigo-500/15"></div>
+
+                    <!-- Mock flying electrons -->
+                    <div class="absolute w-3 h-3 bg-indigo-400 rounded-full animate-ping" style="top: 15%; left: 20%;"></div>
+                    <div class="absolute w-2 h-2 bg-indigo-300 rounded-full" style="bottom: 25%; right: 15%;"></div>
+
+                </div>
+
+                <!-- Nucleus (Center) -->
+                <!-- We dynamically adjust scale and size with JS -->
+                <div id="nucleus" class="absolute rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center shadow-lg shadow-red-500/30 z-20 cursor-pointer" style="width: 4px; height: 4px;">
+                    
+                    <!-- Proton / Neutron structures inside nucleus (visible when zoomed in) -->
+                    <div id="nucleus-details" class="hidden grid grid-cols-2 gap-0.5 p-1 w-full h-full rounded-full bg-red-600 items-center justify-center animate-pulse">
+                        <div class="w-3 h-3 bg-red-400 rounded-full flex items-center justify-center text-[8px] font-bold text-white shadow">＋</div>
+                        <div class="w-3 h-3 bg-slate-400 rounded-full flex items-center justify-center text-[8px] font-bold text-white shadow">N</div>
+                        <div class="w-3 h-3 bg-slate-400 rounded-full flex items-center justify-center text-[8px] font-bold text-white shadow">N</div>
+                        <div class="w-3 h-3 bg-red-400 rounded-full flex items-center justify-center text-[8px] font-bold text-white shadow">＋</div>
+                    </div>
+
+                    <!-- Floating Label for Nucleus (Only visible when appropriate or zoomed) -->
+                    <div id="nucleus-label" class="absolute whitespace-nowrap text-xs text-red-400 bg-slate-950 px-2 py-0.5 rounded border border-red-800 opacity-100 transition-all pointer-events-none" style="transform: translateY(-24px);">
+                        原子核 (極小)
+                    </div>
+                </div>
+
+                <!-- Dimension Info Overlay -->
+                <div class="absolute bottom-4 left-4 bg-slate-900/90 p-3 rounded-lg border border-slate-800 text-xs font-mono space-y-1.5 z-30 pointer-events-none min-w-[340px] max-w-[95%]">
+                    <div class="text-indigo-400 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 font-semibold">
+                        <span>原子の(見かけ)直径:</span> 
+                        <span id="atom-diameter-val" class="text-indigo-300 font-bold break-all">---</span>
+                    </div>
+                    <div class="text-rose-400 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 font-semibold">
+                        <span>原子核の(見かけ)直径:</span> 
+                        <span id="nucleus-diameter-val" class="text-rose-300 font-bold break-all">---</span>
+                    </div>
+                </div>
+
+                <!-- Empty space warning when highly zoomed -->
+                <div id="space-warning" class="absolute top-1/4 left-1/2 -translate-x-1/2 bg-indigo-950/80 border border-indigo-500 text-indigo-300 text-xs px-4 py-3 rounded-lg max-w-sm text-center hidden pointer-events-none transition-opacity duration-300">
+                    <p class="font-bold">🌌 果てしない虚無（スカスカ）の領域</p>
+                    <p class="text-[10px] text-indigo-400 mt-1">原子核はまだまだ先です。電子殻の壁はすでに見えないほど遠くに離れていきました。</p>
+                </div>
+
+            </div>
+
+            <!-- Scale Reference Bar -->
+            <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 flex justify-between items-center text-xs z-10">
+                <span class="text-slate-400 flex items-center gap-1.5"><i data-lucide="scale" class="w-4 h-4 text-slate-500"></i> スケール基準：</span>
+                <span id="scale-reference-text" class="font-mono text-indigo-400 font-semibold">原子核 ＝ 一粒 of 米 (2mm) に対して、原子 ＝ 東京ドーム (200m)</span>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 p-3 text-center text-xs text-slate-500">
+        <p>© 2026 化学基礎授業案アシスタント | 原子・原子核の超スケール比較モデル</p>
+    </footer>
+
+    <script>
+        // Setup icons
+        lucide.createIcons();
+
+        // App state
+        let currentMode = 'real';
+        let zoomFactor = 1; // Real multiplier from 1 to 10^14
+
+        // Scaling configs for different modes (Corrected mathematically to meet exact 100,000:1 ratio)
+        const modes = {
+            real: {
+                title: "実際の極小スケール",
+                atomSizeMeters: 1e-10,       // 0.1 nm (10^-10 m)
+                nucleusSizeMeters: 1e-15,    // 10^-15 m
+                refText: "100兆倍拡大すると原子核（10cm：手のひらサイズ）が目の前に現れる極小の世界です。",
+                explanation: `
+                    <p><strong>1. 原子全体の本当のサイズ</strong><br>
+                    一般的な原子の直径は約 <strong>$10^{-10}$ m ($0.1$ nm)</strong>。光の波長よりも遥かに小さく、電子顕微鏡を使ってようやく輪郭が掴める世界です。</p>
+                    <p><strong>2. 10万分の1の原子核</strong><br>
+                    中心に位置する原子核の直径は約 <strong>$10^{-15}$ m</strong>。原子核を<strong>10cm（手のひら大）</strong>まで拡大すると、最外殻は<strong>10 km（富士山を超える直径）</strong>にまで広がります！</p>
+                `
+            },
+            dome: {
+                title: "東京ドームの例え",
+                atomSizeMeters: 200,         // 200 m
+                nucleusSizeMeters: 0.002,    // 2 mm
+                refText: "原子 ＝ 東京ドーム（200m）に対して、原子核 ＝ マウンド上の一粒の米（2mm） 【比率 100,000 : 1】",
+                explanation: `
+                    <p><strong>1. 東京ドーム巨大空間</strong><br>
+                    原子を<strong>東京ドームのサイズ（直径約200m）</strong>まで巨大化させたとします。外壁が最外殻電子の軌道にあたります。</p>
+                    <p><strong>2. ピッチャーマウンドの米粒</strong><br>
+                    その巨大空間の中央、ピッチャーマウンドにぽつんと置かれた<strong>一粒の米（約2mm）</strong>。これを100兆倍ズームすると、米がなんと太陽系規模にまで巨大化します！</p>
+                `
+            },
+            track: {
+                title: "陸上競技場の例え",
+                atomSizeMeters: 150,         // 150 m
+                nucleusSizeMeters: 0.0015,   // 1.5 mm
+                refText: "原子 ＝ 400m競技場（150m）に対して、原子核 ＝ センターサークルに置いた画鋲のピンの頭（1.5mm） 【比率 100,000 : 1】",
+                explanation: `
+                    <p><strong>1. 競技場トラック of 境界</strong><br>
+                    原子を<strong>400mトラック競技場全体（直径約150m）</strong>に見立てます。最外トラックが、電子が存在する境界です。</p>
+                    <p><strong>2. 中央の小さなピンの頭</strong><br>
+                    競技場中央 of ピッチ真ん中に置かれた、わずか<strong>1.5 mmの画鋲のピンの頭</strong>が原子核に相当します。</p>
+                `
+            },
+            fuji: {
+                title: "富士山の例え",
+                atomSizeMeters: 3000,        // 3 km (3000 m)
+                nucleusSizeMeters: 0.03,     // 3 cm (0.03 m)
+                refText: "原子 ＝ 富士山の山頂エリア（3km）に対して、原子核 ＝ 山頂に置いたゴルフボール（3cm） 【比率 100,000 : 1】",
+                explanation: `
+                    <p><strong>1. 富士山頂お鉢巡りの広さ</strong><br>
+                    原子を<strong>富士山頂の火口エリア（直径約3km）</strong>まで巨大化させたとします。</p>
+                    <p><strong>2. 山頂に置いたゴルフボール</strong><br>
+                    その広大な山頂エリアの真ん中にぽつんと置かれた、ひとつの<strong>ゴルフボール（直径約3cm）</strong>。これを100兆倍ズームすると、銀河系スケールに突入します！</p>
+                `
+            }
+        };
+
+        // Utility: formats metric meters in absolute plain decimal string
+        // Handles very tiny values (0.000000000000001 m) and huge cosmic distances dynamically.
+        function formatToPlainDecimal(val) {
+            if (val >= 1000) {
+                // If it is colossal, offer astronomical references to wow students
+                const km = val / 1000;
+                let ref = "";
+                
+                if (val >= 9.46e15) {
+                    ref = ` (約 ${(val / 9.46e15).toFixed(2)} 光年)`;
+                } else if (val >= 1.496e11) {
+                    ref = ` (約 ${(val / 1.496e11).toFixed(2)} 天文単位 [地球-太陽間])`;
+                } else if (val >= 1.2756e7) {
+                    ref = ` (地球 約 ${(val / 1.2756e7).toFixed(1)} 個分)`;
+                } else if (val >= 1000000) {
+                    ref = ` (約 ${(km / 10000).toFixed(1)} 万km)`;
+                }
+
+                // Format normal thousands comma
+                const formattedKm = Math.round(km).toLocaleString();
+                return `${formattedKm} km${ref}`;
+            }
+
+            if (val >= 0.1) {
+                // Larger than 10cm, keep normal formatting (e.g. 0.150 m)
+                // CRITICAL FIX: 1m = 100cm, so multiplier corrected to 100 instead of 10
+                return `${val.toFixed(3)} m (約 ${(val * 100).toFixed(1)} cm)`;
+            }
+
+            // For small decimal values under 1m
+            // Format to 15 decimal places (covers 10^-15 range of nucleus at 1x scale)
+            let str = val.toFixed(15);
+            
+            // Remove excessive trailing zeros to keep representation clean
+            str = str.replace(/0+$/, "");
+            if (str.endsWith(".")) {
+                str = str.substring(0, str.length - 1);
+            }
+            
+            return str + " m";
+        }
+
+        // DOM elements
+        const zoomSlider = document.getElementById('zoom-slider');
+        const zoomValue = document.getElementById('zoom-value');
+        const atomShell = document.getElementById('atom-shell');
+        const nucleus = document.getElementById('nucleus');
+        const nucleusDetails = document.getElementById('nucleus-details');
+        const shellLabel = document.getElementById('shell-label');
+        const nucleusLabel = document.getElementById('nucleus-label');
+        const spaceWarning = document.getElementById('space-warning');
+
+        const atomDiameterVal = document.getElementById('atom-diameter-val');
+        const nucleusDiameterVal = document.getElementById('nucleus-diameter-val');
+        
+        const canvasTitle = document.getElementById('canvas-title');
+        const scaleRefText = document.getElementById('scale-reference-text');
+        const explanationText = document.getElementById('explanation-text');
+
+        // Functions to update view
+        function updateSimulation() {
+            // Read exponent value from slider (0 to 14) and display formatted magnification
+            const exponent = parseFloat(zoomSlider.value);
+            zoomFactor = Math.pow(10, exponent);
+
+            zoomValue.innerText = `x ${Math.round(zoomFactor).toLocaleString()}`;
+
+            // Scale atomic shell container using CSS transform scale
+            if (zoomFactor < 150) {
+                atomShell.style.display = 'flex';
+                atomShell.style.transform = `scale(${zoomFactor})`;
+                shellLabel.style.opacity = Math.max(0, 1 - (zoomFactor / 5));
+            } else {
+                // Completely hide outer shell to save GPU and prevent browser lag when deep inside
+                atomShell.style.display = 'none';
+            }
+
+            // Calculate active Nucleus Size
+            // Nucleus expands logarithmically to match screen area gracefully up to 10^14 scale
+            let nSize = 4 + (exponent * 11.14); // Scaled cleanly: at exp=14, nSize = 4 + 156 = 160px
+            if (zoomFactor >= 1e14) {
+                nSize = 160; // Locked max size to show structure
+            }
+
+            nucleus.style.width = `${nSize}px`;
+            nucleus.style.height = `${nSize}px`;
+
+            // Display nucleus details (protons/neutrons) when zoomed in enough (typically > 10^12 magnification)
+            if (zoomFactor > 1e12) {
+                nucleusDetails.classList.remove('hidden');
+                nucleusDetails.classList.add('grid');
+                nucleusLabel.innerText = "原子核（陽子と中性子の集まり）";
+                nucleusLabel.style.transform = `translateY(-${(nSize/2) + 20}px)`;
+            } else {
+                nucleusDetails.classList.add('hidden');
+                nucleusDetails.classList.remove('grid');
+                nucleusLabel.innerText = zoomFactor > 500 ? "原子核 (拡大中)" : "原子核 (極小)";
+                nucleusLabel.style.transform = `translateY(-24px)`;
+            }
+
+            // Show Space Warning (Empty space alert) when zoom is mid-way (completely vast empty area)
+            if (zoomFactor > 20 && zoomFactor < 5e11) {
+                spaceWarning.classList.remove('hidden');
+                spaceWarning.style.opacity = Math.min(1, (zoomFactor - 20) / 100);
+            } else {
+                spaceWarning.classList.add('hidden');
+            }
+
+            // Dynamic headers & overlays update based on zoom range
+            if (zoomFactor < 5) {
+                canvasTitle.innerText = "原子全体を捉えた視野";
+            } else if (zoomFactor < 500) {
+                canvasTitle.innerText = "最外殻の内側へ侵入（スカスカの空間）";
+            } else if (zoomFactor < 1e12) {
+                canvasTitle.innerText = "原子核への接近中（真空の旅）";
+            } else {
+                canvasTitle.innerText = "原子核の超拡大クローズアップ";
+            }
+
+            // Dynamic calculation for Dimension Info overlay
+            updateDimensionLabels();
+        }
+
+        function updateDimensionLabels() {
+            const config = modes[currentMode];
+            
+            // --- 1. Current "Apparent/Scaled" Atom Diameter in plain decimal layout ---
+            const scaledAtomMeters = config.atomSizeMeters * zoomFactor;
+            atomDiameterVal.innerText = formatToPlainDecimal(scaledAtomMeters);
+
+            // --- 2. Current "Apparent/Scaled" Nucleus Diameter in plain decimal layout ---
+            const scaledNucleusMeters = config.nucleusSizeMeters * zoomFactor;
+            nucleusDiameterVal.innerText = formatToPlainDecimal(scaledNucleusMeters);
+        }
+
+        // Change the baseline scale mode (real, dome, track, fuji)
+        function changeMode(mode) {
+            currentMode = mode;
+            
+            // UI Button Active classes
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.className = "mode-btn w-full text-left px-3 py-2.5 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-900 transition-all text-sm";
+            });
+            const activeBtn = document.getElementById(`btn-${mode}`);
+            activeBtn.className = "mode-btn w-full text-left px-3 py-2.5 rounded-lg border text-sm transition-all bg-indigo-950/40 border-indigo-500 text-white font-medium";
+
+            // Update content text
+            const config = modes[mode];
+            scaleRefText.innerHTML = `<span class="text-slate-400">スケール基準：</span> ${config.refText}`;
+            explanationText.innerHTML = config.explanation;
+
+            updateSimulation();
+        }
+
+        // Directly set zoom factor using slider logarithmic scaling coordinates (0 to 14)
+        function setZoom(sliderVal) {
+            zoomSlider.value = sliderVal;
+            zoomFactor = Math.pow(10, sliderVal);
+            updateSimulation();
+        }
+
+        // Slider interaction (Converts linear range [0-14] to Exponential ZoomFactor [1 - 100,000,000,000,000])
+        zoomSlider.addEventListener('input', function() {
+            updateSimulation();
+        });
+
+        // Logarithmic easing animation for beautiful deep dive zoom
+        let animId = null;
+        function animateTo(targetZoom) {
+            if (animId) cancelAnimationFrame(animId);
+            
+            const startLog = Math.log10(zoomFactor);
+            const targetLog = Math.log10(targetZoom);
+            const duration = 3000; // Smooth 3 seconds transition for 100-Trillion scale
+            const startTime = performance.now();
+
+            function run(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease-in-out-cubic curve
+                const ease = progress < 0.5 
+                    ? 4 * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                const currentLog = startLog + (targetLog - startLog) * ease;
+                zoomSlider.value = currentLog;
+                updateSimulation();
+
+                if (progress < 1) {
+                    animId = requestAnimationFrame(run);
+                } else {
+                    animId = null;
+                }
+            }
+            animId = requestAnimationFrame(run);
+        }
+
+        // Initialize App
+        window.onload = function() {
+            changeMode('real');
+            setZoom(0); // Starts at 10^0 = 1x zoom
+        };
+    </script>
+</body>
+</html>
