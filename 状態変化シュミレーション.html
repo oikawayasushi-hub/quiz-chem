@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物質の三態変化と熱運動・分子間力シミュレーター</title>
+    <!-- Tailwind CSS for clean layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Modern styling & animations */
+        canvas {
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-950 p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600 rounded-lg text-white">
+                    <i data-lucide="flame" class="w-6 h-6 animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">物質の三態変化・熱運動シミュレーター</h1>
+                    <p class="text-xs text-slate-400">高校化学基礎：熱運動（温度）と分子間力（引力）のせめぎ合いを科学的に視覚化</p>
+                </div>
+            </div>
+            <div class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-indigo-400 font-medium">
+                対象：高校化学基礎（物質の三態、熱運動、物理変化）
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Panel: Control Station & Mini Lectures (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+            
+            <!-- 1. State Selector & Quick Temperature Presets -->
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                    <i data-lucide="thermometer" class="text-indigo-400 w-4 h-4"></i> 温度・状態を設定
+                </h2>
+                
+                <!-- Quick State Buttons -->
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <button onclick="setTemperaturePreset(-15)" id="btn-solid" class="py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300">
+                        <span class="text-base">❄️ 固体</span>
+                        <span class="text-[10px] text-slate-400 font-normal mt-0.5">-15 ℃ (氷)</span>
+                    </button>
+                    <button onclick="setTemperaturePreset(40)" id="btn-liquid" class="py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300">
+                        <span class="text-base">💧 液体</span>
+                        <span class="text-[10px] text-slate-400 font-normal mt-0.5">40 ℃ (水)</span>
+                    </button>
+                    <button onclick="setTemperaturePreset(115)" id="btn-gas" class="py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300">
+                        <span class="text-base">💨 気体</span>
+                        <span class="text-[10px] text-slate-400 font-normal mt-0.5">115 ℃ (水蒸気)</span>
+                    </button>
+                </div>
+
+                <!-- Manual Temperature Slider with strict math-proportional layout -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400">温度の微調整:</span>
+                        <span id="temp-display" class="font-mono text-lg font-bold text-indigo-400">-15 ℃</span>
+                    </div>
+                    
+                    <!-- Slider input -->
+                    <div class="relative pb-8">
+                        <input type="range" id="temp-slider" min="-30" max="150" value="-15" class="w-full accent-indigo-500 bg-slate-800 h-2 rounded-lg appearance-none cursor-pointer relative z-10">
+                        
+                        <!-- Mathematical tick line indicators -->
+                        <div class="absolute w-full top-1 px-1 pointer-events-none">
+                            <div class="relative w-full h-2">
+                                <!-- -30C Mark -->
+                                <div class="absolute h-1.5 w-[1px] bg-slate-700" style="left: 0%;"></div>
+                                <!-- 0C Mark: (30 / 180) * 100% = 16.67% -->
+                                <div class="absolute h-1.5 w-[1px] bg-indigo-500" style="left: 16.67%;"></div>
+                                <!-- 100C Mark: (130 / 180) * 100% = 72.22% -->
+                                <div class="absolute h-1.5 w-[1px] bg-indigo-500" style="left: 72.22%;"></div>
+                                <!-- 150C Mark -->
+                                <div class="absolute h-1.5 w-[1px] bg-slate-700" style="left: 100%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Mathematical text layout aligned exactly with active slide percentages -->
+                        <div class="absolute w-full top-3 text-[10px] text-slate-500 font-mono pointer-events-none">
+                            <div class="relative w-full h-6">
+                                <span class="absolute" style="left: 0%; transform: translateX(0%);">-30 ℃</span>
+                                <span class="absolute text-center leading-none text-indigo-400/90 font-bold" style="left: 16.67%; transform: translateX(-50%);">0 ℃<br><span class="text-[8px] font-normal text-slate-500">(融点)</span></span>
+                                <span class="absolute text-center leading-none text-indigo-400/90 font-bold" style="left: 72.22%; transform: translateX(-50%);">100 ℃<br><span class="text-[8px] font-normal text-slate-500">(沸点)</span></span>
+                                <span class="absolute" style="left: 100%; transform: translateX(-100%);">150 ℃</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slow Heat / Cool Buttons -->
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <button onmousedown="startHeating(false)" onmouseup="stopHeating()" onmouseleave="stopHeating()" class="py-2 px-3 bg-red-950/40 hover:bg-red-900/40 text-red-300 border border-red-800 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5">
+                        <i data-lucide="chevron-up" class="w-4 h-4"></i> 加熱し続ける
+                    </button>
+                    <button onmousedown="startHeating(true)" onmouseup="stopHeating()" onmouseleave="stopHeating()" class="py-2 px-3 bg-blue-950/40 hover:bg-blue-900/40 text-blue-300 border border-blue-800 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i> 冷却し続ける
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Force Balance Gauge Sheet -->
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                    <i data-lucide="scale" class="text-indigo-400 w-4 h-4"></i> 力のバランスメーター
+                </h2>
+                
+                <!-- Force balance indicator gauge -->
+                <div class="space-y-3 font-sans">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-red-400 flex items-center gap-1 font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span> 熱運動（ばらばらにする力）
+                            </span>
+                            <span id="gauge-motion-val" class="font-mono font-bold text-red-400">低</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
+                            <div id="gauge-motion-bar" class="bg-red-500 h-full transition-all duration-300" style="width: 10%;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-blue-400 flex items-center gap-1 font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span> 分子間力（引きあう力）
+                            </span>
+                            <span id="gauge-attraction-val" class="font-mono font-bold text-blue-400">強</span>
+                        </div>
+                        <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
+                            <div id="gauge-attraction-bar" class="bg-blue-500 h-full transition-all duration-300" style="width: 90%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-2.5 bg-slate-950 rounded-lg border border-slate-800/80 text-[11px] text-slate-300 leading-normal" id="balance-summary">
+                        <!-- Dynamic sum text -->
+                        分子間力が熱運動を完全に抑え込んでいるため、各粒子は位置を変えずにその場で振動しています。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Mini Lecture Column -->
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex-1 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
+                        <i data-lucide="book-open" class="text-indigo-400 w-4 h-4"></i> 教科書p.39-40に基づくポイント解説
+                    </h2>
+                    <div id="lecture-box" class="text-xs text-slate-300 leading-relaxed space-y-2">
+                        <!-- Dynamic lesson commentary -->
+                    </div>
+                </div>
+                <div class="mt-4 p-2.5 bg-indigo-950/30 rounded-lg border border-indigo-900/50 flex items-start gap-2 text-[10px] text-indigo-300">
+                    <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <strong>融解・沸騰中に温度が一定なのはなぜ？</strong><br>
+                        外部から与えられた熱エネルギーが、温度を上げる（運動速度を速める）ためではなく、<strong>「分子同士を引き合わせている分子間力を切る（バネを外す）仕事」</strong>にすべて使われるためです。
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Panel: Micro Molecular Viewer & Cooling Curve (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+            
+            <!-- Real-time Status Card Banner -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-500 block font-bold uppercase">現在の状態</span>
+                    <span id="card-state-name" class="text-lg font-black text-slate-200 mt-1 block">固体（氷）</span>
+                </div>
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-500 block font-bold uppercase">粒子の並び方</span>
+                    <span id="card-layout-name" class="text-base font-bold text-indigo-300 mt-1.5 block">規則正しく整列</span>
+                </div>
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-500 block font-bold uppercase">結合状態（バネ数）</span>
+                    <span id="card-links-name" class="text-base font-bold text-emerald-400 mt-1.5 block">がっちり結合</span>
+                </div>
+            </div>
+
+            <!-- Molecular Viewer Viewport -->
+            <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 flex-1 flex flex-col relative overflow-hidden min-h-[440px]">
+                
+                <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2 z-10">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                        <h3 class="text-sm font-semibold text-slate-200">顕微鏡ビュー：水分子の熱運動モデル</h3>
+                    </div>
+                    <div class="flex gap-4 text-[10px] text-slate-400">
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-blue-500 rounded-full inline-block"></span>水分子</span>
+                        <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-indigo-500 inline-block border-t border-dashed"></span>分子間力（引力）</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Area for Molecular Simulator -->
+                <div class="flex-1 relative bg-slate-950 rounded-lg border border-slate-800 overflow-hidden flex items-center justify-center">
+                    <canvas id="molecular-canvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- Synchronized Heating Curve Graph (Direct mapping to Fig 21) -->
+                <div class="mt-4 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="text-slate-400 font-semibold flex items-center gap-1.5">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-indigo-400"></i>
+                            教科書p.40 図21「加熱による水の状態変化」同期グラフ
+                        </span>
+                        <span class="font-mono text-[10px] text-slate-500">※オレンジ線が現在の状態</span>
+                    </div>
+                    
+                    <!-- Graph Canvas representing heating curve -->
+                    <div class="h-28 relative">
+                        <canvas id="graph-canvas" class="w-full h-full block"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 p-4 text-center text-xs text-slate-500">
+        <p>© 2026 ベテラン化学教師の教育用シミュレーターシリーズ | 物理変化と三態・熱運動の可視化</p>
+    </footer>
+
+    <script>
+        // Setup icons
+        lucide.createIcons();
+
+        // ----------------------------------------------------
+        // Simulation Properties & Data
+        // ----------------------------------------------------
+        let temperature = -15; // Starting temperature in Celsius
+        let isHeatingActive = false;
+        let isCoolingActive = false;
+
+        // Constants of Water properties
+        const TEMP_MELTING = 0;
+        const TEMP_BOILING = 100;
+
+        // Molecular Simulation physics settings
+        const canvas = document.getElementById('molecular-canvas');
+        const ctx = canvas.getContext('2d');
+        let molecules = [];
+        const NUM_MOLECULES = 48;
+        const MOLECULE_RADIUS = 10;
+        const ATTRACTION_DIST = 42; // Max distance for spring link
+
+        // ----------------------------------------------------
+        // Molecule Class
+        // ----------------------------------------------------
+        class Molecule {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                // Base anchor coordinates for solid crystal structure
+                this.anchorX = x;
+                this.anchorY = y;
+                // Velocities
+                this.vx = 0;
+                this.vy = 0;
+            }
+
+            update(temp) {
+                // Determine thermal motion amplitude (velocity) based on temperature
+                // Kelvin approximation for speed scaling
+                const kelvin = temp + 273.15;
+                const speedFactor = Math.sqrt(kelvin) * 0.15;
+
+                if (temp < TEMP_MELTING) {
+                    // --- SOLID MODE ---
+                    // Vibration around anchor points. No translations.
+                    const maxVibe = 1 + (temp + 30) * 0.08; // slightly wider vibe as temp goes up
+                    const targetX = this.anchorX + (Math.random() - 0.5) * maxVibe;
+                    const targetY = this.anchorY + (Math.random() - 0.5) * maxVibe;
+
+                    // Spring back to anchors
+                    this.x += (targetX - this.x) * 0.3;
+                    this.y += (targetY - this.y) * 0.3;
+                } 
+                else if (temp >= TEMP_MELTING && temp < TEMP_BOILING) {
+                    // --- LIQUID MODE ---
+                    // Molecules slide around but remain relatively clumped near bottom of container
+                    // Add small brownian thermal motion
+                    this.vx += (Math.random() - 0.5) * speedFactor * 0.6;
+                    this.vy += (Math.random() - 0.5) * speedFactor * 0.6;
+
+                    // Apply gentle drag to simulate viscosity of fluid clumps
+                    this.vx *= 0.85;
+                    this.vy *= 0.85;
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Bound to liquid chamber borders (gravity pull simulation)
+                    const gravPull = 0.08;
+                    this.vy += gravPull; // Gravity keeps them down
+
+                    const boundY = canvas.height - MOLECULE_RADIUS - 10;
+                    if (this.y > boundY) {
+                        this.y = boundY;
+                        this.vy *= -0.3;
+                    }
+                    if (this.x < MOLECULE_RADIUS + 10) {
+                        this.x = MOLECULE_RADIUS + 10;
+                        this.vx *= -0.5;
+                    }
+                    if (this.x > canvas.width - MOLECULE_RADIUS - 10) {
+                        this.x = canvas.width - MOLECULE_RADIUS - 10;
+                        this.vx *= -0.5;
+                    }
+                    if (this.y < canvas.height / 2.2) { // Gas phase barrier (liquid surface)
+                        this.y = canvas.height / 2.2;
+                        this.vy *= -0.2;
+                    }
+                } 
+                else {
+                    // --- GAS MODE ---
+                    // High-speed random motion. Elastic bounces on all walls.
+                    this.vx += (Math.random() - 0.5) * speedFactor * 0.3;
+                    this.vy += (Math.random() - 0.5) * speedFactor * 0.3;
+
+                    // Limit max speed
+                    const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                    const maxAllowedSpeed = speedFactor * 2.2;
+                    if (currentSpeed > maxAllowedSpeed) {
+                        this.vx = (this.vx / currentSpeed) * maxAllowedSpeed;
+                        this.vy = (this.vy / currentSpeed) * maxAllowedSpeed;
+                    }
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Standard hard boundary bounce (expand on whole box)
+                    if (this.x < MOLECULE_RADIUS + 8 || this.x > canvas.width - MOLECULE_RADIUS - 8) {
+                        this.vx *= -1;
+                        this.x = this.x < MOLECULE_RADIUS + 8 ? MOLECULE_RADIUS + 8 : canvas.width - MOLECULE_RADIUS - 8;
+                    }
+                    if (this.y < MOLECULE_RADIUS + 8 || this.y > canvas.height - MOLECULE_RADIUS - 8) {
+                        this.vy *= -1;
+                        this.y = this.y < MOLECULE_RADIUS + 8 ? MOLECULE_RADIUS + 8 : canvas.height - MOLECULE_RADIUS - 8;
+                    }
+                }
+            }
+        }
+
+        // Initialize Molecular Lattice structure for Solid state
+        function initMolecules() {
+            molecules = [];
+            const cols = 8;
+            const rows = 6;
+            
+            // Generate grid inside base frame
+            const startX = (canvas.width - (cols - 1) * 32) / 2;
+            const startY = canvas.height - (rows - 1) * 28 - 30;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    // Hexagonal lattice nesting shift for solid lattice structure
+                    const shiftX = (r % 2 === 0) ? 0 : 16;
+                    const x = startX + c * 32 + shiftX;
+                    const y = startY + r * 28;
+                    molecules.push(new Molecule(x, y));
+                }
+            }
+        }
+
+        // ----------------------------------------------------
+        // Rendering Molecular Loops
+        // ----------------------------------------------------
+        function drawMolecularViewport() {
+            // Clear Frame
+            ctx.fillStyle = '#020617'; // slate-950
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw container walls
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#334155'; // slate-700
+            ctx.strokeRect(6, 6, canvas.width - 12, canvas.height - 12);
+
+            // Calculate connections (molecule links representing intermolecular attractive forces)
+            ctx.lineWidth = 1.5;
+            
+            // Draw intermolecular forces (バネ・分子間力の線)
+            for (let i = 0; i < molecules.length; i++) {
+                const m1 = molecules[i];
+                for (let j = i + 1; j < molecules.length; j++) {
+                    const m2 = molecules[j];
+                    const dist = Math.hypot(m1.x - m2.x, m1.y - m2.y);
+
+                    if (dist < ATTRACTION_DIST) {
+                        // Spring opacity depends on state and proximity
+                        let alpha = 0;
+                        if (temperature < TEMP_MELTING) {
+                            alpha = 0.8; // Strong solid springs
+                        } else if (temperature >= TEMP_MELTING && temperature < TEMP_BOILING) {
+                            // Fluid dynamically shifting springs
+                            alpha = Math.max(0, 0.5 * (1 - dist / ATTRACTION_DIST));
+                        } else {
+                            // Gas: highly fleeting or zero springs
+                            alpha = Math.max(0, 0.05 * (1 - dist / ATTRACTION_DIST));
+                        }
+
+                        if (alpha > 0) {
+                            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`; // Indigo springs
+                            ctx.beginPath();
+                            ctx.moveTo(m1.x, m1.y);
+                            ctx.lineTo(m2.x, m2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            // Draw individual molecules
+            molecules.forEach(m => {
+                m.update(temperature);
+
+                // Draw water molecule circle
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, MOLECULE_RADIUS, 0, Math.PI * 2);
+                
+                // Color represents speed/temperature state
+                if (temperature < TEMP_MELTING) {
+                    ctx.fillStyle = '#38bdf8'; // Sky blue for ice
+                    ctx.strokeStyle = '#0284c7';
+                } else if (temperature >= TEMP_MELTING && temperature < TEMP_BOILING) {
+                    ctx.fillStyle = '#60a5fa'; // Blue for liquid
+                    ctx.strokeStyle = '#2563eb';
+                } else {
+                    ctx.fillStyle = '#fb923c'; // Orange for hot steam
+                    ctx.strokeStyle = '#ea580c';
+                }
+                
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw cute internal water H2O schematic structure lines
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(m.x, m.y);
+                ctx.lineTo(m.x - 4, m.y + 4);
+                ctx.moveTo(m.x, m.y);
+                ctx.lineTo(m.x + 4, m.y + 4);
+                ctx.stroke();
+            });
+        }
+
+        // ----------------------------------------------------
+        // Synchronized Heating Curve Rendering (Fig 21)
+        // ----------------------------------------------------
+        const graphCanvas = document.getElementById('graph-canvas');
+        const gCtx = graphCanvas.getContext('2d');
+
+        // Path coordinates for Water Heating Curve
+        // Map Temperature (-30 to 150) -> x & y coords on graph
+        function drawSynchronizedGraph() {
+            gCtx.fillStyle = '#020617'; // slate-950
+            gCtx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+            const w = graphCanvas.width;
+            const h = graphCanvas.height;
+
+            // Coordinates for structural key steps (Fig 21 line graph)
+            // K: solid, M: melting, L: liquid, B: boiling, G: gas
+            const pSolidStart = { x: w * 0.05, y: h * 0.85 };
+            const pMeltingStart = { x: w * 0.15, y: h * 0.7 }; // 0 deg C
+            const pMeltingEnd = { x: w * 0.35, y: h * 0.7 };
+            const pLiquidEnd = { x: w * 0.55, y: h * 0.25 };  // 100 deg C
+            const pBoilingEnd = { x: w * 0.85, y: h * 0.25 };
+            const pGasEnd = { x: w * 0.95, y: h * 0.1 };
+
+            // Draw grid axes
+            gCtx.strokeStyle = '#1e293b'; // slate-800
+            gCtx.lineWidth = 1;
+            
+            // Draw baseline melting (0C) and boiling (100C) dotted lines
+            gCtx.setLineDash([3, 3]);
+            gCtx.strokeStyle = '#334155';
+            
+            // 0 ℃ Line
+            gCtx.beginPath();
+            gCtx.moveTo(0, pMeltingStart.y);
+            gCtx.lineTo(w, pMeltingStart.y);
+            gCtx.stroke();
+            gCtx.fillText("0 ℃ (融点)", 8, pMeltingStart.y - 4);
+
+            // 100 ℃ Line
+            gCtx.beginPath();
+            gCtx.moveTo(0, pLiquidEnd.y);
+            gCtx.lineTo(w, pLiquidEnd.y);
+            gCtx.stroke();
+            gCtx.fillText("100 ℃ (沸点)", 8, pLiquidEnd.y - 4);
+
+            gCtx.setLineDash([]); // solid lines on
+
+            // Draw main Heating Curve Line
+            gCtx.strokeStyle = '#475569'; // slate-600
+            gCtx.lineWidth = 3;
+            gCtx.beginPath();
+            gCtx.moveTo(pSolidStart.x, pSolidStart.y);
+            gCtx.lineTo(pMeltingStart.x, pMeltingStart.y);
+            gCtx.lineTo(pMeltingEnd.x, pMeltingEnd.y);
+            gCtx.lineTo(pLiquidEnd.x, pLiquidEnd.y);
+            gCtx.lineTo(pBoilingEnd.x, pBoilingEnd.y);
+            gCtx.lineTo(pGasEnd.x, pGasEnd.y);
+            gCtx.stroke();
+
+            // Label regions
+            gCtx.fillStyle = '#64748b';
+            gCtx.font = '9px sans-serif';
+            gCtx.fillText("氷", w * 0.08, h * 0.9);
+            gCtx.fillText("融解中", w * 0.22, h * 0.64);
+            gCtx.fillText("水", w * 0.44, h * 0.45);
+            gCtx.fillText("沸騰中", w * 0.68, h * 0.2);
+            gCtx.fillText("水蒸気", w * 0.88, h * 0.08);
+
+            // Calculate current tracker node (interpolated position based on temperature)
+            let currentX = 0;
+            let currentY = 0;
+
+            if (temperature < TEMP_MELTING) {
+                // Interp Solid (from -30C at start to 0C at melting start)
+                const pct = (temperature - (-30)) / (TEMP_MELTING - (-30));
+                currentX = pSolidStart.x + pct * (pMeltingStart.x - pSolidStart.x);
+                currentY = pSolidStart.y + pct * (pMeltingStart.y - pSolidStart.y);
+            } 
+            else if (temperature === TEMP_MELTING) {
+                // Simulated latent phase for Melting
+                // In our simple slider, we can map melting progression relative to some virtual latent state
+                // To keep it simple, we check if the selector is solid/liquid preset.
+                // We fake the progress slightly using decimal offsets or default to middle
+                currentX = (pMeltingStart.x + pMeltingEnd.x) / 2;
+                currentY = pMeltingStart.y;
+            } 
+            else if (temperature > TEMP_MELTING && temperature < TEMP_BOILING) {
+                // Interp Liquid (from 0C to 100C)
+                const pct = (temperature - TEMP_MELTING) / (TEMP_BOILING - TEMP_MELTING);
+                currentX = pMeltingEnd.x + pct * (pLiquidEnd.x - pMeltingEnd.x);
+                currentY = pMeltingEnd.y + pct * (pLiquidEnd.y - pMeltingEnd.y);
+            } 
+            else if (temperature === TEMP_BOILING) {
+                // Boiling plateau
+                currentX = (pLiquidEnd.x + pBoilingEnd.x) / 2;
+                currentY = pLiquidEnd.y;
+            } 
+            else {
+                // Interp Gas (from 100C to 150C)
+                const pct = (temperature - TEMP_BOILING) / (150 - TEMP_BOILING);
+                currentX = pBoilingEnd.x + pct * (pGasEnd.x - pBoilingEnd.x);
+                currentY = pBoilingEnd.y + pct * (pGasEnd.y - pBoilingEnd.y);
+            }
+
+            // Draw orange current position tracker dot
+            gCtx.fillStyle = '#f97316'; // Orange-500
+            gCtx.beginPath();
+            gCtx.arc(currentX, currentY, 6, 0, Math.PI * 2);
+            gCtx.fill();
+            gCtx.strokeStyle = '#ffffff';
+            gCtx.lineWidth = 1.5;
+            gCtx.stroke();
+        }
+
+        // ----------------------------------------------------
+        // Interface Controller Engine
+        // ----------------------------------------------------
+        const tempSlider = document.getElementById('temp-slider');
+        const tempDisplay = document.getElementById('temp-display');
+
+        const cardStateName = document.getElementById('card-state-name');
+        const cardLayoutName = document.getElementById('card-layout-name');
+        const cardLinksName = document.getElementById('card-links-name');
+
+        const gMotionVal = document.getElementById('gauge-motion-val');
+        const gMotionBar = document.getElementById('gauge-motion-bar');
+        const gAttractionVal = document.getElementById('gauge-attraction-val');
+        const gAttractionBar = document.getElementById('gauge-attraction-bar');
+        const summaryText = document.getElementById('balance-summary');
+        const lectureBox = document.getElementById('lecture-box');
+
+        // Commentary Database (Synchronized with textbook pages)
+        const commentaryDb = {
+            solid: {
+                title: "固体（氷）の特徴と熱運動",
+                state: "固体（氷）",
+                layout: "規則正しく整列",
+                links: "がっちり結合",
+                commentary: `
+                    <p><strong>1. 分子間のバネ（分子間力）が圧倒的！</strong><br>
+                    氷の中では、分子同士を引きつける「分子間力」が、分子をバラバラにしようとする「熱運動」よりも圧倒的に強ため、各分子はカチッと定位置に固定されます（規則的な結晶配置）。</p>
+                    <p><strong>2. 固体でも分子は動いている？</strong><br>
+                    「固体だから静止している」というのは誤解です。分子は<strong>位置を変えないまま、その場で小刻みに振動（熱運動）</strong>しています。温度を上げると、このプルプルとした振動が徐々に激しくなっていきます。</p>
+                `,
+                motionVal: "低 (プルプル振動)", motionPct: "15%",
+                attractVal: "強 (完全にホールド)", attractPct: "95%",
+                summary: "分子間力（バネ）が完全に熱運動を抑え込んでいます。分子は移動できず、定位置で細かく振動するのみなので、氷としての一定の形状と体積をキープします。"
+            },
+            melting: {
+                title: "融解状態（0 ℃）のせめぎ合い",
+                state: "融解中（0 ℃）",
+                layout: "緩やかに崩壊中",
+                links: "結合がほどけ中",
+                commentary: `
+                    <p><strong>3. なぜ0℃で加熱しても温度が上がらない？</strong><br>
+                    外部からの加熱熱エネルギーが、分子の速度を上げる（＝温度を上げる）ために使われるのではなく、<strong>分子同士のガッチリした結合（分子間力のバネ）を緩めてバラバラにする仕事に100%消費されているから</strong>です。すべてのバネが緩みきるまで温度は0℃にロックされます。</p>
+                `,
+                motionVal: "中 (結合破壊にエネルギー消費)", motionPct: "45%",
+                attractVal: "中 (徐々にロック解除)", attractPct: "60%",
+                summary: "加えた熱エネルギーはすべてバネ（結合）を切断するために消費されています。そのため、固体がすべて液体に変わるまで温度は0℃のまま一定に保たれます（融点）。"
+            },
+            liquid: {
+                title: "液体（水）の特徴と熱運動",
+                state: "液体（水）",
+                layout: "不規則で位置変化",
+                links: "流動的な結合",
+                commentary: `
+                    <p><strong>4. バネが緩み、位置が変えられる状態</strong><br>
+                    温度が上がり熱運動の力が強くなると、分子は定位置の縛りから脱出します。分子間力はまだ働いているためバラバラには散りませんが、<strong>お互いの位置をズルズルと変えながら流動的に動き回ります。</strong>これが「液体」の正体です。</p>
+                    <p><strong>5. 形状は変わるが、体積は不変</strong><br>
+                    粒子が互いに密着しながら滑り合っているため、容器の形に合わせて自由に形を変えられます。しかし、粒子同士の間隔は詰まっているため、体積は固体とほぼ変わりません。</p>
+                `,
+                motionVal: "中〜高 (激しい流動運動)", motionPct: "55%",
+                attractVal: "中 (流動結合を維持)", attractPct: "50%",
+                summary: "熱運動と分子間力が絶妙なバランスで均衡しています。分子同士はくっついていますが、定位置から自由になってズルズルと滑り動くため、流動性（水）が生じます。"
+            },
+            boiling: {
+                title: "沸騰状態（100 ℃）のせめぎ合い",
+                state: "沸騰中（100 ℃）",
+                layout: "完全にバラバラへ",
+                links: "結合を完全切断中",
+                commentary: `
+                    <p><strong>6. 液体の内部からも気体が発生！</strong><br>
+                    沸点に達すると、液体の「表面」だけでなく「内部」からも分子間力を完全に断ち切った水蒸気の気泡が発生し始めます。これも融解と同様、バネを完全に切断する仕事（蒸発熱）にエネルギーが使われるため、全て気体になるまで温度は100℃で一定になります。</p>
+                `,
+                motionVal: "高 (完全分離にエネルギー消費)", motionPct: "80%",
+                attractVal: "弱 (ほとんど千切れる)", attractPct: "20%",
+                summary: "液体の内部からも気体が発生する激しい蒸発（沸騰）が始まります。熱エネルギーは分子間力のバネを完全に引きちぎるために使われるため、温度は100℃のまま不変です。"
+            },
+            gas: {
+                title: "気体（水蒸気）の特徴と熱運動",
+                state: "気体（水蒸気）",
+                layout: "完全にランダム飛散",
+                links: "結合はほぼ皆無",
+                commentary: `
+                    <p><strong>7. 熱運動の「完全勝利」！</strong><br>
+                    沸点を超えて気体になると、<strong>粒子の激しい熱運動のパワーが、分子同士の引力（分子間力）に完全に打ち勝ちます。</strong>バネはすべて千切れて消滅し、分子は互いに拘束されることなく、超高速で空間全体を自由に飛び回ります。</p>
+                    <p><strong>8. 空間のスカスカ感と拡散</strong><br>
+                    粒子同士の距離が固体の約1000倍も離れるため、体積が爆発的に膨張します。教科書p.38にある「臭素の拡散」のように、仕切りを外すと、高速で飛ぶ粒子同士がランダムに衝突しながら全体へ一瞬で広がっていきます。</p>
+                `,
+                motionVal: "極大 (猛烈に飛び回る)", motionPct: "95%",
+                attractVal: "極小 (ほとんど働かない)", attractPct: "5%",
+                summary: "熱運動が分子間力に完全に打ち勝った状態です。バネは完全に消失し、粒子は互いに束縛されることなく空間全体を猛烈なスピードで飛び回ります（気体）。"
+            }
+        };
+
+        // Update active displays depending on slider temperature
+        function updateUIState() {
+            tempDisplay.innerText = `${temperature} ℃`;
+
+            let currentConfig = commentaryDb.solid;
+
+            // Determine phase stage
+            if (temperature < TEMP_MELTING) {
+                currentConfig = commentaryDb.solid;
+                document.getElementById('btn-solid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-sky-950/40 border-sky-500 text-sky-300 ring-1 ring-sky-500/20";
+                document.getElementById('btn-liquid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+                document.getElementById('btn-gas').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+            } 
+            else if (temperature === TEMP_MELTING) {
+                currentConfig = commentaryDb.melting;
+                document.getElementById('btn-solid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-amber-950/40 border-amber-500 text-amber-300 ring-1 ring-amber-500/20";
+                document.getElementById('btn-liquid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+                document.getElementById('btn-gas').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+            } 
+            else if (temperature > TEMP_MELTING && temperature < TEMP_BOILING) {
+                currentConfig = commentaryDb.liquid;
+                document.getElementById('btn-solid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+                document.getElementById('btn-liquid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-blue-950/40 border-blue-500 text-blue-300 ring-1 ring-blue-500/20";
+                document.getElementById('btn-gas').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+            } 
+            else if (temperature === TEMP_BOILING) {
+                currentConfig = commentaryDb.boiling;
+                document.getElementById('btn-solid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+                document.getElementById('btn-liquid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-amber-950/40 border-amber-500 text-amber-300 ring-1 ring-amber-500/20";
+                document.getElementById('btn-gas').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+            } 
+            else {
+                currentConfig = commentaryDb.gas;
+                document.getElementById('btn-solid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+                document.getElementById('btn-liquid').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-slate-800 border-slate-700 text-slate-300";
+                document.getElementById('btn-gas').className = "py-2 px-3 rounded-lg border text-xs font-bold transition flex flex-col items-center justify-center bg-orange-950/40 border-orange-500 text-orange-300 ring-1 ring-orange-500/20";
+            }
+
+            // Cards info
+            cardStateName.innerText = currentConfig.state;
+            cardLayoutName.innerText = currentConfig.layout;
+            cardLinksName.innerText = currentConfig.links;
+
+            // Gauges
+            gMotionVal.innerText = currentConfig.motionVal;
+            gMotionBar.style.width = currentConfig.motionPct;
+            gAttractionVal.innerText = currentConfig.attractVal;
+            gAttractionBar.style.width = currentConfig.attractPct;
+
+            // Text notes
+            summaryText.innerHTML = `<strong>勢力分析：</strong> ${currentConfig.summary}`;
+            lectureBox.innerHTML = `
+                <h3 class="text-sm font-bold text-indigo-400 mb-2 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> ${currentConfig.title}
+                </h3>
+                ${currentConfig.commentary}
+            `;
+
+            // Draw synced graph state
+            drawSynchronizedGraph();
+        }
+
+        // Preset button click trigger
+        function setTemperaturePreset(val) {
+            temperature = val;
+            tempSlider.value = val;
+            
+            // Re-init crystal lattice grid if we set solid phase
+            if (val < TEMP_MELTING) {
+                initMolecules();
+            }
+
+            updateUIState();
+        }
+
+        // Slider change listener
+        tempSlider.addEventListener('input', function(e) {
+            const oldTemp = temperature;
+            temperature = parseInt(e.target.value);
+
+            // Re-init lattice structure if slider goes from liquid to solid
+            if (temperature < TEMP_MELTING && oldTemp >= TEMP_MELTING) {
+                initMolecules();
+            }
+
+            updateUIState();
+        });
+
+        // ----------------------------------------------------
+        // Continuous Heat/Cool Logic (Teacher Demonstration Buttons)
+        // ----------------------------------------------------
+        let heatIntervalId = null;
+
+        function startHeating(isCooling) {
+            if (heatIntervalId) clearInterval(heatIntervalId);
+
+            heatIntervalId = setInterval(() => {
+                const oldTemp = temperature;
+                
+                if (isCooling) {
+                    if (temperature > -30) {
+                        // Slowly cool down
+                        // Simulate delay at plateau boiling/melting points for realistic physical curve
+                        if (temperature === TEMP_BOILING || temperature === TEMP_MELTING) {
+                            // Virtual sub-plateau delay (50% chance to skip decrease per tick)
+                            if (Math.random() < 0.6) {
+                                temperature--;
+                            }
+                        } else {
+                            temperature--;
+                        }
+                    }
+                } else {
+                    if (temperature < 150) {
+                        // Slowly heat up
+                        if (temperature === TEMP_BOILING || temperature === TEMP_MELTING) {
+                            if (Math.random() < 0.6) {
+                                temperature++;
+                            }
+                        } else {
+                            temperature++;
+                        }
+                    }
+                }
+
+                tempSlider.value = temperature;
+
+                // Re-init solid lattice if transitioned back into solid
+                if (temperature < TEMP_MELTING && oldTemp >= TEMP_MELTING) {
+                    initMolecules();
+                }
+
+                updateUIState();
+
+                // Stop at limits
+                if (temperature <= -30 || temperature >= 150) {
+                    stopHeating();
+                }
+
+            }, 40); // 40ms interval speed
+        }
+
+        function stopHeating() {
+            if (heatIntervalId) {
+                clearInterval(heatIntervalId);
+                heatIntervalId = null;
+            }
+        }
+
+        // ----------------------------------------------------
+        // Animation loop & Window Initialization
+        // ----------------------------------------------------
+        function handleResize() {
+            // Get dimensions of parent element to avoid scaling blur
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            const gRect = graphCanvas.getBoundingClientRect();
+            graphCanvas.width = gRect.width;
+            graphCanvas.height = gRect.height;
+
+            // Render structure grid on first load or resize
+            initMolecules();
+            updateUIState();
+        }
+
+        function animationLoop() {
+            drawMolecularViewport();
+            requestAnimationFrame(animationLoop);
+        }
+
+        // Setup on window load
+        window.onload = function() {
+            handleResize();
+            window.addEventListener('resize', handleResize);
+            
+            // Start main rendering loop
+            animationLoop();
+        };
+    </script>
+</body>
+</html>
