@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原子の電子配置＆価電子シミュレーター</title>
+    <!-- Tailwind CSS for modern responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons for clean aesthetic -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom Keyframes for Electron Orbit Rotation */
+        @keyframes orbit-k {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-l {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        @keyframes orbit-m {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-n {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        .orbit-k-anim { animation: orbit-k 12s linear infinite; }
+        .orbit-l-anim { animation: orbit-l 20s linear infinite; }
+        .orbit-m-anim { animation: orbit-m 28s linear infinite; }
+        .orbit-n-anim { animation: orbit-n 36s linear infinite; }
+
+        /* Custom range slider styling */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            transition: background .15s ease-in-out;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-950 p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600 rounded-lg text-white">
+                    <i data-lucide="atom" class="w-6 h-6 animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">電子配置・価電子マスターシミュレーター</h1>
+                    <p class="text-xs text-slate-400">高校化学基礎：周期表の「族」「周期」と電子殻・価電子の完全連動モデル</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-emerald-400 font-medium">
+                    対象：高校化学基礎（周期律と電子配置）
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Atom Selector & Periodic Table Quick Links (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+            
+            <!-- 1. Slider & Input Controls -->
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <h2 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                    <i data-lucide="sliders" class="text-indigo-400 w-4 h-4"></i> 原子番号を選択
+                </h2>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs text-slate-400">原子番号 (Z)</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="stepElement(-1)" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 active:bg-slate-600 flex items-center justify-center border border-slate-700 text-sm font-bold">-</button>
+                        <span id="atomic-number-display" class="text-2xl font-mono font-bold text-indigo-400 w-12 text-center">1</span>
+                        <button onclick="stepElement(1)" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 active:bg-slate-600 flex items-center justify-center border border-slate-700 text-sm font-bold">+</button>
+                    </div>
+                </div>
+
+                <input type="range" id="element-slider" min="1" max="20" value="1" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer mb-6 accent-indigo-500">
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="p-2.5 bg-slate-950 rounded-lg border border-slate-800 col-span-1 text-center">
+                        <span class="text-[9px] uppercase text-slate-500 block">現在の元素</span>
+                        <span id="element-symbol" class="text-3xl font-black tracking-tight text-white block my-1">H</span>
+                        <span id="element-name" class="text-[11px] font-bold text-slate-400 block">水素</span>
+                    </div>
+                    <div class="p-2.5 bg-indigo-950/20 rounded-lg border border-indigo-900/30 col-span-1 text-center flex flex-col justify-center">
+                        <span class="text-[9px] uppercase text-indigo-400 font-bold block">所属する「族」</span>
+                        <span id="element-group-display" class="text-xl font-extrabold text-indigo-300 block my-0.5">1 族</span>
+                        <span id="element-group-type" class="text-[9px] text-indigo-400 font-medium block">アルカリ金属等</span>
+                    </div>
+                    <div class="p-2.5 bg-teal-950/20 rounded-lg border border-teal-900/30 col-span-1 text-center flex flex-col justify-center">
+                        <span class="text-[9px] uppercase text-teal-400 font-bold block">所属する「周期」</span>
+                        <span id="element-period-display" class="text-xl font-extrabold text-teal-300 block my-0.5">第 1 周期</span>
+                        <span id="element-period-shell" class="text-[9px] text-teal-400 font-medium block">K殻まで使用</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Interactive Simplified Periodic Table with Group & Period Headers -->
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                        <i data-lucide="grid" class="text-indigo-400 w-4 h-4"></i> 周期表と電子配置の規則性
+                    </h2>
+                </div>
+                <p class="text-[10px] text-slate-400 mb-4 bg-slate-950 p-2 rounded border border-slate-800/80 leading-relaxed">
+                    💡 <strong class="text-indigo-300">縦（族）が揃うと：</strong> 価電子数（化学的性質）が同じになる！<br>
+                    💡 <strong class="text-teal-300">横（周期）が揃うと：</strong> 使用する電子殻の数（原子の大きさ）が同じになる！
+                </p>
+                
+                <!-- Expanded Grid to include Headers: 9 columns (1 for Period Labels + 8 for Groups) -->
+                <div class="grid grid-cols-9 gap-1 text-center font-mono text-xs" id="periodic-grid">
+                    <!-- Dynamic Grid with headers will be injected here by JS -->
+                </div>
+
+                <!-- Legend of classification -->
+                <div class="flex flex-wrap gap-2 mt-4 text-[10px] text-slate-400 border-t border-slate-800/60 pt-3 justify-center">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-amber-500/20 border border-amber-500 inline-block"></span>1族</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-orange-500/20 border border-orange-500 inline-block"></span>2族</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-500/20 border border-emerald-500 inline-block"></span>17族(ハロゲン)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-indigo-500/20 border border-indigo-500 inline-block"></span>18族(希ガス)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-slate-800 border border-slate-700 inline-block"></span>その他典型</span>
+                </div>
+            </div>
+
+            <!-- 3. Dynamic Educational Panel -->
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex-1 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
+                        <i data-lucide="book-open" class="text-indigo-400 w-4 h-4"></i> ベテラン教師の徹底講義
+                    </h2>
+                    <div id="teacher-note" class="text-xs text-slate-300 leading-relaxed space-y-2">
+                        <!-- Dynamic commentary goes here -->
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-indigo-950/40 rounded-lg border border-indigo-900/50 flex items-start gap-2.5">
+                    <i data-lucide="info" class="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-[10px] text-indigo-300 leading-normal">
+                        <strong>周期表を「縦」と「横」に切る重要性：</strong><br>
+                        縦列（同族）は、反応の決め手である「価電子」の数が同じなため性質がソックリになります。横列（周期）は、電子が入る「部屋（電子殻）」の数が同じなので、右に行くほど原子核が強くなり、サイズがキュッと縮みます。
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Diagram & Stats Display (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+            
+            <!-- Statistical Card Indicators (Optimized with direct Group/Period connection and 5-card layout) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                <!-- 1. 最外殻電子数 -->
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <span class="text-[10px] text-indigo-400 block font-bold uppercase flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span>最外殻電子数
+                    </span>
+                    <span id="outer-electrons" class="text-2xl font-bold font-mono text-indigo-400">1</span>
+                    <span class="text-[10px] text-slate-400 block" id="outer-shell-name">K殻に入っています</span>
+                </div>
+                <!-- 2. 価電子数 -->
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <span class="text-[10px] text-emerald-400 block font-bold uppercase flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>価電子数
+                    </span>
+                    <span id="valence-electrons" class="text-2xl font-bold font-mono text-emerald-400">1</span>
+                    <span class="text-[10px] text-slate-400 block font-semibold text-emerald-500/90" id="valence-relation-text">1族 ＝ 価電子 1個</span>
+                </div>
+                <!-- 3. 電子殻の数 -->
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <span class="text-[10px] text-teal-400 block font-bold uppercase flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-teal-400 rounded-full"></span>電子殻の数
+                    </span>
+                    <span id="shell-count-display" class="text-2xl font-bold font-mono text-teal-400">1</span>
+                    <span class="text-[10px] text-slate-400 block font-semibold text-teal-500/90" id="shell-relation-text">第1周期 ＝ 1殻分使用</span>
+                </div>
+                <!-- 4. 電子配置パターン (CRITICAL FIX: Restored missing element ID to prevent JS TypeError) -->
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <span class="text-[10px] text-amber-400 block font-bold uppercase flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>電子配置パターン
+                    </span>
+                    <span id="electron-distribution" class="text-2xl font-bold font-mono text-amber-400">K: 1</span>
+                    <span class="text-[10px] text-slate-400 block">各電子殻への配置</span>
+                </div>
+                <!-- 5. 目指すイオン -->
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 col-span-2 sm:col-span-1 md:col-span-1">
+                    <span class="text-[10px] text-pink-400 block font-bold uppercase flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-pink-400 rounded-full"></span>目指すイオン
+                    </span>
+                    <span id="target-ion" class="text-base font-bold text-pink-400 block mt-1.5">H⁺ (陽イオン)</span>
+                    <span class="text-[10px] text-slate-400 block" id="ion-explanation">電子1個を放出して安定化</span>
+                </div>
+            </div>
+
+            <!-- Interactive Bohr Model Visualizer Canvas Area -->
+            <div class="bg-slate-900 rounded-xl border border-slate-800 p-4 flex-1 flex flex-col relative overflow-hidden min-h-[480px]">
+                
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2.5 z-10">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
+                        <h3 class="text-sm font-semibold text-slate-200" id="visualizer-header">水素原子 (H) のボーア模型</h3>
+                    </div>
+                    <div class="flex items-center gap-3 text-[10px] text-slate-400">
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>原子核</span>
+                        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-400 inline-block"></span>内殻電子</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white inline-block"></span>価電子（最外殻）</span>
+                    </div>
+                </div>
+
+                <!-- Simulation Viewport -->
+                <div class="flex-1 relative flex items-center justify-center bg-slate-950 rounded-lg border border-slate-800 overflow-hidden" id="atom-viewport">
+                    
+                    <!-- Center Nucleus -->
+                    <div class="absolute w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-pink-600 border border-red-400 flex flex-col items-center justify-center text-white font-mono shadow-lg shadow-red-500/20 z-30 pointer-events-none">
+                        <span class="text-xs font-bold" id="nucleus-charge">+1</span>
+                        <span class="text-[8px] text-red-200" id="nucleus-neutrons">N:0</span>
+                    </div>
+
+                    <!-- Orbit Shells (Concentric Circles) -->
+                    <!-- K-Shell (n=1) -->
+                    <div id="shell-k" class="absolute rounded-full border border-slate-800 flex items-center justify-center transition-all duration-300 pointer-events-none" style="width: 130px; height: 130px;">
+                        <span id="label-k-shell" class="absolute -top-3.5 text-[9px] text-slate-500 font-mono bg-slate-950/80 px-1 rounded transition-all">K殻 (n=1)</span>
+                        <div id="orbit-rotator-k" class="absolute w-full h-full orbit-k-anim">
+                            <!-- Electrons dynamically injected -->
+                        </div>
+                    </div>
+
+                    <!-- L-Shell (n=2) -->
+                    <div id="shell-l" class="absolute rounded-full border border-slate-800 flex items-center justify-center transition-all duration-300 pointer-events-none" style="width: 220px; height: 220px;">
+                        <span id="label-l-shell" class="absolute -top-3.5 text-[9px] text-slate-500 font-mono bg-slate-950/80 px-1 rounded transition-all">L殻 (n=2)</span>
+                        <div id="orbit-rotator-l" class="absolute w-full h-full orbit-l-anim">
+                            <!-- Electrons dynamically injected -->
+                        </div>
+                    </div>
+
+                    <!-- M-Shell (n=3) -->
+                    <div id="shell-m" class="absolute rounded-full border border-slate-800 flex items-center justify-center transition-all duration-300 pointer-events-none" style="width: 310px; height: 310px;">
+                        <span id="label-m-shell" class="absolute -top-3.5 text-[9px] text-slate-500 font-mono bg-slate-950/80 px-1 rounded transition-all">M殻 (n=3)</span>
+                        <div id="orbit-rotator-m" class="absolute w-full h-full orbit-m-anim">
+                            <!-- Electrons dynamically injected -->
+                        </div>
+                    </div>
+
+                    <!-- N-Shell (n=4) -->
+                    <div id="shell-n" class="absolute rounded-full border border-slate-800 flex items-center justify-center transition-all duration-300 pointer-events-none" style="width: 400px; height: 400px;">
+                        <span id="label-n-shell" class="absolute -top-3.5 text-[9px] text-slate-500 font-mono bg-slate-950/80 px-1 rounded transition-all">N殻 (n=4)</span>
+                        <div id="orbit-rotator-n" class="absolute w-full h-full orbit-n-anim">
+                            <!-- Electrons dynamically injected -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Simulation Control buttons underneath visualizer -->
+                <div class="mt-3 flex justify-between items-center text-xs">
+                    <span id="period-rule-hint" class="text-slate-400 font-medium">第1周期（H）は、K殻（1殻分）のみに電子を配置します。</span>
+                    <div class="flex gap-2">
+                        <button onclick="toggleAnimation()" id="btn-anim" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 flex items-center gap-1">
+                            <i data-lucide="pause" class="w-3.5 h-3.5" id="btn-anim-icon"></i>
+                            <span id="btn-anim-text">アニメーション停止</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 p-4 text-center text-xs text-slate-500">
+        <p>© 2026 ベテラン化学教師の教育用シミュレーターシリーズ | 原子の構造と電子軌道のマスター</p>
+    </footer>
+
+    <script>
+        // Database of first 20 elements with chemical details & tailored teacher commentary
+        const elementsData = {
+            1: {
+                symbol: "H", name: "水素", group: 1, period: 1, neutrons: 0,
+                config: { k: 1, l: 0, m: 0, n: 0 },
+                commentary: "<strong>【第1周期 / 1族】</strong>すべての原子の中で最もシンプルで軽い構造。第1周期なので『K殻（1番内側の殻）』のみを使い、1族なので『最外殻電子（価電子）が1個』です。もう1個入ると安定な閉殻（ヘリウム型）になるため、他から電子を奪って陰イオン H⁻（水素化物イオン）にもなれるし、電子1個を放り出して H⁺（水素イオン）にもなれる柔軟な元素です。"
+            },
+            2: {
+                symbol: "He", name: "ヘリウム", group: 18, period: 1, neutrons: 2,
+                config: { k: 2, l: 0, m: 0, n: 0 },
+                commentary: "<strong>【第1周期 / 18族】</strong>第1周期の終点。K殻の最大収容数である『2』を満たしています。このように最外殻に目一杯電子が詰まった構造を<strong>閉殻構造（へいかくこうぞう）</strong>と呼び、極めて安定しています。そのため、価電子は『0』であり、他の原子と化学反応を一切行いません。"
+            },
+            3: {
+                symbol: "Li", name: "リチウム", group: 1, period: 2, neutrons: 4,
+                config: { k: 2, l: 1, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 1族】</strong>ここから第2周期へ突入！K殻（2個）が満杯になったため、3つ目の電子は2枚目の殻である『L殻』に配置されます。これが周期2（＝殻が2枚）の物理的な意味です。1族なので、最外殻（L殻）の電子数は1個。この1価の価電子は非常に手放しやすく、1価の陽イオン Li⁺ になりやすい性質があります（アルカリ金属）。"
+            },
+            4: {
+                symbol: "Be", name: "ベリリウム", group: 2, period: 2, neutrons: 5,
+                config: { k: 2, l: 2, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 2族】</strong>第2周期なので使用電子殻は2つ（K, L殻）。2族なのでL殻の電子数（価電子数）は2。外側の2個の電子を放出して、ヘリウムと同じ安定な電子配置になろうとするため、2価の陽イオン Be²⁺ になりやすい典型的な金属の性質を示し始めます。"
+            },
+            5: {
+                symbol: "B", name: "ホウ素", group: 13, period: 2, neutrons: 6,
+                config: { k: 2, l: 3, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 13族】</strong>13族ですが、10を引いた『3個』が最外殻（L殻）の電子数になります。価電子数は3。非金属元素としての性質を示し始め、他の非金属原子と電子を分け合う『共有結合』を主に形成します。"
+            },
+            6: {
+                symbol: "C", name: "炭素", group: 14, period: 2, neutrons: 6,
+                config: { k: 2, l: 4, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 14族】</strong>有機化学の主役、炭素。14族なので価電子数は『4』。L殻が満杯（8個）になるためにはあと4個必要で、半分埋まった最もバランスの取れた状態です。そのため、周りの4つの原子と電子を分け合って、合計4本の手（共有結合）を伸ばした様々な複雑な骨格を形成できます。"
+            },
+            7: {
+                symbol: "N", name: "窒素", group: 15, period: 2, neutrons: 7,
+                config: { k: 2, l: 5, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 15族】</strong>最外殻（L殻）に5個の電子があります。あと3個の電子を受け入れると、ネオン（Ne）と同じ安定なオクテット（8個）になれます。そのため、他と電子を3組共有する『3重結合（N₂）』を非常に作りやすく、強固な結合ゆえに空気中の大半を占める不活性な窒素ガスとして存在します。"
+            },
+            8: {
+                symbol: "O", name: "酸素", group: 16, period: 2, neutrons: 8,
+                config: { k: 2, l: 6, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 16族】</strong>最外殻（L殻）に6個の電子があります（16族の1の位の数）。あと2個の電子をどこからか奪ってくると、安定なネオンの配置になれます。そのため電子を引きつける力が非常に強く、容易に電子2個をぶんどって2価の陰イオン O²⁻（酸化物イオン）として安定化します。"
+            },
+            9: {
+                symbol: "F", name: "フッ素", group: 17, period: 2, neutrons: 10,
+                config: { k: 2, l: 7, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 17族】</strong>ハロゲンの王者フッ素。最外殻に7個あり、あと『たった1個』で夢のネオンと同じ電子配置になれます。そのため、全元素中で<strong>最も強烈に電子を欲しがる性質（最大の電気陰性度）</strong>を持ち、あらゆる相手から電子を1個奪って1価 of 陰イオン F⁻ になります。"
+            },
+            10: {
+                symbol: "Ne", name: "ネオン", group: 18, period: 2, neutrons: 10,
+                config: { k: 2, l: 8, m: 0, n: 0 },
+                commentary: "<strong>【第2周期 / 18族】</strong>第2周期の終点。K殻に2個, L殻に8個で、外側の殻（L殻）がオクテット（8個）となり非常に安定な<strong>閉殻状態</strong>です。これ以上電子を欲しがらないし、捨てることもありません。最外殻電子数は8ですが、化学反応に使える手はないので<strong>『価電子数は0』</strong>となります。"
+            },
+            11: {
+                symbol: "Na", name: "ナトリウム", group: 1, period: 3, neutrons: 12,
+                config: { k: 2, l: 8, m: 1, n: 0 },
+                commentary: "<strong>【第3周期 / 1族】</strong>ここから第3周期（M殻）へ。第3周期なので使用電子殻は3つ（K, L, M殻）となり、原子が一気にサイズアップします。1族なので最外殻であるM殻にポツンと電子が1個だけあります（最外殻＝価電子＝1）。この外側の1個が抜ければ、内側のL殻（8個）が実質的な最外殻になってネオンと同じ安定な形になれます。よって、非常に1価の陽イオン Na⁺ になりやすい激しい金属です。"
+            },
+            12: {
+                symbol: "Mg", name: "マグネシウム", group: 2, period: 3, neutrons: 12,
+                config: { k: 2, l: 8, m: 2, n: 0 },
+                commentary: "<strong>【第3周期 / 2族】</strong>第3周期（3殻分）の2族（価電子2）。このM殻の2個の電子をパッと捨ててしまえば、ネオンと同じ電子配置になれるため、2価の陽イオン Mg²⁺ になります。アルカリ土類金属に準じた性質を持ちます。"
+            },
+            13: {
+                symbol: "Al", name: "アルミニウム", group: 13, period: 3, neutrons: 14,
+                config: { k: 2, l: 8, m: 3, n: 0 },
+                commentary: "<strong>【第3周期 / 13族】</strong>最外殻のM殻に3個の電子があります（価電子数3）。電子3個をすべて放出して、ネオン型の安定した電子配置になりたがるため、3価の陽イオン Al³⁺ になりやすい性質を持ちます。"
+            },
+            14: {
+                symbol: "Si", name: "ケイ素", group: 14, period: 3, neutrons: 14,
+                config: { k: 2, l: 8, m: 4, n: 0 },
+                commentary: "<strong>【第3周期 / 14族】</strong>炭素と同族の14族元素。最外殻電子（価電子）は4個。炭素と同じように、電子を4個共有してがっちりと四方に結合を広げる網目構造を形成できます。これが半導体の材料であるシリコンクリスタルを生み出す基礎です。"
+            },
+            15: {
+                symbol: "P", name: "リン", group: 15, period: 3, neutrons: 16,
+                config: { k: 2, l: 8, m: 5, n: 0 },
+                commentary: "<strong>【第3周期 / 15族】</strong>最外殻（M殻）に5個の電子を持ちます（価電子数5）。窒素と同族で、化学結合において多様な結合パターンを持つ、生体（DNAやATP）に極めて重要な元素です。"
+            },
+            16: {
+                symbol: "S", name: "硫黄", group: 16, period: 3, neutrons: 16,
+                config: { k: 2, l: 8, m: 6, n: 0 },
+                commentary: "<strong>【第3周期 / 16族】</strong>酸素と同族の16族。最外殻電子（価電子）は6個。あと2個の電子を欲しがって、2価の陰イオン S²⁻（硫化物イオン）になるのが得意です。"
+            },
+            17: {
+                symbol: "Cl", name: "塩素", group: 17, period: 3, neutrons: 18,
+                config: { k: 2, l: 8, m: 7, n: 0 },
+                commentary: "<strong>【第3周期 / 17族】</strong>フッ素と同族のハロゲン元素。最外殻に7個の電子を持ち、アルゴンと同じ安定構造を完成させるためにあと1個の電子を強く欲しがります。結果として、1価の陰イオン Cl⁻（塩化物イオン）として身の回りの塩（NaCl）などに存在します。"
+            },
+            18: {
+                symbol: "Ar", name: "アルゴン", group: 18, period: 3, neutrons: 22,
+                config: { k: 2, l: 8, m: 8, n: 0 },
+                commentary: "<strong>【第3周期 / 18族】</strong>第3周期の希ガス。M殻の最大収容数は本質的には18個ですが、<strong>最外殻に8個入った時点でオクテット（極めて安定な構造）を形成</strong>するため、ここでひとまず閉殻と同等の不活性な状態になります。そのため価電子数は『0』です。"
+            },
+            19: {
+                symbol: "K", name: "カリウム", group: 1, period: 4, neutrons: 20,
+                config: { k: 2, l: 8, m: 8, n: 1 },
+                commentary: "<strong>【第4周期 / 1族】</strong>ここから第4周期（N殻）へ突入！M殻にはまだ電子が入る余裕（あと10個）があるのに、なぜ19番目の電子はN殻に入るのか？理由は、M殻の一部（d軌道）よりも、N殻の入り口（s軌道）の方がエネルギーが低くて電子が居心地が良いため。最外殻はN殻（1個）となり、1価の陽イオン K⁺ になります。"
+            },
+            20: {
+                symbol: "Ca", name: "カルシウム", group: 2, period: 4, neutrons: 20,
+                config: { k: 2, l: 8, m: 8, n: 2 },
+                commentary: "<strong>【第4周期 / 2族】</strong>第4周期（4殻分）の2族（価電子2）。カルシウム。カリウムに引き続きN殻に2番目の電子が入ります（最外殻＝価電子＝2）。このN殻の2個をポイッと放出して、手前のアルゴンと同じ安定した電子配置になりたがるので、2価の陽イオン Ca²⁺ になります。"
+            }
+        };
+
+        // UI state variables
+        let currentAtomicNumber = 1;
+        let isAnimationRunning = true;
+
+        // Render the 1-20 Periodic grid layout inside left column (Optimized with Group & Period Labels)
+        function buildPeriodicGrid() {
+            const gridContainer = document.getElementById('periodic-grid');
+            gridContainer.innerHTML = '';
+
+            // 1. Group Headers (Top row): Row of 9 columns (1 empty for Period label corner + 8 Group labels)
+            const groupHeaders = [
+                { text: '周期\\族', isCorner: true },
+                { text: '1', isGroup: true, num: 1 },
+                { text: '2', isGroup: true, num: 2 },
+                { text: '13', isGroup: true, num: 13 },
+                { text: '14', isGroup: true, num: 14 },
+                { text: '15', isGroup: true, num: 15 },
+                { text: '16', isGroup: true, num: 16 },
+                { text: '17', isGroup: true, num: 17 },
+                { text: '18', isGroup: true, num: 18 }
+            ];
+
+            groupHeaders.forEach(header => {
+                const headDiv = document.createElement('div');
+                if (header.isCorner) {
+                    headDiv.className = "text-[9px] text-slate-500 font-bold flex items-center justify-center border-b border-r border-slate-800/80 pb-1 h-8";
+                    headDiv.innerHTML = "<div><span>族</span><hr class='border-slate-800 my-0.5'/><span>周期</span></div>";
+                } else {
+                    headDiv.id = `group-header-${header.num}`;
+                    headDiv.className = "text-[11px] text-indigo-400 font-extrabold flex flex-col justify-center items-center border-b border-slate-800/80 pb-1 transition-all h-8";
+                    headDiv.innerHTML = `<span class="text-[8px] text-indigo-600 font-normal">族</span>${header.text}`;
+                }
+                gridContainer.appendChild(headDiv);
+            });
+
+            // Periodic table layout mapping
+            // Elements mapped per row (Period 1 to 4)
+            // Column 1 is Period Label, Column 2-9 are the respective groups [1, 2, 13, 14, 15, 16, 17, 18]
+            const gridLayout = [
+                // Period 1
+                { type: 'period', num: 1, text: '第1周期 (K殻)' },
+                { type: 'element', z: 1 },  // H (Group 1)
+                { type: 'empty' },          // Group 2
+                { type: 'empty' },          // Group 13
+                { type: 'empty' },          // Group 14
+                { type: 'empty' },          // Group 15
+                { type: 'empty' },          // Group 16
+                { type: 'empty' },          // Group 17
+                { type: 'element', z: 2 },  // He (Group 18)
+
+                // Period 2
+                { type: 'period', num: 2, text: '第2周期 (L殻)' },
+                { type: 'element', z: 3 },  // Li
+                { type: 'element', z: 4 },  // Be
+                { type: 'element', z: 5 },  // B
+                { type: 'element', z: 6 },  // C
+                { type: 'element', z: 7 },  // N
+                { type: 'element', z: 8 },  // O
+                { type: 'element', z: 9 },  // F
+                { type: 'element', z: 10 }, // Ne
+
+                // Period 3
+                { type: 'period', num: 3, text: '第3周期 (M殻)' },
+                { type: 'element', z: 11 }, // Na
+                { type: 'element', z: 12 }, // Mg
+                { type: 'element', z: 13 }, // Al
+                { type: 'element', z: 14 }, // Si
+                { type: 'element', z: 15 }, // P
+                { type: 'element', z: 16 }, // S
+                { type: 'element', z: 17 }, // Cl
+                { type: 'element', z: 18 }, // Ar
+
+                // Period 4
+                { type: 'period', num: 4, text: '第4周期 (N殻)' },
+                { type: 'element', z: 19 }, // K
+                { type: 'element', z: 20 }, // Ca
+                { type: 'empty' },
+                { type: 'empty' },
+                { type: 'empty' },
+                { type: 'empty' },
+                { type: 'empty' },
+                { type: 'empty' }
+            ];
+
+            gridLayout.forEach(cell => {
+                if (cell.type === 'empty') {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = "bg-transparent border border-transparent";
+                    gridContainer.appendChild(emptyDiv);
+                } 
+                else if (cell.type === 'period') {
+                    const periodDiv = document.createElement('div');
+                    periodDiv.id = `period-header-${cell.num}`;
+                    periodDiv.className = "text-[9px] text-teal-400 font-extrabold border-r border-slate-800/80 flex flex-col justify-center items-start text-left pr-1.5 transition-all";
+                    periodDiv.innerHTML = `<span class="text-[7px] text-teal-600 block leading-none">周期</span>${cell.num}<span class="text-[7px] text-slate-500 font-normal font-sans block mt-0.5">${cell.num === 1 ? 'K殻' : cell.num === 2 ? 'L殻' : cell.num === 3 ? 'M殻' : 'N殻'}</span>`;
+                    gridContainer.appendChild(periodDiv);
+                } 
+                else if (cell.type === 'element') {
+                    const el = elementsData[cell.z];
+                    const btn = document.createElement('button');
+                    btn.id = `grid-el-${cell.z}`;
+                    btn.onclick = () => selectElement(cell.z);
+                    
+                    // Group style helpers
+                    let bgStyle = "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750";
+                    if (el.group === 1 && el.symbol !== "H") {
+                        bgStyle = "bg-amber-950/30 border-amber-800 text-amber-300 hover:bg-amber-900/50";
+                    } else if (el.group === 2) {
+                        bgStyle = "bg-orange-950/30 border-orange-800/80 text-orange-300 hover:bg-orange-900/50";
+                    } else if (el.group === 17) {
+                        bgStyle = "bg-emerald-950/30 border-emerald-800 text-emerald-300 hover:bg-emerald-900/50";
+                    } else if (el.group === 18) {
+                        bgStyle = "bg-indigo-950/30 border-indigo-800 text-indigo-300 hover:bg-indigo-900/50";
+                    }
+
+                    btn.className = `${bgStyle} border p-1 rounded flex flex-col items-center justify-between transition-all aspect-square font-mono font-bold`;
+                    btn.innerHTML = `
+                        <span class="text-[8px] opacity-60 block leading-none">${cell.z}</span>
+                        <span class="text-sm block font-black leading-tight">${el.symbol}</span>
+                    `;
+                    gridContainer.appendChild(btn);
+                }
+            });
+        }
+
+        // Selection Trigger
+        function selectElement(z) {
+            currentAtomicNumber = z;
+            document.getElementById('element-slider').value = z;
+            updateUI();
+        }
+
+        // Stepper triggered (+ / -)
+        function stepElement(dir) {
+            let nextVal = currentAtomicNumber + dir;
+            if (nextVal >= 1 && nextVal <= 20) {
+                selectElement(nextVal);
+            }
+        }
+
+        // Slider Input Trigger
+        document.getElementById('element-slider').addEventListener('input', function(e) {
+            selectElement(parseInt(e.target.value));
+        });
+
+        // Toggle Animation State
+        function toggleAnimation() {
+            isAnimationRunning = !isAnimationRunning;
+            const btnText = document.getElementById('btn-anim-text');
+            const btnIcon = document.getElementById('btn-anim-icon');
+            const rotators = ['orbit-rotator-k', 'orbit-rotator-l', 'orbit-rotator-m', 'orbit-rotator-n'];
+
+            if (isAnimationRunning) {
+                btnText.innerText = "アニメーション停止";
+                btnIcon.setAttribute('data-lucide', 'pause');
+                rotators.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.animationPlayState = 'running';
+                });
+            } else {
+                btnText.innerText = "アニメーション再生";
+                btnIcon.setAttribute('data-lucide', 'play');
+                rotators.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.animationPlayState = 'paused';
+                });
+            }
+            lucide.createIcons();
+        }
+
+        // Primary UI & Bohr Model Generator Engine
+        function updateUI() {
+            const data = elementsData[currentAtomicNumber];
+            
+            // Highlight selected periodic grid button & headers
+            document.querySelectorAll('[id^="grid-el-"]').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-indigo-400', 'scale-105', 'z-10');
+            });
+            document.querySelectorAll('[id^="group-header-"]').forEach(hdr => {
+                hdr.classList.remove('text-indigo-300', 'scale-110', 'bg-indigo-950/20', 'rounded-t');
+                hdr.classList.add('text-indigo-400');
+            });
+            document.querySelectorAll('[id^="period-header-"]').forEach(hdr => {
+                hdr.classList.remove('text-teal-200', 'scale-110', 'bg-teal-950/20', 'rounded-l');
+                hdr.classList.add('text-teal-400');
+            });
+
+            // Set current highlights on Table Headers
+            const activeGridBtn = document.getElementById(`grid-el-${currentAtomicNumber}`);
+            if (activeGridBtn) {
+                activeGridBtn.classList.add('ring-2', 'ring-indigo-400', 'scale-105', 'z-10');
+            }
+            const activeGroupHdr = document.getElementById(`group-header-${data.group}`);
+            if (activeGroupHdr) {
+                activeGroupHdr.classList.add('text-indigo-300', 'scale-110', 'bg-indigo-950/20', 'rounded-t');
+                activeGroupHdr.classList.remove('text-indigo-400');
+            }
+            const activePeriodHdr = document.getElementById(`period-header-${data.period}`);
+            if (activePeriodHdr) {
+                activePeriodHdr.classList.add('text-teal-200', 'scale-110', 'bg-teal-950/20', 'rounded-l');
+                activePeriodHdr.classList.remove('text-teal-400');
+            }
+
+            // Text info updates
+            document.getElementById('atomic-number-display').innerText = currentAtomicNumber;
+            document.getElementById('element-symbol').innerText = data.symbol;
+            document.getElementById('element-name').innerText = data.name;
+            document.getElementById('teacher-note').innerHTML = data.commentary;
+            document.getElementById('visualizer-header').innerText = `${data.name}原子 (${data.symbol}) のボーア電子殻模型（第 ${data.period} 周期 / ${data.group} 族）`;
+
+            // Group & Period Detail Badges
+            document.getElementById('element-group-display').innerText = `${data.group} 族`;
+            document.getElementById('element-period-display').innerText = `第 ${data.period} 周期`;
+            
+            // Subtitles of badges
+            let groupType = "典型元素";
+            if (data.group === 1 && data.symbol !== "H") groupType = "アルカリ金属";
+            else if (data.group === 2) groupType = "アルカリ土類金属";
+            else if (data.group === 17) groupType = "ハロゲン";
+            else if (data.group === 18) groupType = "希ガス";
+            document.getElementById('element-group-type').innerText = groupType;
+
+            const shellNameOfPeriod = data.period === 1 ? "K殻のみ" : data.period === 2 ? "K・L殻" : data.period === 3 ? "K・L・M殻" : "K・L・M・N殻";
+            document.getElementById('element-period-shell').innerText = `${shellNameOfPeriod}を使用`;
+
+            // Nucleus center label
+            document.getElementById('nucleus-charge').innerText = `+${currentAtomicNumber}`;
+            document.getElementById('nucleus-neutrons').innerText = `N:${data.neutrons}`;
+
+            // Calculate electron characteristics
+            const totalShells = (data.config.n > 0) ? 4 : (data.config.m > 0) ? 3 : (data.config.l > 0) ? 2 : 1;
+            
+            let outerCount = 0;
+            let activeShellLetter = "K";
+            let activeShellName = "K殻";
+            if (data.config.n > 0) {
+                outerCount = data.config.n;
+                activeShellLetter = "N";
+                activeShellName = "N殻";
+            } else if (data.config.m > 0) {
+                outerCount = data.config.m;
+                activeShellLetter = "M";
+                activeShellName = "M殻";
+            } else if (data.config.l > 0) {
+                outerCount = data.config.l;
+                activeShellLetter = "L";
+                activeShellName = "L殻";
+            } else {
+                outerCount = data.config.k;
+                activeShellLetter = "K";
+                activeShellName = "K殻";
+            }
+
+            // Valence calculation: 18족 (He, Ne, Ar) has 0 valence
+            const isNobleGas = (data.group === 18);
+            const valenceCount = isNobleGas ? 0 : outerCount;
+
+            // Update stats cards
+            document.getElementById('outer-electrons').innerText = outerCount;
+            document.getElementById('outer-shell-name').innerText = `${activeShellName}が最も外側`;
+            
+            document.getElementById('valence-electrons').innerText = valenceCount;
+            document.getElementById('valence-relation-text').innerText = isNobleGas 
+                ? "18族 ＝ 価電子 0個" 
+                : `${data.group}族 ＝ 価電子 ${valenceCount}個`;
+
+            document.getElementById('shell-count-display').innerText = totalShells;
+            document.getElementById('shell-relation-text').innerText = `第${data.period}周期 ＝ ${totalShells}つの殻を使用`;
+
+            // Hint Text near controls
+            document.getElementById('period-rule-hint').innerText = `第${data.period}周期の元素なので、一番外側は ${activeShellName}（合計 ${totalShells} つの電子殻）になります。`;
+
+            // Electron configuration string (K: 2, L: 8...)
+            let distributionStr = `K: ${data.config.k}`;
+            if (data.config.l > 0) distributionStr += ` / L: ${data.config.l}`;
+            if (data.config.m > 0) distributionStr += ` / M: ${data.config.m}`;
+            if (data.config.n > 0) distributionStr += ` / N: ${data.config.n}`;
+            document.getElementById('electron-distribution').innerText = distributionStr;
+
+            // Expected ion structure label
+            const targetIonSpan = document.getElementById('target-ion');
+            const ionExpSpan = document.getElementById('ion-explanation');
+            
+            if (isNobleGas) {
+                targetIonSpan.innerText = "希ガス（安定）";
+                targetIonSpan.className = "text-base font-bold text-indigo-400 block mt-1.5";
+                ionExpSpan.innerText = "価電子0。極めて不活性な安定構造";
+            } else if (valenceCount <= 3 && data.symbol !== "H") {
+                // Metal cation tendency
+                targetIonSpan.innerText = `${data.symbol}${valenceCount === 1 ? '⁺' : valenceCount === 2 ? '²⁺' : '³⁺'} (陽イオン)`;
+                targetIonSpan.className = "text-base font-bold text-amber-400 block mt-1.5";
+                ionExpSpan.innerText = `価電子 ${valenceCount}個を放出しやすい（陽性）`;
+            } else if (valenceCount >= 5) {
+                // Nonmetal anion tendency
+                const missingValence = 8 - valenceCount;
+                targetIonSpan.innerText = `${data.symbol}${missingValence === 1 ? '⁻' : '²⁻'} (陰イオン)`;
+                targetIonSpan.className = "text-base font-bold text-emerald-400 block mt-1.5";
+                ionExpSpan.innerText = `電子を ${missingValence}個引き込んで安定化`;
+            } else if (data.symbol === "H") {
+                targetIonSpan.innerText = "H⁺ または H⁻";
+                targetIonSpan.className = "text-base font-bold text-pink-400 block mt-1.5";
+                ionExpSpan.innerText = "電子を1個捨てるか、1個奪うか";
+            } else {
+                // Carbon, Silicon (group 14) -> covalent bindings
+                targetIonSpan.innerText = "共有結合しやすい";
+                targetIonSpan.className = "text-base font-bold text-blue-400 block mt-1.5";
+                ionExpSpan.innerText = "電子を4個ずつ共有して強力に結合";
+            }
+
+            // Shell visualization rendering (Active shells styling / highlighting)
+            styleShellCircle('shell-k', data.config.k, totalShells >= 1, activeShellLetter === 'K');
+            styleShellCircle('shell-l', data.config.l, totalShells >= 2, activeShellLetter === 'L');
+            styleShellCircle('shell-m', data.config.m, totalShells >= 3, activeShellLetter === 'M');
+            styleShellCircle('shell-n', data.config.n, totalShells >= 4, activeShellLetter === 'N');
+
+            // Populate Electrons on Rotators
+            renderElectronsInOrbit('orbit-rotator-k', data.config.k, 'K', activeShellLetter === "K", isNobleGas);
+            renderElectronsInOrbit('orbit-rotator-l', data.config.l, 'L', activeShellLetter === "L", isNobleGas);
+            renderElectronsInOrbit('orbit-rotator-m', data.config.m, 'M', activeShellLetter === "M", isNobleGas);
+            renderElectronsInOrbit('orbit-rotator-n', data.config.n, 'N', activeShellLetter === "N", isNobleGas);
+        }
+
+        // Sets styling (glow/opacity) of Bohr orbital shells if active & highlights the active outer shell
+        function styleShellCircle(elementId, electronCount, isActive, isOuterShell) {
+            const shellEl = document.getElementById(elementId);
+            const labelEl = document.getElementById(`label-${elementId.split('-')[1]}-shell`);
+            
+            if (!isActive) {
+                shellEl.classList.add('opacity-10', 'border-slate-800');
+                shellEl.classList.remove('opacity-100', 'border-indigo-500/30', 'border-teal-500/80', 'ring-1', 'ring-teal-500/30');
+                if (labelEl) {
+                    labelEl.className = "absolute -top-3.5 text-[8px] text-slate-700 font-mono bg-transparent px-1 rounded";
+                }
+            } else {
+                shellEl.classList.remove('opacity-10', 'border-slate-800');
+                
+                if (isOuterShell) {
+                    // Highlight the active valence shell with teal glow
+                    shellEl.classList.add('opacity-100', 'border-teal-500/80', 'ring-1', 'ring-teal-500/20');
+                    shellEl.classList.remove('border-indigo-500/30');
+                    if (labelEl) {
+                        labelEl.className = "absolute -top-3.5 text-[10px] text-teal-300 font-extrabold font-mono bg-slate-950 border border-teal-900/50 px-1.5 py-0.5 rounded shadow shadow-teal-950";
+                    }
+                } else {
+                    shellEl.classList.add('opacity-100', 'border-indigo-500/30');
+                    shellEl.classList.remove('border-teal-500/80', 'ring-1', 'ring-teal-500/20');
+                    if (labelEl) {
+                        labelEl.className = "absolute -top-3.5 text-[9px] text-slate-500 font-mono bg-slate-950/80 px-1 rounded";
+                    }
+                }
+            }
+        }
+
+        // Places electron dots strategically on concentric rings
+        function renderElectronsInOrbit(rotatorId, count, shellLetter, isOuterShell, isNobleGas) {
+            const rotator = document.getElementById(rotatorId);
+            rotator.innerHTML = '';
+
+            if (count === 0) return;
+
+            // Generate precise polar coords around 360deg
+            for (let i = 0; i < count; i++) {
+                const angle = (360 / count) * i;
+                const electronDot = document.createElement('div');
+                
+                // Color configuration: Valence electrons highlighted in emerald unless noble gas (stable/neutral)
+                let dotBg = "bg-indigo-400 shadow shadow-indigo-400/40";
+                if (isOuterShell) {
+                    dotBg = isNobleGas 
+                        ? "bg-indigo-300 shadow shadow-indigo-300/40 border border-white" 
+                        : "bg-emerald-400 shadow shadow-emerald-400/80 border border-white scale-110 z-10 animate-pulse";
+                }
+
+                electronDot.className = `absolute w-3.5 h-3.5 rounded-full ${dotBg} flex items-center justify-center transition-all duration-300`;
+                
+                // Position placing on concentric relative edges
+                electronDot.style.top = "50%";
+                electronDot.style.left = "50%";
+                
+                // Radius of concentric shell
+                let radius = 0;
+                if (shellLetter === 'K') radius = 65;
+                if (shellLetter === 'L') radius = 110;
+                if (shellLetter === 'M') radius = 155;
+                if (shellLetter === 'N') radius = 200;
+
+                // Position via polar trig
+                const x = radius * Math.cos((angle * Math.PI) / 180);
+                const y = radius * Math.sin((angle * Math.PI) / 180);
+
+                electronDot.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+                
+                // Tiny internal label for electron negative sign
+                electronDot.innerHTML = `<span class="text-[8px] font-bold text-slate-950 select-none" style="margin-top:-2px;">-</span>`;
+
+                rotator.appendChild(electronDot);
+            }
+        }
+
+        // Initialize Periodic Table & First Element H
+        window.onload = function() {
+            buildPeriodicGrid();
+            selectElement(1);
+        }
+    </script>
+</body>
+</html>
