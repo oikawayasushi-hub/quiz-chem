@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>イオンクイズ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Kaku Gothic Pro', Meiryo, sans-serif;
+      background: #f0f7ff; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #app { width: 100%; max-width: 680px; padding: 16px; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .card {
+      background: #fff; border-radius: 16px; padding: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+    h1 { color: #1e3a5f; font-size: 1.6rem; margin-bottom: 8px; text-align: center; }
+    .subtitle { color: #666; text-align: center; margin-bottom: 24px; font-size: .95rem; }
+    .info-box {
+      background: #e8f4fd; border-radius: 10px; padding: 16px;
+      margin-bottom: 24px; font-size: .9rem; line-height: 1.8; color: #444;
+    }
+
+    .btn {
+      display: block; width: 100%; padding: 14px; border: none;
+      border-radius: 10px; font-size: 1rem; font-weight: bold;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: #1d6fa4; color: #fff; }
+    .btn-primary:hover { background: #155d8a; transform: translateY(-1px); }
+
+    .progress-text {
+      display: flex; justify-content: space-between;
+      font-size: .85rem; color: #666; margin-bottom: 6px;
+    }
+    .progress-bar {
+      background: #e5e7eb; border-radius: 99px;
+      height: 8px; margin-bottom: 20px; overflow: hidden;
+    }
+    .progress-fill {
+      background: #1d6fa4; height: 100%;
+      border-radius: 99px; transition: width .3s;
+    }
+
+    .tag {
+      display: inline-block; background: #dbeafe; color: #1e40af;
+      border-radius: 99px; padding: 3px 12px;
+      font-size: .8rem; margin-bottom: 14px;
+    }
+    .tag.thinking { background: #fef3c7; color: #d97706; }
+    .tag.vocab    { background: #dcfce7; color: #15803d; }
+
+    .question-text {
+      font-size: 1.15rem; font-weight: bold; color: #1f2937;
+      margin-bottom: 20px; line-height: 1.6;
+    }
+
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+    .choice {
+      padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 10px;
+      cursor: pointer; transition: all .15s; background: #fff;
+      text-align: left; font-size: .95rem; color: #374151; width: 100%;
+    }
+    .choice:hover { border-color: #1d6fa4; background: #eff6ff; }
+    .choice.correct { border-color: #10b981; background: #d1fae5; color: #065f46; }
+    .choice.wrong   { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+    .choice.reveal  { border-color: #10b981; background: #d1fae5; color: #065f46; }
+
+    .explanation {
+      margin-top: 16px; padding: 14px;
+      background: #f8fafc; border-left: 4px solid #1d6fa4;
+      border-radius: 0 8px 8px 0; font-size: .9rem;
+      line-height: 1.7; color: #374151;
+    }
+    .btn-next { margin-top: 16px; }
+
+    .result-title {
+      text-align: center; font-size: 1.5rem;
+      font-weight: bold; color: #1f2937; margin-bottom: 8px;
+    }
+    .donut-wrap { display: flex; justify-content: center; margin: 20px 0; }
+    .score-label { text-align: center; margin-bottom: 20px; }
+    .score-big  { font-size: 2.5rem; font-weight: bold; color: #1d6fa4; }
+    .score-small { font-size: 1rem; color: #666; }
+
+    .review-item {
+      background: #fff; border-radius: 10px; padding: 14px;
+      margin-bottom: 10px; border-left: 4px solid #ef4444;
+    }
+    .review-item.correct { border-left-color: #10b981; }
+    .review-q   { font-size: .9rem; font-weight: bold; color: #1f2937; margin-bottom: 4px; }
+    .review-ans { font-size: .85rem; color: #555; }
+    .review-exp { font-size: .82rem; color: #666; margin-top: 4px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── スタート画面 ── -->
+  <div id="s-start" class="screen active">
+    <div class="card">
+      <h1>イオンクイズ</h1>
+      <p class="subtitle">第1編第2章「イオン」</p>
+      <div class="info-box">
+        全37問からランダムに <strong>10問</strong> 出題<br>
+        🔵 知識問題 ＋ 🟢 用語問題 ＋ 🟡 思考力問題<br>
+        陽イオン・陰イオン・多原子イオンの名称と化学式を確認しよう
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">スタート</button>
+    </div>
+  </div>
+
+  <!-- ── クイズ画面 ── -->
+  <div id="s-quiz" class="screen">
+    <div class="card">
+      <div class="progress-text">
+        <span id="q-num">問1 / 10</span>
+        <span id="q-score">正解: 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="prog" style="width:0%"></div>
+      </div>
+      <span class="tag" id="q-tag">知識</span>
+      <p class="question-text" id="q-text"></p>
+      <div class="choices" id="q-choices"></div>
+      <div class="explanation" id="q-exp" style="display:none"></div>
+      <button class="btn btn-primary btn-next" id="btn-next"
+              style="display:none" onclick="next()">次の問題 →</button>
+    </div>
+  </div>
+
+  <!-- ── 結果画面 ── -->
+  <div id="s-result" class="screen">
+    <div class="card">
+      <p class="result-title">結果</p>
+      <div class="donut-wrap">
+        <canvas id="donut" width="160" height="160"></canvas>
+      </div>
+      <div class="score-label">
+        <span class="score-big" id="r-score">0</span>
+        <span class="score-small"> / 10 問正解</span>
+      </div>
+      <p id="r-msg" style="text-align:center;color:#666;margin-bottom:16px;"></p>
+      <div id="r-review"></div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="startQuiz()">もう一度</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ALL_Q = [
+  // ═══════════════════════ 知識問題 (27問) ════════════════════════════
+
+  // ── 陽イオンの化学式 ──
+  {
+    type: "知識",
+    q: "ナトリウムイオンの化学式はどれか。",
+    choices: ["Na⁺", "Na⁻", "Na²⁺", "K⁺"],
+    a: 0,
+    exp: "ナトリウム原子(₁₁Na)は価電子1個を放出して1価の陽イオンNa⁺になる。"
+  },
+  {
+    type: "知識",
+    q: "カリウムイオンの化学式はどれか。",
+    choices: ["K⁺", "K⁻", "K²⁺", "Ca⁺"],
+    a: 0,
+    exp: "カリウム原子(₁₉K)は価電子1個を放出して1価の陽イオンK⁺になる。"
+  },
+  {
+    type: "知識",
+    q: "水素イオンの化学式はどれか。",
+    choices: ["H⁺", "H⁻", "H²⁺", "He⁺"],
+    a: 0,
+    exp: "水素原子(₁H)は電子1個を放出して1価の陽イオンH⁺になる。"
+  },
+  {
+    type: "知識",
+    q: "カルシウムイオンの化学式はどれか。",
+    choices: ["Ca²⁺", "Ca⁺", "Ca³⁺", "Mg²⁺"],
+    a: 0,
+    exp: "カルシウム原子(₂₀Ca)は価電子2個を放出して2価の陽イオンCa²⁺になる。"
+  },
+  {
+    type: "知識",
+    q: "マグネシウムイオンの化学式はどれか。",
+    choices: ["Mg²⁺", "Mg⁺", "Mg²⁻", "Mn²⁺"],
+    a: 0,
+    exp: "マグネシウム原子(₁₂Mg)は価電子2個を放出して2価の陽イオンMg²⁺になる。"
+  },
+  {
+    type: "知識",
+    q: "アルミニウムイオンの化学式はどれか。",
+    choices: ["Al³⁺", "Al²⁺", "Al⁺", "Al³⁻"],
+    a: 0,
+    exp: "アルミニウム原子(₁₃Al)は価電子3個を放出して3価の陽イオンAl³⁺になる。"
+  },
+  {
+    type: "知識",
+    q: "銀イオンの化学式はどれか。",
+    choices: ["Ag⁺", "Ag²⁺", "Ag⁻", "Au⁺"],
+    a: 0,
+    exp: "銀(Ag)は1価の陽イオンAg⁺になる。陽イオンの名称は「元素名＋イオン」。"
+  },
+  {
+    type: "知識",
+    q: "鉄(Ⅱ)イオンの化学式はどれか。",
+    choices: ["Fe²⁺", "Fe³⁺", "Fe⁺", "Fe²⁻"],
+    a: 0,
+    exp: "鉄(Ⅱ)イオンはFe²⁺(2価の陽イオン)。鉄にはFe²⁺とFe³⁺の2種類があるため，ローマ数字で区別する。"
+  },
+  {
+    type: "知識",
+    q: "鉄(Ⅲ)イオンの化学式はどれか。",
+    choices: ["Fe³⁺", "Fe²⁺", "Fe³⁻", "Al³⁺"],
+    a: 0,
+    exp: "鉄(Ⅲ)イオンはFe³⁺(3価の陽イオン)。Fe²⁺と区別するためローマ数字(Ⅲ)で3価であることを示す。"
+  },
+
+  // ── 陰イオンの化学式 ──
+  {
+    type: "知識",
+    q: "フッ化物イオンの化学式はどれか。",
+    choices: ["F⁻", "F²⁻", "F⁺", "Cl⁻"],
+    a: 0,
+    exp: "フッ素原子(₉F)は電子1個を受け取って1価の陰イオンF⁻(フッ化物イオン)になる。"
+  },
+  {
+    type: "知識",
+    q: "塩化物イオンの化学式はどれか。",
+    choices: ["Cl⁻", "Cl⁺", "Cl²⁻", "Br⁻"],
+    a: 0,
+    exp: "塩素原子(₁₇Cl)は電子1個を受け取って1価の陰イオンCl⁻(塩化物イオン)になる。"
+  },
+  {
+    type: "知識",
+    q: "酸化物イオンの化学式はどれか。",
+    choices: ["O²⁻", "O⁻", "O²⁺", "S²⁻"],
+    a: 0,
+    exp: "酸素原子(₈O)は電子2個を受け取って2価の陰イオンO²⁻(酸化物イオン)になる。"
+  },
+  {
+    type: "知識",
+    q: "硫化物イオンの化学式はどれか。",
+    choices: ["S²⁻", "S⁻", "S²⁺", "O²⁻"],
+    a: 0,
+    exp: "硫黄原子(₁₆S)は電子2個を受け取って2価の陰イオンS²⁻(硫化物イオン)になる。"
+  },
+
+  // ── 多原子イオンの化学式 ──
+  {
+    type: "知識",
+    q: "アンモニウムイオンの化学式はどれか。",
+    choices: ["NH₄⁺", "NH₃⁺", "NO₃⁺", "NH₄⁻"],
+    a: 0,
+    exp: "アンモニウムイオンはNH₄⁺(1価の多原子陽イオン)。2個以上の原子からなる多原子イオンの一種。"
+  },
+  {
+    type: "知識",
+    q: "水酸化物イオンの化学式はどれか。",
+    choices: ["OH⁻", "OH⁺", "O₂H⁻", "H₂O⁻"],
+    a: 0,
+    exp: "水酸化物イオンはOH⁻(1価の多原子陰イオン)。"
+  },
+  {
+    type: "知識",
+    q: "硫酸イオンの化学式はどれか。",
+    choices: ["SO₄²⁻", "SO₃²⁻", "SO₄⁻", "SO₄²⁺"],
+    a: 0,
+    exp: "硫酸イオンはSO₄²⁻(2価の多原子陰イオン)。"
+  },
+  {
+    type: "知識",
+    q: "硝酸イオンの化学式はどれか。",
+    choices: ["NO₃⁻", "NO₂⁻", "NO₃²⁻", "N₂O⁻"],
+    a: 0,
+    exp: "硝酸イオンはNO₃⁻(1価の多原子陰イオン)。"
+  },
+  {
+    type: "知識",
+    q: "炭酸イオンの化学式はどれか。",
+    choices: ["CO₃²⁻", "CO₂²⁻", "CO₃⁻", "HCO₃⁻"],
+    a: 0,
+    exp: "炭酸イオンはCO₃²⁻(2価の多原子陰イオン)。炭酸水素イオンHCO₃⁻(1価)と混同しないこと。"
+  },
+  {
+    type: "知識",
+    q: "リン酸イオンの化学式はどれか。",
+    choices: ["PO₄³⁻", "PO₃³⁻", "PO₄²⁻", "PO₄³⁺"],
+    a: 0,
+    exp: "リン酸イオンはPO₄³⁻(3価の多原子陰イオン)。"
+  },
+
+  // ── 化学式から名称 ──
+  {
+    type: "知識",
+    q: "化学式「Na⁺」の名称はどれか。",
+    choices: ["ナトリウムイオン", "ナトリウム化物イオン", "塩化ナトリウムイオン", "ナトリウム陽イオン"],
+    a: 0,
+    exp: "陽イオンの名称は「元素名＋イオン」。Na⁺はナトリウムイオン。"
+  },
+  {
+    type: "知識",
+    q: "化学式「Cl⁻」の名称はどれか。",
+    choices: ["塩化物イオン", "塩素イオン", "塩化イオン", "クロルイオン"],
+    a: 0,
+    exp: "陰イオンの名称は語尾が「～化物イオン」になる。Cl⁻は塩化物イオン。"
+  },
+  {
+    type: "知識",
+    q: "化学式「Ca²⁺」の名称はどれか。",
+    choices: ["カルシウムイオン", "カルシウム化物イオン", "炭素イオン", "カルシウム陰イオン"],
+    a: 0,
+    exp: "Ca²⁺はカルシウムイオン(2価の陽イオン)。陽イオンの名称は「元素名＋イオン」。"
+  },
+  {
+    type: "知識",
+    q: "化学式「OH⁻」の名称はどれか。",
+    choices: ["水酸化物イオン", "水素酸化イオン", "酸素水素イオン", "オキソニウムイオン"],
+    a: 0,
+    exp: "OH⁻は水酸化物イオン。多原子陰イオンの1種(1価)。"
+  },
+  {
+    type: "知識",
+    q: "化学式「SO₄²⁻」の名称はどれか。",
+    choices: ["硫酸イオン", "亜硫酸イオン", "硫化物イオン", "過硫酸イオン"],
+    a: 0,
+    exp: "SO₄²⁻は硫酸イオン(2価の多原子陰イオン)。"
+  },
+
+  // ── 電子の放出・受取の数 ──
+  {
+    type: "知識",
+    q: "ナトリウム原子(₁₁Na)が陽イオンになるとき，失う電子の数はいくつか。",
+    choices: ["1個", "2個", "3個", "8個"],
+    a: 0,
+    exp: "₁₁Naの電子配置はK:2, L:8, M:1。M殻の価電子1個を放出してNa⁺(K:2, L:8)になり，Neと同じ電子配置になる。"
+  },
+  {
+    type: "知識",
+    q: "塩素原子(₁₇Cl)が陰イオンになるとき，受け取る電子の数はいくつか。",
+    choices: ["1個", "2個", "3個", "7個"],
+    a: 0,
+    exp: "₁₇Clの電子配置はK:2, L:8, M:7。電子1個を受け取ってCl⁻(K:2, L:8, M:8)になり，Arと同じ電子配置になる。"
+  },
+  {
+    type: "知識",
+    q: "カルシウム原子(₂₀Ca)が陽イオンになるとき，失う電子の数はいくつか。",
+    choices: ["2個", "1個", "3個", "8個"],
+    a: 0,
+    exp: "₂₀Caの電子配置はK:2, L:8, M:8, N:2。N殻の電子2個を放出してCa²⁺(K:2, L:8, M:8)になる。"
+  },
+
+  // ═══════════════════════ 用語問題 (8問) ═════════════════════════════
+  {
+    type: "用語",
+    q: "「イオン（単原子イオン）」の説明として正しいものはどれか。",
+    choices: [
+      "原子が電子を放出または受け取り，電気を帯びた粒子",
+      "原子が陽子を放出して電気を帯びた粒子",
+      "2個以上の原子が結合して電気を帯びた粒子",
+      "原子核が分裂して生じた粒子"
+    ],
+    a: 0,
+    exp: "イオンとは，原子が電子を放出したり受け取ったりして，陽子の数と電子の数が異なるようになり，電気を帯びた粒子のこと。"
+  },
+  {
+    type: "用語",
+    q: "「陽イオン」の説明として正しいものはどれか。",
+    choices: [
+      "原子が電子を放出して正の電荷をもつようになった粒子",
+      "原子が電子を受け取って正の電荷をもつようになった粒子",
+      "原子が陽子を受け取って生じた粒子",
+      "原子が電子を放出して負の電荷をもつようになった粒子"
+    ],
+    a: 0,
+    exp: "陽イオン(cation)とは，原子が電子を放出して正の電荷をもつようになった粒子。例：Na → Na⁺ + e⁻"
+  },
+  {
+    type: "用語",
+    q: "「陰イオン」の説明として正しいものはどれか。",
+    choices: [
+      "原子が電子を受け取って負の電荷をもつようになった粒子",
+      "原子が電子を放出して負の電荷をもつようになった粒子",
+      "原子が陽子を失って生じた粒子",
+      "原子が電子を受け取って正の電荷をもつようになった粒子"
+    ],
+    a: 0,
+    exp: "陰イオン(anion)とは，原子が電子を受け取って負の電荷をもつようになった粒子。例：Cl + e⁻ → Cl⁻"
+  },
+  {
+    type: "用語",
+    q: "「陽性」の説明として正しいものはどれか。",
+    choices: [
+      "原子が陽イオンになりやすい性質",
+      "原子が陰イオンになりやすい性質",
+      "原子が電子を受け取りやすい性質",
+      "イオン化エネルギーが大きい性質"
+    ],
+    a: 0,
+    exp: "陽性とは，原子が陽イオンになりやすい性質のこと。一般に価電子数が1〜3個の原子は陽性が強い。"
+  },
+  {
+    type: "用語",
+    q: "「陰性」の説明として正しいものはどれか。",
+    choices: [
+      "原子が陰イオンになりやすい性質",
+      "原子が陽イオンになりやすい性質",
+      "原子が電子を放出しやすい性質",
+      "イオン化エネルギーが小さい性質"
+    ],
+    a: 0,
+    exp: "陰性とは，原子が陰イオンになりやすい性質のこと。一般に価電子数が6〜7個の原子は陰性が強い。"
+  },
+  {
+    type: "用語",
+    q: "イオンの「価数」の説明として正しいものはどれか。",
+    choices: [
+      "原子がイオンになるときに放出または受け取った電子の数",
+      "イオンがもつ陽子の数",
+      "イオンの原子番号",
+      "イオンの電子殻の数"
+    ],
+    a: 0,
+    exp: "価数とは，原子がイオンになるときに放出したり受け取ったりした電子の数のこと。この電子数がイオンの電荷の大きさに等しい。"
+  },
+  {
+    type: "用語",
+    q: "「多原子イオン」の説明として正しいものはどれか。",
+    choices: [
+      "2個以上の原子が結合した原子団が電気を帯びることで生じるイオン",
+      "1個の原子から生じるイオン",
+      "2価以上の電荷をもつイオン",
+      "原子番号が大きい原子から生じるイオン"
+    ],
+    a: 0,
+    exp: "多原子イオンとは，2個以上の原子が結合した原子団が電気を帯びることで生じるイオン。NH₄⁺・SO₄²⁻などが代表例。"
+  },
+
+  // ═══════════════════════ 思考力問題 (3問) ════════════════════════════
+  {
+    type: "思考力",
+    q: "ナトリウムイオン(Na⁺)が安定な理由として，最も正しいものはどれか。",
+    choices: [
+      "Na⁺はNeと同じ電子配置をとり，貴ガスに近い安定な状態になるから",
+      "Na⁺は電子数が減り軽くなるから安定",
+      "Na⁺は陽子数と電子数が等しくなるから安定",
+      "Na⁺はM殻に電子が追加されるから安定"
+    ],
+    a: 0,
+    exp: "Na⁺の電子配置はK:2, L:8でNeと同じ。最外殻(L殻)に8個の電子が入った安定な電子配置になるため，Na⁺は安定である。"
+  },
+  {
+    type: "思考力",
+    q: "塩素原子(₁₇Cl)が電子を1個受け取って陰イオンになりやすい理由として，正しいものはどれか。",
+    choices: [
+      "電子を1個受け取るとArと同じ電子配置になり，最外殻に8個の電子が入って安定になるから",
+      "Clは原子番号が大きく電子を引きつける力が弱いから",
+      "Clの価電子は6個で電子を受け取っても変化が少ないから",
+      "電子を受け取るとM殻が満杯(18個)になるから安定"
+    ],
+    a: 0,
+    exp: "Clの電子配置はK:2, L:8, M:7。電子1個を受け取るとK:2, L:8, M:8となりArと同じ安定な電子配置になる。価電子数7個の原子は陰性が強い。"
+  },
+  {
+    type: "思考力",
+    q: "一般に，価電子数が1〜3個の原子は陽イオンに，6〜7個の原子は陰イオンになりやすい。その理由として最も適切なものはどれか。",
+    choices: [
+      "少数の電子を失うか受け取るだけで，貴ガスに近い安定な電子配置になれるから",
+      "価電子数が少ないほど原子核の引力が弱く，電子を失いやすいから",
+      "価電子数が多いほど陽子数も多くなり，電子を引きつけやすいから",
+      "価電子数の合計が8になる組み合わせほど安定だから"
+    ],
+    a: 0,
+    exp: "価電子数1〜3の原子は少数の電子を放出するだけで直前の貴ガスの電子配置に近づける。価電子数6〜7の原子は1〜2個受け取るだけで直後の貴ガスの電子配置になれる。どちらも少ない変化で安定化できるため。"
+  }
+];
+
+// ── クイズ状態 ──
+let session = [], idx = 0, score = 0, results = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showOnly(id) {
+  ['s-start', 's-quiz', 's-result'].forEach(s => {
+    document.getElementById(s).classList.toggle('active', s === id);
+  });
+}
+
+function startQuiz() {
+  // 毎回：思考力1問＋用語2問＋知識7問 = 10問
+  const thinking  = shuffle(ALL_Q.filter(q => q.type === '思考力'));
+  const vocab     = shuffle(ALL_Q.filter(q => q.type === '用語'));
+  const knowledge = shuffle(ALL_Q.filter(q => q.type === '知識'));
+  session = shuffle([thinking[0], ...vocab.slice(0, 2), ...knowledge.slice(0, 7)]);
+  idx = 0; score = 0; results = [];
+  renderQ();
+  showOnly('s-quiz');
+}
+
+function renderQ() {
+  const q = session[idx];
+  document.getElementById('q-num').textContent   = `問${idx + 1} / ${session.length}`;
+  document.getElementById('q-score').textContent = `正解: ${score}`;
+  document.getElementById('prog').style.width    = `${(idx / session.length) * 100}%`;
+
+  const tagEl = document.getElementById('q-tag');
+  tagEl.textContent = q.type;
+  tagEl.className   = 'tag'
+    + (q.type === '思考力' ? ' thinking' : q.type === '用語' ? ' vocab' : '');
+
+  document.getElementById('q-text').textContent   = q.q;
+  document.getElementById('q-exp').style.display  = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+
+  const choicesEl = document.getElementById('q-choices');
+  choicesEl.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.textContent = c;
+    btn.onclick = () => select(i);
+    choicesEl.appendChild(btn);
+  });
+}
+
+function select(chosen) {
+  const q = session[idx];
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => { b.onclick = null; });
+
+  const correct = chosen === q.a;
+  if (correct) score++;
+
+  btns[chosen].classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) btns[q.a].classList.add('reveal');
+
+  const expEl = document.getElementById('q-exp');
+  expEl.textContent   = q.exp;
+  expEl.style.display = 'block';
+
+  results.push({ q, chosen, correct });
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent   = idx + 1 < session.length ? '次の問題 →' : '結果を見る';
+}
+
+function next() {
+  idx++;
+  if (idx < session.length) {
+    renderQ();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('r-score').textContent = score;
+  const pct = score / session.length;
+  const msg = pct === 1  ? '満点！完璧です！'
+            : pct >= 0.8 ? 'よくできました！'
+            : pct >= 0.6 ? 'もう少しです。'
+            : '復習しましょう！';
+  document.getElementById('r-msg').textContent = msg;
+
+  // ドーナツグラフ
+  const canvas = document.getElementById('donut');
+  const ctx = canvas.getContext('2d');
+  const cx = 80, cy = 80, r = 65, lw = 18;
+  ctx.clearRect(0, 0, 160, 160);
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+  if (score > 0) {
+    ctx.strokeStyle = '#1d6fa4';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI / 2,
+            -Math.PI / 2 + (Math.PI * 2 * score / session.length));
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#1f2937';
+  ctx.font = 'bold 28px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`${score}/${session.length}`, cx, cy);
+
+  // 振り返りリスト
+  const reviewEl = document.getElementById('r-review');
+  reviewEl.innerHTML = '<p style="font-weight:bold;margin-bottom:10px;color:#374151;">問題の振り返り</p>';
+  results.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'review-item' + (r.correct ? ' correct' : '');
+    div.innerHTML = `
+      <div class="review-q">問${i + 1}. ${r.q.q}</div>
+      <div class="review-ans">
+        ${r.correct
+          ? '&#x2705; 正解'
+          : `&#x274C; あなたの答え：${r.q.choices[r.chosen]}　→　正解：${r.q.choices[r.q.a]}`}
+      </div>
+      <div class="review-exp">${r.q.exp}</div>
+    `;
+    reviewEl.appendChild(div);
+  });
+
+  showOnly('s-result');
+}
+</script>
+</body>
+</html>

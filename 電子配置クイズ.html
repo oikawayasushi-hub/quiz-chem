@@ -1,248 +1,498 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>化学基礎クイズ 電子配置・価電子</title>
-<style>
-  :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --correct: #16a34a;
-    --wrong: #dc2626;
-    --bg: #f1f5f9;
-    --card: #ffffff;
-    --text: #1e293b;
-    --muted: #64748b;
-    --border: #e2e8f0;
-    --radius: 12px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>電子配置クイズ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Kaku Gothic Pro', Meiryo, sans-serif;
+      background: #f0f4ff; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #app { width: 100%; max-width: 680px; padding: 16px; }
 
-  .screen { display: none; }
-  .screen.active { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 16px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
 
-  /* ── START ── */
-  #start { justify-content: center; gap: 24px; }
-  .start-card { background: var(--card); border-radius: var(--radius); padding: 40px 32px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
-  .start-card h1 { font-size: 1.5rem; margin-bottom: 8px; color: var(--primary); }
-  .start-card p { color: var(--muted); font-size: .95rem; margin-bottom: 28px; line-height: 1.7; }
-  .category-list { text-align: left; margin-bottom: 28px; }
-  .category-list li { font-size: .88rem; color: var(--muted); padding: 4px 0; list-style: none; padding-left: 1.2em; position: relative; }
-  .category-list li::before { content: "●"; position: absolute; left: 0; color: var(--primary); font-size: .6em; top: 6px; }
-  .btn { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.05rem; cursor: pointer; font-weight: 700; transition: background .15s; }
-  .btn:hover { background: var(--primary-dark); }
+    .card {
+      background: #fff; border-radius: 16px; padding: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+    h1 { color: #2c3e50; font-size: 1.6rem; margin-bottom: 8px; text-align: center; }
+    .subtitle { color: #666; text-align: center; margin-bottom: 24px; font-size: .95rem; }
+    .info-box {
+      background: #eef2ff; border-radius: 10px; padding: 16px;
+      margin-bottom: 24px; font-size: .9rem; line-height: 1.8; color: #444;
+    }
 
-  /* ── QUIZ ── */
-  #quiz { gap: 0; }
-  .quiz-header { width: 100%; max-width: 640px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .quiz-header .prog { font-size: .9rem; color: var(--muted); }
-  .progress-bar { width: 100%; max-width: 640px; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .4s; }
-  .q-card { background: var(--card); border-radius: var(--radius); padding: 28px 24px; max-width: 640px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
-  .tag { display: inline-block; background: #dbeafe; color: var(--primary); font-size: .75rem; font-weight: 700; padding: 2px 10px; border-radius: 99px; margin-bottom: 12px; }
-  .q-text { font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; }
-  .choices { display: flex; flex-direction: column; gap: 10px; }
-  .choice { display: flex; align-items: flex-start; gap: 12px; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; padding: 12px 16px; cursor: pointer; font-size: .97rem; transition: border-color .15s, background .15s; text-align: left; width: 100%; }
-  .choice:hover:not(.disabled) { border-color: var(--primary); background: #eff6ff; }
-  .choice.correct { border-color: var(--correct); background: #f0fdf4; }
-  .choice.wrong { border-color: var(--wrong); background: #fef2f2; }
-  .choice.disabled { cursor: default; }
-  .choice-label { font-weight: 700; min-width: 1.4em; color: var(--muted); }
-  .choice.correct .choice-label { color: var(--correct); }
-  .choice.wrong .choice-label { color: var(--wrong); }
-  .exp-box { margin-top: 18px; background: #fef9c3; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; font-size: .9rem; line-height: 1.7; display: none; }
-  .exp-box.show { display: block; }
-  .next-wrap { margin-top: 20px; text-align: right; display: none; }
-  .next-wrap.show { display: block; }
+    .btn {
+      display: block; width: 100%; padding: 14px; border: none;
+      border-radius: 10px; font-size: 1rem; font-weight: bold;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: #4f46e5; color: #fff; }
+    .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+    .btn-secondary { background: #e5e7eb; color: #374151; margin-top: 10px; }
+    .btn-secondary:hover { background: #d1d5db; }
 
-  /* ── RESULT ── */
-  #result { justify-content: center; gap: 20px; }
-  .result-card { background: var(--card); border-radius: var(--radius); padding: 36px 28px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
-  .result-card h2 { font-size: 1.4rem; margin-bottom: 24px; }
-  .donut-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 20px; }
-  .donut-wrap svg { transform: rotate(-90deg); }
-  .donut-bg { fill: none; stroke: var(--border); stroke-width: 14; }
-  .donut-fg { fill: none; stroke: var(--primary); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
-  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.8rem; font-weight: 800; color: var(--primary); }
-  .score-label { font-size: 1rem; color: var(--muted); margin-bottom: 24px; }
-  .review-list { text-align: left; margin-bottom: 28px; }
-  .review-item { border-bottom: 1px solid var(--border); padding: 10px 0; font-size: .9rem; }
-  .review-item .ri-q { color: var(--text); margin-bottom: 4px; }
-  .review-item .ri-a { color: var(--muted); font-size: .85rem; }
-  .review-item .ri-a .mark { font-weight: 700; }
-  .mark.ok { color: var(--correct); }
-  .mark.ng { color: var(--wrong); }
-  .btn-retry { margin-top: 8px; }
-</style>
+    .progress-text {
+      display: flex; justify-content: space-between;
+      font-size: .85rem; color: #666; margin-bottom: 6px;
+    }
+    .progress-bar {
+      background: #e5e7eb; border-radius: 99px;
+      height: 8px; margin-bottom: 20px; overflow: hidden;
+    }
+    .progress-fill {
+      background: #4f46e5; height: 100%;
+      border-radius: 99px; transition: width .3s;
+    }
+
+    .tag {
+      display: inline-block; background: #eef2ff; color: #4f46e5;
+      border-radius: 99px; padding: 3px 12px;
+      font-size: .8rem; margin-bottom: 14px;
+    }
+    .tag.thinking { background: #fef3c7; color: #d97706; }
+    .tag.vocab    { background: #dcfce7; color: #15803d; }
+
+    .question-text {
+      font-size: 1.15rem; font-weight: bold; color: #1f2937;
+      margin-bottom: 20px; line-height: 1.6;
+    }
+
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+    .choice {
+      padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 10px;
+      cursor: pointer; transition: all .15s; background: #fff;
+      text-align: left; font-size: .95rem; color: #374151; width: 100%;
+    }
+    .choice:hover { border-color: #4f46e5; background: #f5f3ff; }
+    .choice.correct  { border-color: #10b981; background: #d1fae5; color: #065f46; }
+    .choice.wrong    { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+    .choice.reveal   { border-color: #10b981; background: #d1fae5; color: #065f46; }
+
+    .explanation {
+      margin-top: 16px; padding: 14px;
+      background: #f8fafc; border-left: 4px solid #4f46e5;
+      border-radius: 0 8px 8px 0; font-size: .9rem;
+      line-height: 1.7; color: #374151;
+    }
+    .btn-next { margin-top: 16px; }
+
+    .result-title {
+      text-align: center; font-size: 1.5rem;
+      font-weight: bold; color: #1f2937; margin-bottom: 8px;
+    }
+    .donut-wrap { display: flex; justify-content: center; margin: 20px 0; }
+    .score-label { text-align: center; margin-bottom: 20px; }
+    .score-big  { font-size: 2.5rem; font-weight: bold; color: #4f46e5; }
+    .score-small { font-size: 1rem; color: #666; }
+
+    .review-item {
+      background: #fff; border-radius: 10px; padding: 14px;
+      margin-bottom: 10px; border-left: 4px solid #ef4444;
+    }
+    .review-item.correct { border-left-color: #10b981; }
+    .review-q   { font-size: .9rem; font-weight: bold; color: #1f2937; margin-bottom: 4px; }
+    .review-ans { font-size: .85rem; color: #555; }
+    .review-exp { font-size: .82rem; color: #666; margin-top: 4px; line-height: 1.5; }
+  </style>
 </head>
 <body>
+<div id="app">
 
-<!-- START -->
-<div id="start" class="screen active">
-  <div class="start-card">
-    <h1>化学基礎クイズ</h1>
-    <p>第1編 第2章「物質の構成粒子」p.50–51<br>全問題からランダムに <strong>10問</strong> 出題します。</p>
-    <ul class="category-list">
-      <li>電子配置（電子殻・閉殻・最外殻電子）</li>
-      <li>価電子と貴ガス</li>
-    </ul>
-    <button class="btn" onclick="startQuiz()">スタート</button>
-  </div>
-</div>
-
-<!-- QUIZ -->
-<div id="quiz" class="screen">
-  <div class="quiz-header">
-    <span class="prog" id="progText">1 / 10</span>
-  </div>
-  <div class="progress-bar"><div class="progress-bar-fill" id="progBar" style="width:0%"></div></div>
-  <div class="q-card" id="qCard"></div>
-</div>
-
-<!-- RESULT -->
-<div id="result" class="screen">
-  <div class="result-card">
-    <h2>結果</h2>
-    <div class="donut-wrap">
-      <svg viewBox="0 0 140 140" width="140" height="140">
-        <circle class="donut-bg" cx="70" cy="70" r="58"/>
-        <circle class="donut-fg" id="donutFg" cx="70" cy="70" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
-      </svg>
-      <div class="donut-center" id="scoreNum">0/10</div>
+  <!-- ── スタート画面 ── -->
+  <div id="s-start" class="screen active">
+    <div class="card">
+      <h1>電子配置クイズ</h1>
+      <p class="subtitle">第1編第2章「物質の構成粒子」</p>
+      <div class="info-box">
+        全38問からランダムに <strong>10問</strong> 出題<br>
+        🔵 知識問題 ＋ 🟢 用語問題 ＋ 🟡 思考力問題<br>
+        電子殻・電子配置・価電子・貴ガスを確認しよう
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">スタート</button>
     </div>
-    <p class="score-label" id="scoreLabel">よく頑張りました！</p>
-    <p id="saveStatus" style="font-size:.85rem;color:var(--muted);min-height:1.4em;margin-bottom:8px;"></p>
-    <div class="review-list" id="reviewList"></div>
-    <button class="btn btn-retry" onclick="startQuiz()">もう一度（ランダム10問）</button>
-    <br><br>
-    <button class="btn" style="background:#64748b" onclick="showOnly('start')">トップへ戻る</button>
   </div>
+
+  <!-- ── クイズ画面 ── -->
+  <div id="s-quiz" class="screen">
+    <div class="card">
+      <div class="progress-text">
+        <span id="q-num">問1 / 10</span>
+        <span id="q-score">正解: 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="prog" style="width:0%"></div>
+      </div>
+      <span class="tag" id="q-tag">知識</span>
+      <p class="question-text" id="q-text"></p>
+      <div class="choices" id="q-choices"></div>
+      <div class="explanation" id="q-exp" style="display:none"></div>
+      <button class="btn btn-primary btn-next" id="btn-next"
+              style="display:none" onclick="next()">次の問題 →</button>
+    </div>
+  </div>
+
+  <!-- ── 結果画面 ── -->
+  <div id="s-result" class="screen">
+    <div class="card">
+      <p class="result-title">結果</p>
+      <div class="donut-wrap">
+        <canvas id="donut" width="160" height="160"></canvas>
+      </div>
+      <div class="score-label">
+        <span class="score-big" id="r-score">0</span>
+        <span class="score-small"> / 10 問正解</span>
+      </div>
+      <p id="r-msg" style="text-align:center;color:#666;margin-bottom:16px;"></p>
+      <div id="r-review"></div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="startQuiz()">もう一度</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
-// ───────────────────────────────────────────────────────
-// 問題データ（p.50–51）
-// ───────────────────────────────────────────────────────
 const ALL_Q = [
+  // ═══════════════════════════ 知識問題 (27問) ════════════════════════════
+  {
+    type: "知識",
+    q: "K殻に入ることができる電子の最大数は何個か。",
+    choices: ["2個", "4個", "6個", "8個"],
+    a: 0,
+    exp: "K殻はn=1なので，最大数は 2n²=2×1²=2個。"
+  },
+  {
+    type: "知識",
+    q: "L殻に入ることができる電子の最大数は何個か。",
+    choices: ["2個", "4個", "8個", "18個"],
+    a: 2,
+    exp: "L殻はn=2なので，最大数は 2n²=2×2²=8個。"
+  },
+  {
+    type: "知識",
+    q: "M殻に入ることができる電子の最大数は何個か。",
+    choices: ["8個", "12個", "18個", "32個"],
+    a: 2,
+    exp: "M殻はn=3なので，最大数は 2n²=2×3²=18個。"
+  },
+  {
+    type: "知識",
+    q: "N殻に入ることができる電子の最大数は何個か。",
+    choices: ["18個", "24個", "28個", "32個"],
+    a: 3,
+    exp: "N殻はn=4なので，最大数は 2n²=2×4²=32個。"
+  },
+  {
+    type: "知識",
+    q: "内側からn番目の電子殻に入れる電子の最大数を表す式はどれか。",
+    choices: ["2n", "n²", "2n²", "4n²"],
+    a: 2,
+    exp: "内側からn番目の電子殻の最大電子数は 2n² 個。K殻(n=1)は2個，L殻(n=2)は8個，M殻(n=3)は18個。"
+  },
+  {
+    type: "知識",
+    q: "炭素原子(₆C)の最外殻電子の数は何個か。",
+    choices: ["2個", "4個", "6個", "8個"],
+    a: 1,
+    exp: "₆Cの電子配置はK:2, L:4。最外殻(L殻)に4個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "窒素原子(₇N)の最外殻電子の数は何個か。",
+    choices: ["3個", "4個", "5個", "7個"],
+    a: 2,
+    exp: "₇Nの電子配置はK:2, L:5。最外殻(L殻)に5個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "酸素原子(₈O)の価電子の数は何個か。",
+    choices: ["2個", "4個", "6個", "8個"],
+    a: 2,
+    exp: "₈Oの電子配置はK:2, L:6。貴ガスではないので価電子数＝最外殻電子数＝6個。"
+  },
+  {
+    type: "知識",
+    q: "フッ素原子(₉F)の最外殻電子の数は何個か。",
+    choices: ["5個", "6個", "7個", "9個"],
+    a: 2,
+    exp: "₉Fの電子配置はK:2, L:7。最外殻(L殻)に7個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "ネオン原子(₁₀Ne)の価電子の数は何個か。",
+    choices: ["0個", "2個", "8個", "10個"],
+    a: 0,
+    exp: "₁₀Neは貴ガス。K殻・L殻がともに閉殻で非常に安定なため，価電子数は0個と定義される。"
+  },
+  {
+    type: "知識",
+    q: "ナトリウム原子(₁₁Na)のM殻に入っている電子の数は何個か。",
+    choices: ["1個", "2個", "3個", "8個"],
+    a: 0,
+    exp: "₁₁Naの電子配置はK:2, L:8, M:1。M殻には1個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "マグネシウム原子(₁₂Mg)の価電子の数は何個か。",
+    choices: ["1個", "2個", "3個", "4個"],
+    a: 1,
+    exp: "₁₂Mgの電子配置はK:2, L:8, M:2。貴ガスではないので価電子数＝最外殻電子数(M殻)＝2個。"
+  },
+  {
+    type: "知識",
+    q: "アルミニウム原子(₁₃Al)の最外殻電子の数は何個か。",
+    choices: ["1個", "2個", "3個", "4個"],
+    a: 2,
+    exp: "₁₃Alの電子配置はK:2, L:8, M:3。最外殻(M殻)に3個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "ケイ素原子(₁₄Si)の価電子の数は何個か。",
+    choices: ["2個", "4個", "6個", "8個"],
+    a: 1,
+    exp: "₁₄Siの電子配置はK:2, L:8, M:4。貴ガスではないので価電子数＝最外殻電子数(M殻)＝4個。"
+  },
+  {
+    type: "知識",
+    q: "リン原子(₁₅P)の最外殻電子の数は何個か。",
+    choices: ["3個", "4個", "5個", "6個"],
+    a: 2,
+    exp: "₁₅Pの電子配置はK:2, L:8, M:5。最外殻(M殻)に5個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "硫黄原子(₁₆S)の価電子の数は何個か。",
+    choices: ["4個", "5個", "6個", "7個"],
+    a: 2,
+    exp: "₁₆Sの電子配置はK:2, L:8, M:6。貴ガスではないので価電子数＝最外殻電子数(M殻)＝6個。"
+  },
+  {
+    type: "知識",
+    q: "塩素原子(₁₇Cl)の最外殻電子の数は何個か。",
+    choices: ["5個", "6個", "7個", "8個"],
+    a: 2,
+    exp: "₁₇Clの電子配置はK:2, L:8, M:7。最外殻(M殻)に7個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "アルゴン原子(₁₈Ar)の価電子の数は何個か。",
+    choices: ["0個", "6個", "8個", "18個"],
+    a: 0,
+    exp: "₁₈Arは貴ガス。最外殻(M殻)に8個の電子が入って安定な電子配置をとるため，価電子数は0個と定義される。"
+  },
+  {
+    type: "知識",
+    q: "カリウム原子(₁₉K)のN殻に入っている電子の数は何個か。",
+    choices: ["1個", "2個", "8個", "9個"],
+    a: 0,
+    exp: "₁₉Kの電子配置はK:2, L:8, M:8, N:1。M殻が8個になった後，残りの1個はN殻に入る。"
+  },
+  {
+    type: "知識",
+    q: "カルシウム原子(₂₀Ca)の最外殻電子の数は何個か。",
+    choices: ["1個", "2個", "8個", "10個"],
+    a: 1,
+    exp: "₂₀Caの電子配置はK:2, L:8, M:8, N:2。最外殻(N殻)に2個の電子が入っている。"
+  },
+  {
+    type: "知識",
+    q: "ヘリウム原子(₂He)の価電子の数は何個か。",
+    choices: ["0個", "1個", "2個", "4個"],
+    a: 0,
+    exp: "₂Heは貴ガス。K殻に2個の電子が入り閉殻となって非常に安定なため，価電子数は0個と定義される。"
+  },
+  {
+    type: "知識",
+    q: "ナトリウム原子(₁₁Na)の価電子の数は何個か。",
+    choices: ["1個", "2個", "3個", "8個"],
+    a: 0,
+    exp: "₁₁Naの電子配置はK:2, L:8, M:1。貴ガスではないので価電子数＝最外殻電子数(M殻)＝1個。"
+  },
+  {
+    type: "知識",
+    q: "最外殻に最大数の電子が満たされた非常に安定な状態を何というか。",
+    choices: ["閉殻", "価電子", "オクテット", "最外殻電子"],
+    a: 0,
+    exp: "最大数の電子で満たされた電子殻を閉殻（へいかく）という。閉殻状態の原子は非常に安定である。"
+  },
+  {
+    type: "知識",
+    q: "価電子の説明として正しいものはどれか。",
+    choices: [
+      "最外殻電子のうち，化学結合などに重要なはたらきをする電子",
+      "原子核の最も近くにある電子",
+      "K殻に入っているすべての電子",
+      "すべての電子殻の電子の合計数"
+    ],
+    a: 0,
+    exp: "価電子とは，最外殻電子のうち，原子がイオンになったり原子どうしが結びついたりするときに重要なはたらきをする電子のこと。"
+  },
+  {
+    type: "知識",
+    q: "カルシウム原子(₂₀Ca)の電子配置（K:L:M:N）として正しいものはどれか。",
+    choices: ["2:8:8:2", "2:8:10:0", "2:8:8:1:1", "2:6:8:4"],
+    a: 0,
+    exp: "₂₀Caの電子配置はK:2, L:8, M:8, N:2。M殻に8個入った後，エネルギー的な安定性からN殻に2個入る。"
+  },
+  {
+    type: "知識",
+    q: "貴ガスの価電子の数として正しいものはどれか。",
+    choices: ["0個", "2個", "6個", "8個"],
+    a: 0,
+    exp: "貴ガス（He, Ne, Ar など）は安定な電子配置をもつため，価電子数は0個と定義される。"
+  },
+  {
+    type: "知識",
+    q: "電子が電子殻に入るとき，最初にどの電子殻から入るか。",
+    choices: [
+      "K殻から内側の順に入る",
+      "N殻から外側の順に入る",
+      "M殻から内側の順に入る",
+      "L殻から外側の順に入る"
+    ],
+    a: 0,
+    exp: "電子は原子核に近いほど強く引きつけられて安定なため，原則としてK殻から順に（内側から）入っていく。"
+  },
 
-// ══════════════════════════════
-// 電子配置 (p.50) — 13問
-// ══════════════════════════════
-{tag:"電子配置",q:"電子殻は原子核の内側から順に名前がついている。最も内側の電子殻の名称はどれか。",
- choices:["K殻","L殻","M殻","N殻"],a:0,
- exp:"電子殻は内側からK殻・L殻・M殻・N殻…とよばれる。K殻が最も原子核に近い。"},
+  // ═══════════════════════════ 用語問題 (8問) ═════════════════════════════
+  {
+    type: "用語",
+    q: "「電子殻」の説明として正しいものはどれか。",
+    choices: [
+      "原子を構成する電子が分かれて存在する層",
+      "原子核の別名",
+      "電子の最大収容数のこと",
+      "最外殻電子の別名"
+    ],
+    a: 0,
+    exp: "電子殻とは，原子を構成する電子が分かれて存在する層のこと。内側からK殻・L殻・M殻・N殻…とよばれる。"
+  },
+  {
+    type: "用語",
+    q: "「閉殻」の説明として正しいものはどれか。",
+    choices: [
+      "最大数の電子で満たされている電子殻の状態",
+      "電子が1個も入っていない空の電子殻",
+      "最外殻に電子が8個だけ入った状態",
+      "価電子が0個になった状態"
+    ],
+    a: 0,
+    exp: "閉殻（へいかく）とは，その電子殻に入れる最大数の電子で満たされている状態のこと。閉殻の原子は非常に安定である。"
+  },
+  {
+    type: "用語",
+    q: "「最外殻電子」の説明として正しいものはどれか。",
+    choices: [
+      "最も外側の電子殻に入っている電子",
+      "K殻に入っているすべての電子",
+      "化学結合に直接関わる電子",
+      "閉殻を形成している電子"
+    ],
+    a: 0,
+    exp: "最外殻電子とは，最も外側の電子殻（最外殻）に入っている電子のこと。化学的性質に大きく関係する。"
+  },
+  {
+    type: "用語",
+    q: "「電子配置」の説明として正しいものはどれか。",
+    choices: [
+      "各電子殻への電子の入り方",
+      "電子の最大数の求め方",
+      "最外殻電子の個数",
+      "原子核と電子の距離"
+    ],
+    a: 0,
+    exp: "電子配置とは，各電子殻への電子の入り方のこと。原則としてK殻から順に入る（例：₁₁Na→K:2, L:8, M:1）。"
+  },
+  {
+    type: "用語",
+    q: "「価電子」の説明として正しいものはどれか。",
+    choices: [
+      "最外殻電子のうち，化学結合やイオン化に重要なはたらきをする電子",
+      "K殻に入っているすべての電子",
+      "原子核に最も近い電子",
+      "閉殻状態にある電子"
+    ],
+    a: 0,
+    exp: "価電子とは，最外殻電子のうち，原子がイオンになったり原子どうしが結びついたりするときに重要なはたらきをする電子のこと。"
+  },
+  {
+    type: "用語",
+    q: "「貴ガス（希ガス）」の説明として正しいものはどれか。",
+    choices: [
+      "反応性に乏しく，原子1個で安定に存在する気体元素",
+      "価電子数が8個の元素",
+      "常温で必ず気体として存在するすべての元素",
+      "電子殻が1つしかない元素"
+    ],
+    a: 0,
+    exp: "貴ガス（希ガス）は反応性に乏しく，原子1個で安定に存在する。He・Ne・Ar・Kr・Xe・Rnなどがある。"
+  },
+  {
+    type: "用語",
+    q: "次のうち，貴ガス（希ガス）はどれか。",
+    choices: ["Ne（ネオン）", "Na（ナトリウム）", "N（窒素）", "Ni（ニッケル）"],
+    a: 0,
+    exp: "Neはネオン，原子番号10の貴ガス。電子配置はK:2, L:8で，K殻・L殻がともに閉殻の非常に安定な構造。"
+  },
+  {
+    type: "用語",
+    q: "「オクテット」の説明として正しいものはどれか。",
+    choices: [
+      "最も外側の電子殻に電子が8個入った安定な電子配置",
+      "すべての電子殻に合計8個の電子が入った状態",
+      "K殻に電子が8個入った閉殻の状態",
+      "電子の最大数が8個の原子の状態"
+    ],
+    a: 0,
+    exp: "オクテットとは，最も外側の電子殻に電子が8個入った安定な電子配置のこと。Ar・Ne（K殻とL殻が閉殻）などが代表例。"
+  },
 
-{tag:"電子配置",q:"内側からn番目の電子殻に入ることができる電子の最大数を表す式はどれか。",
- choices:["n²","2n","2n²","n²+2"],a:2,
- exp:"n番目の電子殻の最大電子数は2n²個。K殻(n=1):2個、L殻(n=2):8個、M殻(n=3):18個、N殻(n=4):32個。"},
+  // ═══════════════════════════ 思考力問題 (3問) ════════════════════════════
+  {
+    type: "思考力",
+    q: "塩素原子(₁₇Cl)とアルゴン原子(₁₈Ar)のうち，より安定なのはどちらか。その理由として正しいものを選べ。",
+    choices: [
+      "Arは最外殻(M殻)に8個の電子が入り，安定な電子配置をとっているから",
+      "Clは最外殻電子数が7個でArより多く，より多くの結合を形成できるから",
+      "Clは原子番号が小さく核電荷が弱いため，電子を失いやすく安定だから",
+      "Arは電子の総数が多いため，エネルギーが低くなり安定だから"
+    ],
+    a: 0,
+    exp: "Arは貴ガスで，最外殻(M殻)に8個の電子が入った安定な電子配置をとる。Clは最外殻に7個しかなく，電子1個を受け取ろうとする反応性がある。"
+  },
+  {
+    type: "思考力",
+    q: "カリウム原子(₁₉K)では，M殻に8個の電子が入った後，残りの1個がM殻でなくN殻に入る。その理由として正しいものはどれか。",
+    choices: [
+      "N殻に入る方がエネルギー的に安定になるから",
+      "M殻の最大収容数は8個だから",
+      "K殻とL殻がすでに満たされているから",
+      "N殻はM殻より原子核に近い位置にあるから"
+    ],
+    a: 0,
+    exp: "M殻の最大数は18個あるが，続けてM殻に入るよりもN殻に入った方がエネルギー的に安定になる。カルシウムでも同様にM殻8個の後はN殻に2個入る。"
+  },
+  {
+    type: "思考力",
+    q: "価電子の数が同じ原子どうしは，化学的性質がよく似ている。その理由として最も適切なものはどれか。",
+    choices: [
+      "価電子は化学結合やイオン化に直接かかわる電子だから",
+      "価電子の数が同じ原子は原子番号も同じだから",
+      "価電子の数が同じ原子は必ず同じ電子殻に電子が入っているから",
+      "価電子の数が同じ原子は質量数も等しくなるから"
+    ],
+    a: 0,
+    exp: "価電子は化学結合やイオン化などの化学反応に直接かかわる電子。価電子数が同じ原子は同様の反応をしやすく，化学的性質が似る。例：Li(価電子1)とNa(価電子1)はどちらも水と激しく反応する。"
+  }
+];
 
-{tag:"電子配置",q:"K殻に入ることができる電子の最大数はいくつか。",
- choices:["1個","2個","4個","8個"],a:1,
- exp:"K殻はn=1なので、最大電子数は2×1²=2個。"},
-
-{tag:"電子配置",q:"L殻に入ることができる電子の最大数はいくつか。",
- choices:["4個","6個","8個","18個"],a:2,
- exp:"L殻はn=2なので、最大電子数は2×2²=8個。"},
-
-{tag:"電子配置",q:"最大数の電子で満たされている電子殻を何というか。",
- choices:["最外殻","開殻","閉殻","価電子殻"],a:2,
- exp:"最大数の電子で満たされた電子殻を閉殻という。閉殻状態の原子は非常に安定である。"},
-
-{tag:"電子配置",q:"最も外側の電子殻に入っている電子を何というか。",
- choices:["価電子","最外殻電子","核外電子","自由電子"],a:1,
- exp:"最も外側の電子殻に入っている電子を最外殻電子という。"},
-
-{tag:"電子配置",q:"電子は原則としてどの電子殻から順に入っていくか。",
- choices:["N殻から外側へ順に","M殻から順に","L殻から順に","K殻から外側へ順に"],a:3,
- exp:"電子は原子核に近いものほど強く引きつけられ安定になるため、原則としてK殻から順に入っていく（K→L→M→N…）。"},
-
-{tag:"電子配置",q:"ナトリウム原子(₁₁Na)の電子配置として正しいものはどれか。",
- choices:["K:2, L:8, M:1","K:2, L:9","K:2, L:8, M:3","K:11"],a:0,
- exp:"Naは原子番号11。K殻に2個、L殻に8個（最大数）、残り1個がM殻に入る。"},
-
-{tag:"電子配置",q:"ネオン原子(₁₀Ne)の電子配置として正しいものはどれか。",
- choices:["K:2, L:8","K:8, L:2","K:10","K:2, L:6, M:2"],a:0,
- exp:"Neは原子番号10。K殻に2個、残り8個がL殻に入る。L殻が閉殻になっている。"},
-
-{tag:"電子配置",q:"カリウム原子(₁₉K)の電子配置として正しいものはどれか。",
- choices:["K:2, L:8, M:9","K:2, L:8, M:8, N:1","K:2, L:8, M:7, N:2","K:2, L:8, M:8, N:0"],a:1,
- exp:"KはK:2, L:8, M:8, N:1。M殻に8個入った後、残りの1個はエネルギー的に安定なN殻に入る。"},
-
-{tag:"電子配置",q:"炭素原子(₆C)の電子配置として正しいものはどれか。",
- choices:["K:2, L:4","K:4, L:2","K:2, L:2, M:2","K:6"],a:0,
- exp:"Cは原子番号6。K殻に2個、残り4個がL殻に入る。"},
-
-{tag:"電子配置",q:"酸素原子(₈O)の最外殻電子の数はいくつか。",
- choices:["2個","4個","6個","8個"],a:2,
- exp:"酸素はK:2, L:6。最外殻（L殻）の電子数は6個。"},
-
-{tag:"電子配置",q:"閉殻状態にある原子の特徴として正しいものはどれか。",
- choices:["非常に不安定で反応しやすい","非常に安定である","最外殻電子が少ない","価電子の数が多い"],a:1,
- exp:"閉殻（最大数の電子で満たされた電子殻をもつ）状態の原子は非常に安定である。"},
-
-// ══════════════════════════════
-// 価電子・貴ガス (p.51) — 12問
-// ══════════════════════════════
-{tag:"価電子・貴ガス",q:"原子がイオンになったり原子どうしが結びついたりするときに重要なはたらきをする電子を何というか。",
- choices:["最外殻電子","価電子","核外電子","自由電子"],a:1,
- exp:"最外殻電子のうち、イオン化や結合に重要なはたらきをする電子を価電子という。"},
-
-{tag:"価電子・貴ガス",q:"価電子の数が同じ原子どうしは、どのような関係にあるか。",
- choices:["同位体の関係にある","化学的性質がよく似ている","同じ元素である","同じ質量数をもつ"],a:1,
- exp:"価電子の数が同じ原子どうしは化学的性質がよく似ている。"},
-
-{tag:"価電子・貴ガス",q:"次のうち貴ガスに分類される元素はどれか。",
- choices:["窒素(N)","水素(H)","ネオン(Ne)","塩素(Cl)"],a:2,
- exp:"貴ガスはHe・Ne・Ar・Kr・Xe・Rnなど。反応性に乏しく、空気中に気体として僅かに存在する。"},
-
-{tag:"価電子・貴ガス",q:"貴ガスの特徴として正しいものはどれか。",
- choices:["反応性が高く他の物質と結びつきやすい","反応性に乏しく原子1個で安定に存在する","常温で固体として存在する","価電子を多くもつ"],a:1,
- exp:"貴ガスは反応性に乏しく（不活性ガスともよばれる）、原子1個で安定に存在する。"},
-
-{tag:"価電子・貴ガス",q:"貴ガスの価電子の数は何個とするか。",
- choices:["2個","4個","8個","0個"],a:3,
- exp:"貴ガスは非常に安定な電子配置をもち化学的に反応しないため、価電子の数は0個とする。"},
-
-{tag:"価電子・貴ガス",q:"アルゴン(₁₈Ar)の電子配置はK:2, L:8, M:8である。アルゴンの価電子の数はいくつか。",
- choices:["8個","2個","18個","0個"],a:3,
- exp:"アルゴンは貴ガスであり、安定な電子配置をもつため価電子は0個とする。"},
-
-{tag:"価電子・貴ガス",q:"塩素原子(₁₇Cl)の電子配置はK:2, L:8, M:7である。価電子の数はいくつか。",
- choices:["2個","7個","8個","17個"],a:1,
- exp:"ClはM殻（最外殻）に7個の電子をもち、価電子の数は7個。"},
-
-{tag:"価電子・貴ガス",q:"カルシウム原子(₂₀Ca)の電子配置はK:2, L:8, M:8, N:2である。価電子の数はいくつか。",
- choices:["8個","2個","0個","20個"],a:1,
- exp:"CaはN殻（最外殻）に2個の電子をもち、価電子の数は2個。"},
-
-{tag:"価電子・貴ガス",q:"原子番号1〜20の元素のうち、はじめてN殻に電子が入る元素はどれか。",
- choices:["₁₇Cl","₁₈Ar","₁₉K","₂₀Ca"],a:2,
- exp:"カリウム(₁₉K)の電子配置はK:2, L:8, M:8, N:1。M殻が8個になった後、N殻に1個入る。"},
-
-{tag:"価電子・貴ガス",q:"ヘリウム(₂He)とネオン(₁₀Ne)に共通することとして正しいものはどれか。",
- choices:["M殻が閉殻になっている","K殻が閉殻になっている","最外殻電子が8個である","価電子が2個である"],a:1,
- exp:"HeはK:2（K殻閉殻）、NeはK:2, L:8（K殻・L殻いずれも閉殻）。どちらもK殻が閉殻状態にある。"},
-
-{tag:"価電子・貴ガス",q:"最も外側の電子殻に8個の電子が入った安定な電子配置を何というか。",
- choices:["閉殻","オクテット","最外殻配置","価電子配置"],a:1,
- exp:"最も外側の電子殻に電子が8個入った安定な電子配置をオクテットとよぶ。"},
-
-{tag:"価電子・貴ガス",q:"窒素原子(₇N)の電子配置はK:2, L:5である。価電子の数はいくつか。",
- choices:["2個","5個","7個","0個"],a:1,
- exp:"NはL殻（最外殻）に5個の電子をもち、価電子の数は5個。"},
-
-]; // END ALL_Q
-
-// ───────────────────────────────────────────────────────
-const LABELS = ["ア","イ","ウ","エ"];
-let session = [], cur = 0, score = 0, answered = [];
-
-function showOnly(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+// ── クイズ状態 ──
+let session = [], idx = 0, score = 0, results = [];
 
 function shuffle(arr) {
   const a = [...arr];
@@ -253,90 +503,132 @@ function shuffle(arr) {
   return a;
 }
 
+function showOnly(id) {
+  ['s-start', 's-quiz', 's-result'].forEach(s => {
+    document.getElementById(s).classList.toggle('active', s === id);
+  });
+}
+
 function startQuiz() {
-  session = shuffle(ALL_Q).slice(0, 10);
-  cur = 0; score = 0; answered = [];
-  showOnly('quiz');
+  // 毎回：思考力1問＋用語2問＋知識7問 = 10問（セッション内でシャッフル）
+  const thinking  = shuffle(ALL_Q.filter(q => q.type === '思考力'));
+  const vocab     = shuffle(ALL_Q.filter(q => q.type === '用語'));
+  const knowledge = shuffle(ALL_Q.filter(q => q.type === '知識'));
+  session = shuffle([thinking[0], ...vocab.slice(0, 2), ...knowledge.slice(0, 7)]);
+  idx = 0; score = 0; results = [];
   renderQ();
+  showOnly('s-quiz');
 }
 
 function renderQ() {
-  const q = session[cur];
-  const pct = (cur / 10) * 100;
-  document.getElementById('progText').textContent = `${cur + 1} / 10`;
-  document.getElementById('progBar').style.width = pct + '%';
+  const q = session[idx];
+  document.getElementById('q-num').textContent   = `問${idx + 1} / ${session.length}`;
+  document.getElementById('q-score').textContent = `正解: ${score}`;
+  document.getElementById('prog').style.width    = `${(idx / session.length) * 100}%`;
 
-  const shuffled = shuffle(q.choices.map((c, i) => ({ text: c, origIdx: i })));
-  q._shuffled = shuffled;
-  q._newCorrect = shuffled.findIndex(c => c.origIdx === q.a);
+  const tagEl = document.getElementById('q-tag');
+  tagEl.textContent = q.type;
+  tagEl.className   = 'tag'
+    + (q.type === '思考力' ? ' thinking' : q.type === '用語' ? ' vocab' : '');
 
-  const choices = shuffled.map((c, i) => `
-    <button class="choice" onclick="select(${i})" id="ch${i}">
-      <span class="choice-label">${LABELS[i]}</span>
-      <span>${c.text}</span>
-    </button>`).join('');
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-exp').style.display  = 'none';
+  document.getElementById('btn-next').style.display = 'none';
 
-  document.getElementById('qCard').innerHTML = `
-    <span class="tag">${q.tag}</span>
-    <div class="q-text">${q.q}</div>
-    <div class="choices">${choices}</div>
-    <div class="exp-box" id="expBox">${q.exp}</div>
-    <div class="next-wrap" id="nextWrap">
-      <button class="btn" onclick="next()">${cur < 9 ? '次の問題 →' : '結果を見る'}</button>
-    </div>`;
+  const choicesEl = document.getElementById('q-choices');
+  choicesEl.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.textContent = c;
+    btn.onclick = () => select(i);
+    choicesEl.appendChild(btn);
+  });
 }
 
-function select(idx) {
-  const q = session[cur];
-  const correct = q._newCorrect;
-  const shuffledTexts = q._shuffled.map(c => c.text);
+function select(chosen) {
+  const q = session[idx];
   const btns = document.querySelectorAll('.choice');
-  btns.forEach(b => b.classList.add('disabled'));
-  btns[idx].classList.add(idx === correct ? 'correct' : 'wrong');
-  if (idx !== correct) btns[correct].classList.add('correct');
-  if (idx === correct) score++;
-  answered.push({ q: q.q, chosen: idx, correct, ok: idx === correct, choices: shuffledTexts });
-  document.getElementById('expBox').classList.add('show');
-  document.getElementById('nextWrap').classList.add('show');
+  btns.forEach(b => { b.onclick = null; });
+
+  const correct = chosen === q.a;
+  if (correct) score++;
+
+  btns[chosen].classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) btns[q.a].classList.add('reveal');
+
+  const expEl = document.getElementById('q-exp');
+  expEl.textContent  = q.exp;
+  expEl.style.display = 'block';
+
+  results.push({ q, chosen, correct });
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent   = idx + 1 < session.length ? '次の問題 →' : '結果を見る';
 }
 
 function next() {
-  cur++;
-  if (cur < 10) { renderQ(); }
-  else { showResult(); }
+  idx++;
+  if (idx < session.length) {
+    renderQ();
+  } else {
+    showResult();
+  }
 }
 
 function showResult() {
-  showOnly('result');
-  document.getElementById('scoreNum').textContent = `${score}/10`;
+  document.getElementById('r-score').textContent = score;
+  const pct = score / session.length;
+  const msg = pct === 1   ? '満点！完璧です！'
+            : pct >= 0.8  ? 'よくできました！'
+            : pct >= 0.6  ? 'もう少しです。'
+            : '復習しましょう！';
+  document.getElementById('r-msg').textContent = msg;
 
-  const st = document.getElementById('saveStatus');
-  if (typeof google !== 'undefined' && google.script) {
-    st.textContent = '送信中...';
-    google.script.run
-      .withSuccessHandler(() => { st.textContent = '✓ 記録しました'; })
-      .withFailureHandler(() => { st.textContent = '⚠ 送信に失敗しました'; })
-      .saveResult(score);
+  // ドーナツグラフ
+  const canvas = document.getElementById('donut');
+  const ctx = canvas.getContext('2d');
+  const cx = 80, cy = 80, r = 65, lw = 18;
+  ctx.clearRect(0, 0, 160, 160);
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+  if (score > 0) {
+    ctx.strokeStyle = '#4f46e5';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI / 2,
+            -Math.PI / 2 + (Math.PI * 2 * score / session.length));
+    ctx.stroke();
   }
+  ctx.fillStyle = '#1f2937';
+  ctx.font = 'bold 28px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`${score}/${session.length}`, cx, cy);
 
-  const labels = ['もう少し頑張ろう！', 'まあまあです！', 'よく頑張りました！', '優秀です！', '満点！素晴らしい！'];
-  const idx = score <= 3 ? 0 : score <= 5 ? 1 : score <= 7 ? 2 : score <= 9 ? 3 : 4;
-  document.getElementById('scoreLabel').textContent = labels[idx];
-
-  const circ = 364.4;
-  const offset = circ - (score / 10) * circ;
-  setTimeout(() => { document.getElementById('donutFg').style.strokeDashoffset = offset; }, 50);
-
-  const list = document.getElementById('reviewList');
-  list.innerHTML = answered.map((a, i) => `
-    <div class="review-item">
-      <div class="ri-q">Q${i+1}. ${a.q}</div>
-      <div class="ri-a">
-        あなたの答え：${LABELS[a.chosen]}（${a.choices[a.chosen]}）
-        <span class="mark ${a.ok ? 'ok' : 'ng'}">${a.ok ? '○' : '✕'}</span>
-        ${!a.ok ? `　正解：${LABELS[a.correct]}（${a.choices[a.correct]}）` : ''}
+  // 振り返りリスト
+  const reviewEl = document.getElementById('r-review');
+  reviewEl.innerHTML = '<p style="font-weight:bold;margin-bottom:10px;color:#374151;">問題の振り返り</p>';
+  results.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'review-item' + (r.correct ? ' correct' : '');
+    div.innerHTML = `
+      <div class="review-q">問${i + 1}. ${r.q.q}</div>
+      <div class="review-ans">
+        ${r.correct
+          ? '&#x2705; 正解'
+          : `&#x274C; あなたの答え：${r.q.choices[r.chosen]}　→　正解：${r.q.choices[r.q.a]}`}
       </div>
-    </div>`).join('');
+      <div class="review-exp">${r.q.exp}</div>
+    `;
+    reviewEl.appendChild(div);
+  });
+
+  showOnly('s-result');
 }
 </script>
 </body>
