@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ｜原子の構造</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:640px}
+.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
+#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
+.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
+.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
+.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
+.choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
+.choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
+.choice-btn:disabled{cursor:default}
+.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
+.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
+.donut-svg{width:120px;height:120px}
+.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.9rem;color:#718096}
+.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.review-item .ra{font-size:.85rem;color:#718096}
+.review-item.miss .rq{color:#c53030}
+.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.retry-btn:hover{opacity:.9}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="start" class="card">
+  <h1>化学基礎クイズ</h1>
+  <p class="sub">原子の構造｜毎回ランダム10問</p>
+  <div class="total-badge">全35問収録</div>
+  <button class="start-btn" onclick="startQuiz()">スタート</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="header">
+    <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+    <div class="q-num" id="qnum"></div>
+  </div>
+  <div id="qtext" class="q-text"></div>
+  <div id="choices" class="choices"></div>
+  <div id="exp" class="exp-box"></div>
+  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+</div>
+
+<div id="result" class="card hidden">
+  <div class="r-title">結果発表</div>
+  <div class="donut-wrap">
+    <svg class="donut-svg" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
+      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+        stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+    </svg>
+    <div>
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-sub">/ 10問正解</div>
+    </div>
+  </div>
+  <div class="review-title">解説</div>
+  <div class="review-list" id="reviewList"></div>
+  <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+</div>
+
+</div>
+<script>
+const ALL_Q = [
+  {q:"原子の中心にある部分を何というか？",
+   choices:["原子核","電子殻","核外電子","分子核"], a:0,
+   exp:"原子の中心には原子核があり、その周りを電子が取り囲んでいます。"},
+
+  {q:"原子核を構成する粒子の組み合わせはどれか？",
+   choices:["陽子と中性子","電子と陽子","電子と中性子","陽子・中性子・電子"], a:0,
+   exp:"原子核は陽子と中性子から構成されています。電子は原子核の外側（核外）に存在します。"},
+
+  {q:"陽子がもつ電荷は？",
+   choices:["+1","-1","0","+2"], a:0,
+   exp:"陽子は+1の電荷をもちます。電子は-1、中性子は0の電荷をもちます。"},
+
+  {q:"電子がもつ電荷は？",
+   choices:["-1","+1","0","-2"], a:0,
+   exp:"電子は-1の電荷をもちます。"},
+
+  {q:"中性子がもつ電荷は？",
+   choices:["0","+1","-1","+2"], a:0,
+   exp:"中性子は電荷をもちません（電荷0）。"},
+
+  {q:"原子番号とは何を表すか？",
+   choices:["陽子の数","中性子の数","電子の数","陽子と中性子の和"], a:0,
+   exp:"原子番号は原子核中の陽子の数を表します。元素の種類を決定するのは陽子数です。"},
+
+  {q:"質量数の定義として正しいものは？",
+   choices:["陽子の数＋中性子の数","陽子の数のみ","中性子の数のみ","電子の数"], a:0,
+   exp:"質量数＝陽子の数＋中性子の数です。電子の質量は無視できるほど小さいため含めません。"},
+
+  {q:"中性の原子において、陽子の数と電子の数の関係は？",
+   choices:["等しい","陽子の方が多い","電子の方が多い","2倍の関係"], a:0,
+   exp:"中性の原子は電気的に中性なので、陽子の数（+）と電子の数（-）は等しくなります。"},
+
+  {q:"原子番号6・質量数12の炭素(¹²C)の中性子数は？",
+   choices:["6","12","4","18"], a:0,
+   exp:"中性子数＝質量数－陽子数＝12－6＝6です。"},
+
+  {q:"原子番号11・質量数23のNaの中性子数は？",
+   choices:["12","11","23","6"], a:0,
+   exp:"中性子数＝質量数－陽子数＝23－11＝12です。"},
+
+  {q:"原子番号8・質量数16の酸素(¹⁶O)の中性子数は？",
+   choices:["8","16","6","10"], a:0,
+   exp:"中性子数＝質量数16－陽子数8＝8です。"},
+
+  {q:"原子番号17・質量数35の塩素の中性子数は？",
+   choices:["18","17","35","20"], a:0,
+   exp:"中性子数＝質量数35－陽子数17＝18です。"},
+
+  {q:"原子番号20・質量数40のカルシウムの中性子数は？",
+   choices:["20","40","60","10"], a:0,
+   exp:"中性子数＝質量数40－陽子数20＝20です。"},
+
+  {q:"原子番号17・質量数35の塩素原子の電子数は？",
+   choices:["17","35","18","52"], a:0,
+   exp:"中性原子の電子数は原子番号（陽子数）と等しいので17個です。"},
+
+  {q:"原子番号26・質量数56の鉄(Fe)の中性子数は？",
+   choices:["30","26","56","14"], a:0,
+   exp:"中性子数＝質量数56－陽子数26＝30です。"},
+
+  {q:"同位体（アイソトープ）とはどのような原子か？",
+   choices:["陽子数が同じで中性子数が異なる原子","質量数が同じで陽子数が異なる原子","電子数が異なる原子","同じ分子式をもつ物質"], a:0,
+   exp:"同位体は同じ元素（陽子数が同じ）でありながら中性子数が異なる原子です。化学的性質はほぼ同じです。"},
+
+  {q:"¹H（軽水素）と²H（重水素）の関係は？",
+   choices:["同位体","同素体","同族体","異性体"], a:0,
+   exp:"¹Hと²Hはどちらも水素（原子番号1）ですが質量数が異なります。これを同位体（アイソトープ）といいます。"},
+
+  {q:"同位体どうしで共通しているものは？",
+   choices:["陽子数（原子番号）","中性子数","質量数","原子の質量"], a:0,
+   exp:"同位体は陽子数（原子番号）が等しく、元素の種類が同じです。中性子数・質量数・質量は異なります。"},
+
+  {q:"同位体の化学的性質は？",
+   choices:["ほぼ同じ","まったく異なる","陽子数に比例して変わる","中性子数に比例して変わる"], a:0,
+   exp:"化学的性質は最外殻電子の数によって決まるため、同位体（陽子数が同じ＝電子数が同じ）の化学的性質はほぼ同じです。"},
+
+  {q:"¹⁶Oと¹⁸Oについて正しいものは？",
+   choices:["同位体で陽子数は同じ","同素体で分子構造が異なる","同族体で性質が似ている","同じ質量数をもつ"], a:0,
+   exp:"¹⁶Oと¹⁸Oはどちらも酸素（原子番号8）なので同位体です。陽子数8は同じですが中性子数が異なります。"},
+
+  {q:"³⁵Clと³⁷Clはどのような関係か？",
+   choices:["同位体（陽子数17で同じ、中性子数が異なる）","同素体","同族体","まったく別の元素"], a:0,
+   exp:"³⁵Clと³⁷Clはどちらも塩素（原子番号17）なので同位体です。中性子数はそれぞれ18と20です。"},
+
+  {q:"³⁷Cl（原子番号17）の中性子数は？",
+   choices:["20","17","37","18"], a:0,
+   exp:"中性子数＝質量数37－陽子数17＝20です。"},
+
+  {q:"原子の質量のほとんどは何によるか？",
+   choices:["陽子と中性子","電子","核外電子","最外殻電子"], a:0,
+   exp:"電子の質量は陽子の約1/1836と非常に小さく、原子の質量のほとんどは原子核（陽子と中性子）によります。"},
+
+  {q:"電子の質量は陽子の質量の約何倍か？",
+   choices:["約1/1836","約1/2","約2倍","ほぼ同じ"], a:0,
+   exp:"電子の質量は約9.11×10⁻³¹ kg、陽子は約1.67×10⁻²⁷ kgで、電子は陽子の約1/1836の質量しかありません。"},
+
+  {q:"次のうち「原子番号」を正しく説明しているものはどれか？",
+   choices:["原子核中の陽子の数","陽子と中性子の合計","電子の数","原子の相対質量"], a:0,
+   exp:"原子番号は原子核中の陽子の数を表します。同じ元素は必ず同じ原子番号をもちます。"},
+
+  {q:"質量数が同じでも原子番号が異なる場合、それらは何と呼ばれるか？",
+   choices:["同重体（アイソバー）","同位体（アイソトープ）","同素体","同族体"], a:0,
+   exp:"質量数が同じで原子番号（陽子数）が異なる原子を同重体（アイソバー）といいます。同位体とは区別します。"},
+
+  {q:"原子番号と中性子数の和は何を表すか？",
+   choices:["質量数","陽子数","電子数","原子量"], a:0,
+   exp:"質量数＝陽子数（原子番号）＋中性子数です。"},
+
+  {q:"原子番号が同じで質量数が異なる原子どうしは互いに何か？",
+   choices:["同位体","同素体","同重体","異性体"], a:0,
+   exp:"原子番号（陽子数）が同じで質量数（中性子数）が異なる原子を同位体（アイソトープ）といいます。"},
+
+  {q:"¹²Cを基準（質量数12）として相対的に表した原子の質量を何というか？",
+   choices:["原子量","質量数","分子量","式量"], a:0,
+   exp:"¹²Cの質量を12として、他の原子の質量を相対的に表した値を原子量といいます。同位体の存在比を考慮した平均値です。"},
+
+  {q:"塩素の原子量が約35.5になる理由として最も適切なものは？",
+   choices:["³⁵Clと³⁷Clが約3:1の割合で存在するため","³⁵Clのみが存在するため","³⁷Clのみが存在するため","質量数の平均が35.5だから"], a:0,
+   exp:"天然の塩素は³⁵Cl（約75%）と³⁷Cl（約25%）の混合物です。存在比を考慮した加重平均が約35.5になります。"},
+
+  {q:"原子番号92・質量数238のウランの中性子数は？（参考問題）",
+   choices:["146","92","238","330"], a:0,
+   exp:"中性子数＝質量数238－陽子数92＝146です。"},
+
+  {q:"次の記述のうち誤っているものはどれか？",
+   choices:["同位体は化学的性質がまったく異なる","同位体は陽子数が同じ","同位体は中性子数が異なる","同位体の質量数は異なる"], a:0,
+   exp:"同位体は陽子数（電子数）が同じなので化学的性質はほぼ同じです。「まったく異なる」は誤りです。"},
+
+  {q:"原子核の大きさと原子全体の大きさの関係は？",
+   choices:["原子核は原子全体の約10万分の1程度の大きさ","原子核は原子全体とほぼ同じ大きさ","原子核は原子全体の約半分の大きさ","原子核の方が大きい"], a:0,
+   exp:"原子の直径は約10⁻¹⁰ m程度、原子核は約10⁻¹⁵ m程度と非常に小さく、原子全体の約1/100000（10万分の1）程度です。"},
+
+  {q:"原子番号が同じ原子は必ず同じ何をもつか？",
+   choices:["陽子の数（元素の種類が同じ）","中性子の数","質量数","原子量"], a:0,
+   exp:"原子番号は陽子数を表し、陽子数が同じであれば同じ元素です。中性子数は同位体によって異なります。"},
+
+  {q:"電気的に中性な原子において、次のどの関係が成り立つか？",
+   choices:["陽子数＝電子数","陽子数＝中性子数","電子数＝中性子数","陽子数＝質量数"], a:0,
+   exp:"電気的に中性な原子では、正の電荷（陽子数）と負の電荷（電子数）が釣り合い、陽子数＝電子数となります。"}
+];
+
+let session=[], idx=0, score=0, results=[];
+
+function shuffle(arr){
+  let a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function shuffleChoices(q){
+  const order=shuffle([0,1,2,3]);
+  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
+}
+
+function showOnly(id){
+  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
+}
+
+function startQuiz(){
+  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
+  idx=0; score=0; results=[];
+  showOnly("quiz");
+  renderQ();
+}
+
+function renderQ(){
+  const q=session[idx];
+  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
+  document.getElementById("qnum").textContent=(idx+1)+"/10";
+  document.getElementById("qtext").textContent=q.q;
+  document.getElementById("exp").style.display="none";
+  document.getElementById("nextBtn").style.display="none";
+
+  const ci=document.getElementById("choices");
+  ci.innerHTML="";
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement("button");
+    btn.className="choice-btn";
+    btn.textContent=c;
+    btn.onclick=()=>select(i);
+    ci.appendChild(btn);
+  });
+}
+
+function select(chosen){
+  const q=session[idx];
+  const btns=document.querySelectorAll(".choice-btn");
+  btns.forEach(b=>b.disabled=true);
+  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
+  if(chosen!==q.a) btns[q.a].classList.add("correct");
+
+  if(chosen===q.a) score++;
+  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
+
+  const expBox=document.getElementById("exp");
+  expBox.textContent=q.exp;
+  expBox.style.display="block";
+  document.getElementById("nextBtn").style.display="block";
+  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+}
+
+function next(){
+  idx++;
+  if(idx>=10){showResult();return;}
+  renderQ();
+}
+
+function showResult(){
+  showOnly("result");
+  document.getElementById("scoreBig").textContent=score;
+
+  const pct=score/10*100;
+  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
+  const arc=document.getElementById("donut-arc");
+  arc.setAttribute("stroke",color);
+  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+
+  const list=document.getElementById("reviewList");
+  list.innerHTML="";
+  results.forEach((r,i)=>{
+    const div=document.createElement("div");
+    div.className="review-item"+(r.correct?"":" miss");
+    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
+      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
+      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
+    list.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
