@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ｜周期律と周期表</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:640px}
+.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
+#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
+.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
+.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+.id-input:focus{outline:none;border-color:#4299e1}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
+.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
+.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
+.choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
+.choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
+.choice-btn:disabled{cursor:default}
+.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
+.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
+.donut-svg{width:120px;height:120px}
+.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.9rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+.pass-badge.pass{background:#f0fff4;color:#276749}
+.pass-badge.fail{background:#fff5f5;color:#c53030}
+.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.review-item .ra{font-size:.85rem;color:#718096}
+.review-item.miss .rq{color:#c53030}
+.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.retry-btn:hover{opacity:.9}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="start" class="card">
+  <h1>化学基礎クイズ</h1>
+  <p class="sub">周期律と周期表｜毎回ランダム10問</p>
+  <div class="total-badge" id="totalBadge"></div>
+  <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
+  <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
+  <button class="start-btn" onclick="startQuiz()">スタート</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="header">
+    <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+    <div class="q-num" id="qnum"></div>
+  </div>
+  <div id="qtext" class="q-text"></div>
+  <div id="choices" class="choices"></div>
+  <div id="exp" class="exp-box"></div>
+  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+</div>
+
+<div id="result" class="card hidden">
+  <div class="r-title">結果発表</div>
+  <div class="donut-wrap">
+    <svg class="donut-svg" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
+      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+        stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+    </svg>
+    <div>
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-sub">/ 10問正解</div>
+      <div class="pass-badge" id="passBadge"></div>
+    </div>
+  </div>
+  <div class="review-title">解説</div>
+  <div class="review-list" id="reviewList"></div>
+  <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+  <div class="submit-status" id="submitStatus"></div>
+</div>
+
+</div>
+<script>
+// Apps Scriptデプロイ後、発行されたWebアプリのURLをここに設定（SETUP.md参照）
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const QUIZ_NAME = "周期律と周期表";
+const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+
+const ALL_Q = [
+  {q:"カリウムイオンK⁺（原子番号19）がもつ電子の総数は？",
+   choices:["18個","19個","20個","17個"], a:0,
+   exp:"K原子は電子を19個もちますが、1価の陽イオンになる際に電子を1個失うため、K⁺の電子数は18個になります。"},
+
+  {q:"フッ化物イオンF⁻（原子番号9）がもつ電子の総数は？",
+   choices:["10個","9個","8個","11個"], a:0,
+   exp:"F原子は電子を9個もちますが、1価の陰イオンになる際に電子を1個受け取るため、F⁻の電子数は10個になります。"},
+
+  {q:"原子の最も外側の電子殻から電子を1個取り去って1価の陽イオンにするのに必要なエネルギーを何というか？",
+   choices:["イオン化エネルギー","電子親和力","結合エネルギー","格子エネルギー"], a:0,
+   exp:"このエネルギーをイオン化エネルギー（第一イオン化エネルギー）といいます。"},
+
+  {q:"イオン化エネルギーが小さい原子ほど、どのような傾向があるか？",
+   choices:["陽イオンになりやすい（陽性が強い）","陰イオンになりやすい（陰性が強い）","分子になりやすい","中性を保ちやすい"], a:0,
+   exp:"イオン化エネルギーが小さいほど電子を取り去りやすく、陽イオンになりやすい（陽性が強い）といえます。"},
+
+  {q:"原子が最も外側の電子殻に電子を1個受け取って1価の陰イオンになるときに放出されるエネルギーを何というか？",
+   choices:["電子親和力","イオン化エネルギー","結合エネルギー","昇華熱"], a:0,
+   exp:"このエネルギーを電子親和力といいます。"},
+
+  {q:"電子親和力が大きい原子ほど、どのような傾向があるか？",
+   choices:["陰イオンになりやすい（陰性が強い）","陽イオンになりやすい（陽性が強い）","中性を保ちやすい","分子を作りやすい"], a:0,
+   exp:"電子親和力が大きいほど陰イオンになるときに多くのエネルギーを放出でき、陰イオンになりやすい（陰性が強い）といえます。"},
+
+  {q:"Naの第一イオン化エネルギー（496kJ/mol）に比べ、第二イオン化エネルギー（4562kJ/mol）が非常に大きいのはなぜか？",
+   choices:["Na⁺が安定な電子配置になっており、さらに電子を取り去るのが困難なため","Na⁺が不安定なため電子が抜けやすいため","電子親和力が非常に大きいため","Naの原子核が極端に小さいため"], a:0,
+   exp:"Naは1個の価電子を失うと安定な電子配置のNa⁺になるため第一イオン化エネルギーは小さいですが、そこからさらに電子を取り去るのは困難なため第二イオン化エネルギーは非常に大きくなります。"},
+
+  {q:"Mgで、第二イオン化エネルギーに比べて第三イオン化エネルギーが非常に大きいのはなぜか？",
+   choices:["Mg²⁺が安定な電子配置であり、さらに電子を取り去るのが困難なため","Mgの原子核が非常に大きいため","電子親和力が小さいため","Mgは遷移元素だから"], a:0,
+   exp:"Mgは2個の価電子を失うと安定な電子配置のMg²⁺になるため、そこからさらに電子を取り去る第三イオン化エネルギーは非常に大きくなります。"},
+
+  {q:"元素を原子番号順に並べたとき、性質のよく似た元素が一定の間隔で現れることを何というか？",
+   choices:["周期律","周期表","同族律","族則"], a:0,
+   exp:"このような性質の周期性を元素の周期律といいます。"},
+
+  {q:"元素に周期律があるのはなぜか？",
+   choices:["原子番号の増加に伴って価電子の数が周期的に変化するため","原子核の質量が周期的に変化するため","電子の総数が常に一定であるため","中性子の数が一定であるため"], a:0,
+   exp:"原子番号の増加に伴い価電子の数が周期的に変化するため、元素の性質にも周期性が現れます。"},
+
+  {q:"周期表の縦の列を何というか？",
+   choices:["族","周期","類","段"], a:0,
+   exp:"周期表の縦の列を族といいます。"},
+
+  {q:"周期表の横の行を何というか？",
+   choices:["周期","族","類","列"], a:0,
+   exp:"周期表の横の行を周期といいます。"},
+
+  {q:"現在、国際的に用いられている周期表は何族・何周期で構成されているか？",
+   choices:["18族・7周期","8族・7周期","18族・6周期","20族・7周期"], a:0,
+   exp:"現在の周期表は1〜18族・1〜7周期で構成されています。"},
+
+  {q:"同じ周期の元素では、原子番号が大きいほどイオン化エネルギーはどのような傾向を示すか？",
+   choices:["大きくなる傾向がある（右上がり）","小さくなる傾向がある（右下がり）","変化しない","不規則に変動する"], a:0,
+   exp:"同じ周期内では、原子番号が大きいほどイオン化エネルギーは右上がりの傾向を示します。"},
+
+  {q:"同じ族の元素では、原子番号が大きいほどイオン化エネルギーはどのような傾向を示すか？",
+   choices:["小さくなる傾向がある（右下がり）","大きくなる傾向がある（右上がり）","変化しない","急激に増加する"], a:0,
+   exp:"同じ族内では、原子番号が大きいほどイオン化エネルギーは右下がりの傾向を示します。"},
+
+  {q:"電子親和力が特に大きい値を示す元素には、どのような特徴があるか？",
+   choices:["17族元素であり、価電子を7個もち陰イオンになりやすい","1族元素であり、価電子を1個もつ","18族元素であり、反応性に乏しい","2族元素であり、価電子を2個もつ"], a:0,
+   exp:"F(9)やCl(17)など17族の元素は価電子を7個もち、陰イオンになりやすい（陰性が強い）ため電子親和力が特に大きくなります。"},
+
+  {q:"原子番号と価電子の数の関係を表すグラフでは、貴ガス（He, Ne, Arなど）の価電子の数はどうなるか？",
+   choices:["0個であり、特に小さい値になる","8個であり、特に大きい値になる","原子番号と同じ数になる","不規則に変動する"], a:0,
+   exp:"貴ガスは価電子の数が0個とされ、グラフ上では特に小さい値を示します。"},
+
+  {q:"周期表の1族、2族と13〜18族の元素を何というか？",
+   choices:["典型元素","遷移元素","希少元素","代表元素"], a:0,
+   exp:"周期表の1・2族と13〜18族の元素を典型元素といいます。"},
+
+  {q:"周期表の3〜12族の元素を何というか？",
+   choices:["遷移元素","典型元素","希土類元素","貴金属元素"], a:0,
+   exp:"典型元素以外、つまり3〜12族の元素を遷移元素といいます。"},
+
+  {q:"典型元素の価電子の数には、どのような特徴があるか？",
+   choices:["族番号の一の位の値に等しい（18族の価電子は0個）","常に1個または2個である","常に族番号と同じ数である","常に8個である"], a:0,
+   exp:"典型元素では、原子の価電子の数は族番号の一の位の値に等しくなります（18族の価電子は0個）。"},
+
+  {q:"遷移元素の原子の最外殻電子の数には、どのような特徴があるか？",
+   choices:["1個または2個の元素が多い","族番号の一の位の値に等しい元素が多い","常に0個である","常に8個である"], a:0,
+   exp:"遷移元素では、原子の最外殻電子の数は1個または2個の元素が多いです。"},
+
+  {q:"遷移元素の性質として正しいものはどれか？",
+   choices:["すべてが金属元素である","すべてが非金属元素である","金属元素と非金属元素が半数ずつある","気体の単体をもつものが多い"], a:0,
+   exp:"典型元素には金属元素も非金属元素もありますが、遷移元素はすべてが金属元素です。"},
+
+  {q:"金属元素の特徴として正しいものはどれか？",
+   choices:["価電子の数が少なく、陽イオンになりやすい","価電子の数が多く、陰イオンになりやすい","すべて典型元素である","周期表の右上に多く分布する"], a:0,
+   exp:"金属元素は価電子の数が少なく、原子が陽イオンになりやすい（周期表の左下にいくほど陽性が強い）という特徴があります。"},
+
+  {q:"非金属元素（18族を除く）の特徴として正しいものはどれか？",
+   choices:["価電子の数が多く、陰イオンになりやすい","価電子の数が少なく、陽イオンになりやすい","すべて遷移元素である","酸化物はアルカリ性を示すものが多い"], a:0,
+   exp:"非金属元素は価電子の数が多く、原子が陰イオンになりやすい（周期表の右上にいくほど陰性が強い）という特徴があります。"},
+
+  {q:"水素を除く1族元素を何というか？",
+   choices:["アルカリ金属元素","アルカリ土類金属元素","ハロゲン元素","貴ガス元素"], a:0,
+   exp:"水素を除く1族元素をアルカリ金属元素といい、価電子を1個もち1価の陽イオンになりやすい元素です。"},
+
+  {q:"2族元素を何というか？",
+   choices:["アルカリ土類金属元素","アルカリ金属元素","ハロゲン元素","貴ガス元素"], a:0,
+   exp:"2族元素をアルカリ土類金属元素といい、価電子を2個もち2価の陽イオンになりやすい元素です。"},
+
+  {q:"17族元素を何というか？",
+   choices:["ハロゲン元素","アルカリ金属元素","アルカリ土類金属元素","貴ガス元素"], a:0,
+   exp:"17族元素をハロゲン元素といい、価電子を7個もち1価の陰イオンになりやすい元素です。"},
+
+  {q:"18族元素を何というか？",
+   choices:["貴ガス元素（希ガス元素）","ハロゲン元素","典型元素","遷移元素"], a:0,
+   exp:"18族元素を貴ガス元素（希ガス元素）といい、価電子は0個で反応性に乏しい（不活性ガスともよばれる）元素です。"},
+
+  {q:"同じ族の元素では、原子番号が大きいほど原子半径はどうなるか？",
+   choices:["大きくなる","小さくなる","変化しない","族によって傾向が異なる"], a:0,
+   exp:"同じ族では原子番号が大きいほど外側の電子殻に電子が入り、原子核と最も外側の電子殻の距離が大きくなるため、原子半径は大きくなります。"},
+
+  {q:"同じ周期の元素では、原子番号が大きいほど原子半径はどうなるか？",
+   choices:["小さくなる","大きくなる","変化しない","不規則に変わる"], a:0,
+   exp:"同じ周期では原子番号が大きいほど陽子の数が増え最外殻電子を引きつける力が強くなるため、原子半径は小さくなります。"},
+
+  {q:"電子配置が同じイオン（例：O²⁻, Na⁺, Al³⁺）では、原子番号が大きいほどイオン半径はどうなるか？",
+   choices:["小さくなる","大きくなる","変化しない","中性子の数だけで決まる"], a:0,
+   exp:"電子配置が同じイオンでは、原子番号が大きいほど原子核の陽子の数が増え最外殻電子を引きつける力が強くなるため、イオン半径は小さくなります。"},
+
+  {q:"原子が陽イオンになると、その半径はどうなるか？",
+   choices:["小さくなる","大きくなる","変化しない","2倍になる"], a:0,
+   exp:"最外殻電子がすべて取り除かれ、最も外側の電子殻が1つ内側になるため、イオン半径は小さくなります。"},
+
+  {q:"原子が陰イオンになると、その半径はどうなるか？",
+   choices:["大きくなる","小さくなる","変化しない","半分になる"], a:0,
+   exp:"最も外側の電子殻に電子が加わり電子間の反発が増大するため、イオン半径は大きくなります。"},
+
+  {q:"メンデレーエフは元素を何の順に並べて周期表を作成したか？",
+   choices:["原子の質量（原子量）の小さいものから順に","原子番号の小さいものから順に","電子親和力の大きいものから順に","発見された年代順に"], a:0,
+   exp:"メンデレーエフは当時発見されていた約60種類の元素を、原子の質量の小さいものから順番に並べて周期表を作成しました。"},
+
+  {q:"メンデレーエフがケイ素の下にくる元素として存在を予測し「エカケイ素」と名づけた元素は、後に発見されたどの元素と性質が一致したか？",
+   choices:["ゲルマニウム","ガリウム","スカンジウム","ヒ素"], a:0,
+   exp:"エカケイ素Esの性質は、1886年に発見されたゲルマニウムGeとよく一致し、メンデレーエフの周期表は高く評価されました。"}
+];
+
+let session=[], idx=0, score=0, results=[], studentId="";
+
+document.getElementById("totalBadge").textContent="全"+ALL_Q.length+"問収録";
+
+function shuffle(arr){
+  let a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function shuffleChoices(q){
+  const order=shuffle([0,1,2,3]);
+  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
+}
+
+function showOnly(id){
+  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
+}
+
+function toHalfWidthDigits(s){
+  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+}
+
+function startQuiz(){
+  const idInput=document.getElementById("studentId");
+  const normalized=toHalfWidthDigits(idInput.value.trim());
+  if(!/^[0-9]{4}$/.test(normalized)){
+    alert("学籍番号は半角数字4桁で入力してください（例：1年1組4番→1104）。");
+    idInput.focus();
+    return;
+  }
+  idInput.value=normalized;
+  studentId=normalized;
+  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
+  idx=0; score=0; results=[];
+  showOnly("quiz");
+  renderQ();
+}
+
+function renderQ(){
+  const q=session[idx];
+  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
+  document.getElementById("qnum").textContent=(idx+1)+"/10";
+  document.getElementById("qtext").textContent=q.q;
+  document.getElementById("exp").style.display="none";
+  document.getElementById("nextBtn").style.display="none";
+
+  const ci=document.getElementById("choices");
+  ci.innerHTML="";
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement("button");
+    btn.className="choice-btn";
+    btn.textContent=c;
+    btn.onclick=()=>select(i);
+    ci.appendChild(btn);
+  });
+}
+
+function select(chosen){
+  const q=session[idx];
+  const btns=document.querySelectorAll(".choice-btn");
+  btns.forEach(b=>b.disabled=true);
+  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
+  if(chosen!==q.a) btns[q.a].classList.add("correct");
+
+  if(chosen===q.a) score++;
+  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
+
+  const expBox=document.getElementById("exp");
+  expBox.textContent=q.exp;
+  expBox.style.display="block";
+  document.getElementById("nextBtn").style.display="block";
+  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+}
+
+function next(){
+  idx++;
+  if(idx>=10){showResult();return;}
+  renderQ();
+}
+
+function showResult(){
+  showOnly("result");
+  document.getElementById("scoreBig").textContent=score;
+
+  const pct=score/10*100;
+  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
+  const arc=document.getElementById("donut-arc");
+  arc.setAttribute("stroke",color);
+  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+
+  const passed=score>=PASS_THRESHOLD;
+  const passBadge=document.getElementById("passBadge");
+  passBadge.textContent=passed?"合格":"不合格";
+  passBadge.className="pass-badge "+(passed?"pass":"fail");
+
+  const list=document.getElementById("reviewList");
+  list.innerHTML="";
+  results.forEach((r,i)=>{
+    const div=document.createElement("div");
+    div.className="review-item"+(r.correct?"":" miss");
+    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
+      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
+      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
+    list.appendChild(div);
+  });
+
+  submitResult();
+}
+
+function submitResult(){
+  const statusEl=document.getElementById("submitStatus");
+  if(!SUBMIT_URL){
+    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
+    return;
+  }
+  const payload={
+    studentId:studentId,
+    quizName:QUIZ_NAME,
+    score:score,
+    total:10,
+    passed:score>=PASS_THRESHOLD?"合格":"不合格",
+    timestamp:new Date().toISOString(),
+    missed:results.filter(r=>!r.correct).map(r=>r.q)
+  };
+  try{
+    fetch(SUBMIT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){
+    statusEl.textContent="※通信エラーのため記録できませんでした";
+  }
+}
+</script>
+</body>
+</html>
