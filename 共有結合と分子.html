@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ｜共有結合と分子（電子式・構造式）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:640px}
+.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
+#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
+.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
+.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+.id-input:focus{outline:none;border-color:#4299e1}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
+.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
+.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
+.choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
+.choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
+.choice-btn:disabled{cursor:default}
+.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
+.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
+.donut-svg{width:120px;height:120px}
+.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.9rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+.pass-badge.pass{background:#f0fff4;color:#276749}
+.pass-badge.fail{background:#fff5f5;color:#c53030}
+.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.review-item .ra{font-size:.85rem;color:#718096}
+.review-item.miss .rq{color:#c53030}
+.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.retry-btn:hover{opacity:.9}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="start" class="card">
+  <h1>化学基礎クイズ</h1>
+  <p class="sub">共有結合と分子｜電子式・構造式の書き方・配位結合｜毎回ランダム10問</p>
+  <div class="total-badge" id="totalBadge"></div>
+  <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
+  <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
+  <button class="start-btn" onclick="startQuiz()">スタート</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="header">
+    <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+    <div class="q-num" id="qnum"></div>
+  </div>
+  <div id="qtext" class="q-text"></div>
+  <div id="choices" class="choices"></div>
+  <div id="exp" class="exp-box"></div>
+  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+</div>
+
+<div id="result" class="card hidden">
+  <div class="r-title">結果発表</div>
+  <div class="donut-wrap">
+    <svg class="donut-svg" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
+      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+        stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+    </svg>
+    <div>
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-sub">/ 10問正解</div>
+      <div class="pass-badge" id="passBadge"></div>
+    </div>
+  </div>
+  <div class="review-title">解説</div>
+  <div class="review-list" id="reviewList"></div>
+  <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+  <div class="submit-status" id="submitStatus"></div>
+</div>
+
+</div>
+<script>
+// Apps Scriptデプロイ後、発行されたWebアプリのURLをここに設定（SETUP.md参照）
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const QUIZ_NAME = "共有結合と分子（電子式・構造式・配位結合）";
+const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+
+const ALL_Q = [
+  {q:"いくつかの原子が結びついてできた粒子を何というか？",
+   choices:["分子","結晶","単体","組成式"], a:0,
+   exp:"いくつかの原子が結びついてできた粒子を分子という。"},
+
+  {q:"He、Ne、Arのように、原子1個だけでできている分子を何というか？",
+   choices:["単原子分子","二原子分子","多原子分子","二重分子"], a:0,
+   exp:"分子を構成する原子の総数が1個のものを単原子分子という。He、Ne、Arなどがその例である。"},
+
+  {q:"H₂、N₂、O₂、Cl₂、HClのように、原子2個からできている分子を何というか？",
+   choices:["二原子分子","単原子分子","多原子分子","高分子"], a:0,
+   exp:"原子の総数が2個の分子を二原子分子という。"},
+
+  {q:"H₂O、CO₂、NH₃、CH₄のように、原子3個以上からできている分子を何というか？",
+   choices:["多原子分子","二原子分子","単原子分子","単体分子"], a:0,
+   exp:"原子の総数が3個以上の分子を多原子分子という。"},
+
+  {q:"分子を化学式で表すとき、含まれる原子の元素記号とその数を書いた式を何というか？",
+   choices:["分子式","組成式","電子式","構造式"], a:0,
+   exp:"分子に含まれる原子の元素記号とその数を書いた式を分子式という（例：H₂O）。"},
+
+  {q:"分子式で、ある原子の数が1個のとき、その「1」はどう書くか？",
+   choices:["省略して書かない（例：H₂O）","必ず1と書く（例：H₂O₁）","（　）に入れる","上付きで書く"], a:0,
+   exp:"分子式では組成式と同様に、原子の数が1のときは数字を省略して書かない。"},
+
+  {q:"非金属元素の原子どうしが互いの価電子を共有してできる結合を何というか？",
+   choices:["共有結合","イオン結合","金属結合","配位結合"], a:0,
+   exp:"非金属元素の原子どうしが互いの価電子を共有してできる結合を共有結合という。"},
+
+  {q:"2つのCl原子が近づいて塩素分子Cl₂ができるとき、それぞれのCl原子の電子配置は何と同じ安定な配置になるか？",
+   choices:["アルゴン原子Arと同じ電子配置","ネオン原子Neと同じ電子配置","ヘリウム原子Heと同じ電子配置","変化せずそのまま"], a:0,
+   exp:"2つのCl原子が価電子を共有しあうことで、それぞれのCl原子の電子配置は貴ガスのアルゴン原子Arと同じ安定な電子配置になる。"},
+
+  {q:"原子の最外殻電子を「・」で示して元素記号のまわりに書いた式を何というか？",
+   choices:["電子式","分子式","構造式","組成式"], a:0,
+   exp:"最外殻電子を「・」として元素記号のまわりに書いた式を電子式という。"},
+
+  {q:"原子や分子の中で2個ずつ対になっている電子を何というか？",
+   choices:["電子対","不対電子","価電子","自由電子"], a:0,
+   exp:"2個ずつ対になっている電子を電子対という。"},
+
+  {q:"対になっていない電子を何というか？",
+   choices:["不対電子","電子対","共有電子対","非共有電子対"], a:0,
+   exp:"対になっていない電子を不対電子という。H原子やCl原子には1個の不対電子がある。"},
+
+  {q:"H原子（電子式 H・）がもつ不対電子の数はいくつか？",
+   choices:["1個","2個","3個","0個"], a:0,
+   exp:"H原子の電子式は「H・」であり、不対電子は1個である。"},
+
+  {q:"C原子（14族、電子式は上下左右に「・」を1個ずつ書く）がもつ不対電子の数はいくつか？",
+   choices:["4個","3個","2個","1個"], a:0,
+   exp:"C原子は最外殻電子4個がすべて不対電子となり、不対電子の数は4個である。"},
+
+  {q:"N原子（15族）がもつ不対電子の数はいくつか？",
+   choices:["3個","4個","2個","5個"], a:0,
+   exp:"N原子は最外殻電子5個のうち1組が対になり、不対電子は3個になる。"},
+
+  {q:"O原子（16族）がもつ不対電子の数はいくつか？",
+   choices:["2個","3個","1個","4個"], a:0,
+   exp:"O原子は最外殻電子6個のうち2組が対になり、不対電子は2個になる。"},
+
+  {q:"F原子やCl原子（17族）がもつ不対電子の数はいくつか？",
+   choices:["1個","2個","3個","0個"], a:0,
+   exp:"F・Clなど17族の原子は最外殻電子7個のうち3組が対になり、不対電子は1個になる。"},
+
+  {q:"原子間で共有されている電子対を特に何というか？",
+   choices:["共有電子対","非共有電子対","不対電子","価電子対"], a:0,
+   exp:"原子間で共有されている電子対を共有電子対といい、共有結合を表す。"},
+
+  {q:"共有結合に使われず、1つの原子の中でもともと対になっている電子対を何というか？",
+   choices:["非共有電子対（孤立電子対）","共有電子対","不対電子","自由電子対"], a:0,
+   exp:"共有結合に使われず、1つの原子の中で対になっている電子対を非共有電子対（孤立電子対）という。"},
+
+  {q:"塩素分子Cl₂の電子式では、2つのCl原子の不対電子が1個ずつ出しあわれて共有電子対がつくられる。この共有電子対の数はいくつか？",
+   choices:["1組","2組","3組","0組"], a:0,
+   exp:"Cl₂分子では2つのCl原子が不対電子を1個ずつ出しあって1組の共有電子対をつくる（単結合）。"},
+
+  {q:"塩素分子Cl₂の電子式において、非共有電子対の総数（Cl原子2個分の合計）はいくつか？",
+   choices:["6組（Cl原子1個につき3組）","3組（全体で3組）","2組","1組"], a:0,
+   exp:"Cl原子1個につき非共有電子対が3組あり、Cl₂分子全体では2個のCl原子分で合計6組の非共有電子対がある。"},
+
+  {q:"1組の共有電子対による共有結合を何というか？",
+   choices:["単結合","二重結合","三重結合","配位結合"], a:0,
+   exp:"1組の共有電子対による共有結合を単結合という（例：Cl₂分子のCl-Cl結合）。"},
+
+  {q:"CO₂分子のC原子とO原子の間にみられる、2組の共有電子対による共有結合を何というか？",
+   choices:["二重結合","単結合","三重結合","イオン結合"], a:0,
+   exp:"2組の共有電子対による共有結合を二重結合という（例：CO₂のC=O結合）。"},
+
+  {q:"N₂分子にみられる、3組の共有電子対による共有結合を何というか？",
+   choices:["三重結合","二重結合","単結合","配位結合"], a:0,
+   exp:"3組の共有電子対による共有結合を三重結合という（例：N₂のN≡N結合）。"},
+
+  {q:"電子式における共有電子対を1本の線（価標）で表した化学式を何というか？",
+   choices:["構造式","電子式","分子式","組成式"], a:0,
+   exp:"電子式の共有電子対を1本の線（価標）で表した化学式を構造式という。"},
+
+  {q:"構造式の線（価標）で表すのはどの電子対か？",
+   choices:["共有電子対のみ（非共有電子対は書かない）","非共有電子対のみ","共有電子対と非共有電子対の両方","不対電子のみ"], a:0,
+   exp:"構造式で線（価標）に表すのは共有電子対のみで、非共有電子対は書かない。"},
+
+  {q:"構造式において、1つの原子から出ている線の本数を何というか？",
+   choices:["原子価","電子価","結合価","共有価"], a:0,
+   exp:"構造式で1つの原子から出ている線（価標）の本数を原子価という。原子価は、その原子がもつ不対電子の数に等しい。"},
+
+  {q:"C原子の原子価はいくつか？",
+   choices:["4価","3価","2価","1価"], a:0,
+   exp:"C原子は不対電子を4個もつため、原子価は4価である。"},
+
+  {q:"N原子の原子価はいくつか？",
+   choices:["3価","4価","2価","1価"], a:0,
+   exp:"N原子は不対電子を3個もつため、原子価は3価である。"},
+
+  {q:"O原子の原子価はいくつか？",
+   choices:["2価","3価","1価","4価"], a:0,
+   exp:"O原子は不対電子を2個もつため、原子価は2価である。"},
+
+  {q:"塩化水素HClの構造式として正しいものはどれか？",
+   choices:["H-Cl","H=Cl","H≡Cl","H-Cl-H"], a:0,
+   exp:"HとClはそれぞれ原子価1価（不対電子1個ずつ）なので、1組の共有電子対（単結合）で結ばれ、構造式はH-Clとなる。"},
+
+  {q:"水H₂Oの構造式として正しいものはどれか？",
+   choices:["H-O-H","H=O=H","H-O","H-H-O"], a:0,
+   exp:"O原子は原子価2価なので、H原子2個とそれぞれ単結合をつくり、H-O-Hとなる。"},
+
+  {q:"アンモニアNH₃の構造式について、正しく説明しているものはどれか？",
+   choices:["N原子（原子価3価）を中心に、H原子3個がそれぞれ単結合でつながっている","N原子を中心に、H原子2個が二重結合でつながっている","H原子を中心に、N原子3個がつながっている","N原子とH原子の間に三重結合がある"], a:0,
+   exp:"NH₃ではN原子（原子価3価）を中心に、H原子3個がそれぞれ単結合（N-H結合）でつながっている。"},
+
+  {q:"メタンCH₄の構造式について、正しく説明しているものはどれか？",
+   choices:["C原子（原子価4価）を中心に、H原子4個がそれぞれ単結合でつながっている","C原子を中心に、H原子2個が二重結合でつながっている","H原子を中心に、C原子4個がつながっている","C原子どうしが三重結合をつくる"], a:0,
+   exp:"CH₄ではC原子（原子価4価）を中心に、H原子4個がそれぞれ単結合（C-H結合）でつながっている。"},
+
+  {q:"四塩化炭素CCl₄の構造式について、正しく説明しているものはどれか？",
+   choices:["C原子（原子価4価）を中心に、Cl原子4個がそれぞれ単結合でつながっている","C原子を中心に、Cl原子2個が二重結合でつながっている","Cl原子どうしが直接結合している","C原子とCl原子の間に配位結合がある"], a:0,
+   exp:"CCl₄ではC原子（原子価4価）を中心に、Cl原子4個がそれぞれ単結合でつながっている。"},
+
+  {q:"二酸化炭素CO₂の構造式として正しいものはどれか？",
+   choices:["O=C=O","O-C-O","O≡C≡O","C=O=O"], a:0,
+   exp:"C原子とO原子の間にはそれぞれ2組の共有電子対（二重結合）があるため、構造式はO=C=Oとなる。"},
+
+  {q:"窒素分子N₂の構造式として正しいものはどれか？",
+   choices:["N≡N","N=N","N-N","N-N-N"], a:0,
+   exp:"N₂分子の2つのN原子の間には3組の共有電子対（三重結合）があるため、構造式はN≡Nとなる。"},
+
+  {q:"フッ素F₂分子の構造式として正しいものはどれか？",
+   choices:["F-F","F=F","F≡F","F-F-F"], a:0,
+   exp:"F原子は原子価1価なので、F原子どうしが単結合1本で結ばれ、F-Fとなる。"},
+
+  {q:"フッ化水素HFの構造式として正しいものはどれか？",
+   choices:["H-F","H=F","H≡F","F-H-F"], a:0,
+   exp:"HとFはそれぞれ原子価1価なので、単結合1本で結ばれ、H-Fとなる。"},
+
+  {q:"硫化水素H₂Sの構造式として正しいものはどれか？",
+   choices:["H-S-H","H=S=H","H-S","S-H-H"], a:0,
+   exp:"S原子は原子価2価なので、H原子2個とそれぞれ単結合をつくり、H-S-Hとなる（H₂Oと同じ形式）。"},
+
+  {q:"塩化水素HCl分子には、共有電子対と非共有電子対がそれぞれ何組あるか？",
+   choices:["共有電子対1組、非共有電子対3組（Cl原子に3組）","共有電子対1組、非共有電子対1組","共有電子対3組、非共有電子対1組","共有電子対1組、非共有電子対0組"], a:0,
+   exp:"HClではH-Cl単結合が1つなので共有電子対は1組。Cl原子には非共有電子対が3組あり、H原子には非共有電子対はない。"},
+
+  {q:"過酸化水素H₂O₂（構造式 H-O-O-H）には、共有電子対と非共有電子対がそれぞれ何組あるか？",
+   choices:["共有電子対3組、非共有電子対4組（各O原子に2組ずつ）","共有電子対2組、非共有電子対4組","共有電子対3組、非共有電子対2組","共有電子対4組、非共有電子対3組"], a:0,
+   exp:"H₂O₂はH-O-O-Hという構造で、共有電子対はH-O結合2つとO-O結合1つの合計3組。各O原子には非共有電子対が2組ずつあり、合計4組になる。"},
+
+  {q:"シアン化水素HCN（構造式 H-C≡N）には、共有電子対と非共有電子対がそれぞれ何組あるか？",
+   choices:["共有電子対4組、非共有電子対1組（N原子に1組）","共有電子対3組、非共有電子対1組","共有電子対4組、非共有電子対0組","共有電子対3組、非共有電子対2組"], a:0,
+   exp:"HCNはH-C≡Nという構造で、共有電子対はH-C単結合1組とC≡N三重結合3組の合計4組。非共有電子対はN原子に1組ある。"},
+
+  {q:"二酸化炭素CO₂分子には、共有電子対と非共有電子対がそれぞれ何組あるか？",
+   choices:["共有電子対4組、非共有電子対4組（各O原子に2組ずつ）","共有電子対2組、非共有電子対4組","共有電子対4組、非共有電子対2組","共有電子対2組、非共有電子対2組"], a:0,
+   exp:"CO₂ではC=O二重結合が2つあるので共有電子対は2×2＝4組。また各O原子に非共有電子対が2組ずつあり、O原子2個で非共有電子対は合計4組となる。"},
+
+  {q:"窒素分子N₂には、共有電子対と非共有電子対がそれぞれ何組あるか？",
+   choices:["共有電子対3組、非共有電子対2組（各N原子に1組ずつ）","共有電子対2組、非共有電子対2組","共有電子対3組、非共有電子対0組","共有電子対1組、非共有電子対2組"], a:0,
+   exp:"N₂ではN≡N三重結合があるので共有電子対は3組。各N原子には非共有電子対が1組ずつあり、合計2組になる。"},
+
+  {q:"水H₂O分子のおよその形はどれか？",
+   choices:["折れ線形","直線形","三角錐形","正四面体形"], a:0,
+   exp:"H₂O分子は折れ線形である。"},
+
+  {q:"アンモニアNH₃分子のおよその形はどれか？",
+   choices:["三角錐形","直線形","折れ線形","正四面体形"], a:0,
+   exp:"NH₃分子は三角錐形である。"},
+
+  {q:"メタンCH₄分子のおよその形はどれか？",
+   choices:["正四面体形","直線形","折れ線形","三角錐形"], a:0,
+   exp:"CH₄分子は正四面体形である。"},
+
+  {q:"二酸化炭素CO₂分子のおよその形はどれか？",
+   choices:["直線形","折れ線形","三角錐形","正四面体形"], a:0,
+   exp:"CO₂分子は直線形である。"},
+
+  {q:"1つの原子がもつ非共有電子対を共有してできる共有結合を特に何というか？",
+   choices:["配位結合","イオン結合","金属結合","水素結合"], a:0,
+   exp:"通常の共有結合は2つの原子が互いの不対電子を共有してできるが、1つの原子の非共有電子対を共有してできる共有結合を配位結合という。"},
+
+  {q:"配位結合によってできた結合は、通常の共有結合と区別できるか？",
+   choices:["区別できない（他の共有結合とまったく同じ）","結合の長さが常に長くなる","結合の強さが弱くなる","色が変化するため区別できる"], a:0,
+   exp:"配位結合は通常の共有結合とできるしくみが異なるが、できた結合は他の共有結合とまったく同じで区別することはできない。"},
+
+  {q:"アンモニア分子NH₃と水素イオンH⁺が結合してアンモニウムイオンNH₄⁺ができるとき、配位結合はどのように形成されるか？",
+   choices:["NH₃のN原子がもつ非共有電子対がN原子とH原子の間で共有される","H⁺がもつ電子がN原子に移動する","NH₃のH原子がもつ不対電子が使われる","N原子とH⁺が静電気力だけで結びつく"], a:0,
+   exp:"NH₃のN原子がもつ非共有電子対がN原子とH⁺との間で共有されることで、N-Hの配位結合ができる。"},
+
+  {q:"水分子H₂Oと水素イオンH⁺が結合してオキソニウムイオンH₃O⁺ができるとき、配位結合はどの原子間にできるか？",
+   choices:["O原子とH原子の間（O-H配位結合）","H原子とH原子の間","O原子とO原子の間","N原子とH原子の間"], a:0,
+   exp:"H₂OのO原子がもつ非共有電子対とH⁺との間でO-Hの配位結合ができ、H₃O⁺ができる。"},
+
+  {q:"アンモニウムイオンNH₄⁺のおよその形はどれか？",
+   choices:["正四面体形","三角錐形","折れ線形","直線形"], a:0,
+   exp:"NH₄⁺はN原子のまわりに4組の電子対（配位結合1組を含め、すべて共有電子対で区別できない）があるため、正四面体形になると予想できる。"},
+
+  {q:"オキソニウムイオンH₃O⁺のおよその形はどれか？",
+   choices:["三角錐形","正四面体形","直線形","折れ線形"], a:0,
+   exp:"H₃O⁺はO原子のまわりに4組の電子対（3組の共有電子対と1組の非共有電子対）があるため、非共有電子対を除いた形は三角錐形になると予想できる。"}
+];
+
+let session=[], idx=0, score=0, results=[], studentId="";
+
+document.getElementById("totalBadge").textContent="全"+ALL_Q.length+"問収録";
+
+function shuffle(arr){
+  let a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function shuffleChoices(q){
+  const order=shuffle([0,1,2,3]);
+  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
+}
+
+function showOnly(id){
+  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
+}
+
+function toHalfWidthDigits(s){
+  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+}
+
+function startQuiz(){
+  const idInput=document.getElementById("studentId");
+  const normalized=toHalfWidthDigits(idInput.value.trim());
+  if(!/^[0-9]{4}$/.test(normalized)){
+    alert("学籍番号は半角数字4桁で入力してください（例：1年1組4番→1104）。");
+    idInput.focus();
+    return;
+  }
+  idInput.value=normalized;
+  studentId=normalized;
+  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
+  idx=0; score=0; results=[];
+  showOnly("quiz");
+  renderQ();
+}
+
+function renderQ(){
+  const q=session[idx];
+  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
+  document.getElementById("qnum").textContent=(idx+1)+"/10";
+  document.getElementById("qtext").textContent=q.q;
+  document.getElementById("exp").style.display="none";
+  document.getElementById("nextBtn").style.display="none";
+
+  const ci=document.getElementById("choices");
+  ci.innerHTML="";
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement("button");
+    btn.className="choice-btn";
+    btn.textContent=c;
+    btn.onclick=()=>select(i);
+    ci.appendChild(btn);
+  });
+}
+
+function select(chosen){
+  const q=session[idx];
+  const btns=document.querySelectorAll(".choice-btn");
+  btns.forEach(b=>b.disabled=true);
+  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
+  if(chosen!==q.a) btns[q.a].classList.add("correct");
+
+  if(chosen===q.a) score++;
+  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
+
+  const expBox=document.getElementById("exp");
+  expBox.textContent=q.exp;
+  expBox.style.display="block";
+  document.getElementById("nextBtn").style.display="block";
+  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+}
+
+function next(){
+  idx++;
+  if(idx>=10){showResult();return;}
+  renderQ();
+}
+
+function showResult(){
+  showOnly("result");
+  document.getElementById("scoreBig").textContent=score;
+
+  const pct=score/10*100;
+  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
+  const arc=document.getElementById("donut-arc");
+  arc.setAttribute("stroke",color);
+  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+
+  const passed=score>=PASS_THRESHOLD;
+  const passBadge=document.getElementById("passBadge");
+  passBadge.textContent=passed?"合格":"不合格";
+  passBadge.className="pass-badge "+(passed?"pass":"fail");
+
+  const list=document.getElementById("reviewList");
+  list.innerHTML="";
+  results.forEach((r,i)=>{
+    const div=document.createElement("div");
+    div.className="review-item"+(r.correct?"":" miss");
+    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
+      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
+      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
+    list.appendChild(div);
+  });
+
+  submitResult();
+}
+
+function submitResult(){
+  const statusEl=document.getElementById("submitStatus");
+  if(!SUBMIT_URL){
+    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
+    return;
+  }
+  const payload={
+    studentId:studentId,
+    quizName:QUIZ_NAME,
+    score:score,
+    total:10,
+    passed:score>=PASS_THRESHOLD?"合格":"不合格",
+    timestamp:new Date().toISOString(),
+    missed:results.filter(r=>!r.correct).map(r=>r.q)
+  };
+  try{
+    fetch(SUBMIT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){
+    statusEl.textContent="※通信エラーのため記録できませんでした";
+  }
+}
+</script>
+</body>
+</html>
