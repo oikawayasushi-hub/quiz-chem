@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ｜分子からなる物質（極性・分子間力・分子結晶）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:640px}
+.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
+#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
+.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
+.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+.id-input:focus{outline:none;border-color:#4299e1}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
+.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
+.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
+.choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
+.choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
+.choice-btn:disabled{cursor:default}
+.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
+.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
+.donut-svg{width:120px;height:120px}
+.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.9rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+.pass-badge.pass{background:#f0fff4;color:#276749}
+.pass-badge.fail{background:#fff5f5;color:#c53030}
+.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.review-item .ra{font-size:.85rem;color:#718096}
+.review-item.miss .rq{color:#c53030}
+.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.retry-btn:hover{opacity:.9}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="start" class="card">
+  <h1>化学基礎クイズ</h1>
+  <p class="sub">分子からなる物質｜電気陰性度と極性・分子間力・水素結合・分子結晶｜毎回ランダム10問</p>
+  <div class="total-badge" id="totalBadge"></div>
+  <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
+  <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
+  <button class="start-btn" onclick="startQuiz()">スタート</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="header">
+    <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+    <div class="q-num" id="qnum"></div>
+  </div>
+  <div id="qtext" class="q-text"></div>
+  <div id="choices" class="choices"></div>
+  <div id="exp" class="exp-box"></div>
+  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+</div>
+
+<div id="result" class="card hidden">
+  <div class="r-title">結果発表</div>
+  <div class="donut-wrap">
+    <svg class="donut-svg" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
+      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+        stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+    </svg>
+    <div>
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-sub">/ 10問正解</div>
+      <div class="pass-badge" id="passBadge"></div>
+    </div>
+  </div>
+  <div class="review-title">解説</div>
+  <div class="review-list" id="reviewList"></div>
+  <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+  <div class="submit-status" id="submitStatus"></div>
+</div>
+
+</div>
+<script>
+// Apps Scriptデプロイ後、発行されたWebアプリのURLをここに設定（SETUP.md参照）
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const QUIZ_NAME = "分子からなる物質（電気陰性度・極性・分子間力・分子結晶）";
+const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+
+const ALL_Q = [
+  {q:"共有結合において、共有電子対を引きつける強さを表した数値を何というか？",
+   choices:["電気陰性度","原子価","不対電子数","静電気力"], a:0,
+   exp:"共有電子対を引きつける強さを表した数値を電気陰性度という。"},
+
+  {q:"電気陰性度は周期表においてどのような傾向があるか（貴ガスを除く）？",
+   choices:["右上にあるほど大きく、左下にあるほど小さい","左上にあるほど大きく、右下にあるほど小さい","族には関係せず、周期のみで決まる","すべての元素でほぼ同じ"], a:0,
+   exp:"電気陰性度は貴ガスを除いて、周期表の右上にあるほど（陰性が強いほど）大きく、左下にあるほど（陽性が強いほど）小さい。"},
+
+  {q:"塩化水素HClでは、電気陰性度の大きいCl原子がわずかに負の電荷（δ-）を、H原子がわずかに正の電荷（δ+）を帯びる。このような共有結合における電荷のかたよりを何というか？",
+   choices:["結合の極性","電離","静電気力","配位結合"], a:0,
+   exp:"共有結合において電気陰性度の差により電荷がかたよることを結合の極性という。"},
+
+  {q:"2つの原子間の共有結合において、両原子の電気陰性度が等しいとき、結合の極性はどうなるか？",
+   choices:["極性がない","必ず極性がある","イオン結合になる","配位結合になる"], a:0,
+   exp:"共有結合をつくる2原子間の電気陰性度が等しいときは極性がない（例：Cl₂分子のCl-Cl結合）。"},
+
+  {q:"分子内のすべての共有結合について極性を考えたとき、分子全体として極性がない分子を何というか？",
+   choices:["無極性分子","極性分子","電解質分子","イオン分子"], a:0,
+   exp:"分子全体として極性がない分子を無極性分子という。"},
+
+  {q:"分子全体として極性がある分子を何というか？",
+   choices:["極性分子","無極性分子","非電解質分子","中性分子"], a:0,
+   exp:"分子全体として極性がある分子を極性分子という。"},
+
+  {q:"二原子分子の極性について正しい説明はどれか？",
+   choices:["結合に極性がなければ無極性分子、極性があれば極性分子となる","二原子分子はすべて無極性分子である","二原子分子はすべて極性分子である","原子の質量によって決まる"], a:0,
+   exp:"二原子分子は、結合に極性がない場合は無極性分子、結合に極性がある場合は極性分子となる。"},
+
+  {q:"塩素分子Cl₂（同じ原子どうしの結合）は極性分子か、無極性分子か？",
+   choices:["無極性分子（結合に極性がないため）","極性分子（結合に極性があるため）","分子によって異なる","判断できない"], a:0,
+   exp:"Cl₂は同じ電気陰性度のCl原子どうしの結合なので極性がなく、無極性分子である。"},
+
+  {q:"塩化水素HClは極性分子か、無極性分子か？",
+   choices:["極性分子（H-Cl結合に極性があるため）","無極性分子（結合に極性がないため）","中性分子","イオンからなる物質"], a:0,
+   exp:"HClはH原子とCl原子の電気陰性度が異なるため結合に極性があり、極性分子である。"},
+
+  {q:"多原子分子の極性は、結合の極性に加えて何によって影響されるか？",
+   choices:["分子の形","分子量","分子の色","分子の融点"], a:0,
+   exp:"多原子分子の極性は、分子の形にも影響される。結合に極性があっても、分子の形によって極性が打ち消しあうことがある。"},
+
+  {q:"二酸化炭素CO₂は直線形の分子であるが、無極性分子であるのはなぜか？",
+   choices:["直線形のため、C=O結合の極性が互いに打ち消しあうから","C原子とO原子の電気陰性度が等しいから","結合に極性がまったくないから","二重結合には極性が生じないから"], a:0,
+   exp:"CO₂は直線形なので、2つのC=O結合の極性の向きが逆になって互いに打ち消しあい、分子全体としては無極性分子となる。"},
+
+  {q:"水H₂Oは折れ線形の分子であるが、極性分子であるのはなぜか？",
+   choices:["折れ線形のため、O-H結合の極性が打ち消されずに残るから","O原子とH原子の電気陰性度が等しいから","結合に極性がないから","水素結合があるから極性分子になる"], a:0,
+   exp:"H₂Oは折れ線形なので、2つのO-H結合の極性が打ち消されずに残り、分子全体として極性分子になる。"},
+
+  {q:"メタンCH₄は正四面体形の分子であるが、無極性分子であるのはなぜか？",
+   choices:["正四面体形のため、C-H結合の極性が対称的に打ち消しあうから","C原子とH原子の電気陰性度が等しいから","結合に極性がないから","メタンには結合の極性が存在しないから"], a:0,
+   exp:"CH₄は正四面体形なので、4つのC-H結合の極性が対称的に打ち消しあい、分子全体としては無極性分子になる。"},
+
+  {q:"アンモニアNH₃は三角錐形の分子であるが、極性分子であるのはなぜか？",
+   choices:["三角錐形のため、N-H結合の極性が打ち消されずに残るから","N原子とH原子の電気陰性度が等しいから","結合に極性がないから","NH₃には結合の極性が存在しないから"], a:0,
+   exp:"NH₃は三角錐形なので、N-H結合の極性が打ち消されずに残り、分子全体として極性分子になる。"},
+
+  {q:"窒素分子N₂は極性分子か、無極性分子か？",
+   choices:["無極性分子（同じ原子どうしの結合で極性がないため）","極性分子","イオン結晶","判断できない"], a:0,
+   exp:"N₂は同じN原子どうしの結合なので極性がなく、無極性分子である。"},
+
+  {q:"フッ化水素HFは極性分子か、無極性分子か？",
+   choices:["極性分子（H-F結合に極性があるため）","無極性分子","中性分子","イオンからなる物質"], a:0,
+   exp:"HFはH原子とF原子の電気陰性度が大きく異なるため結合に極性があり、極性分子である。"},
+
+  {q:"硫化水素H₂S（折れ線形の分子）は極性分子か、無極性分子か？",
+   choices:["極性分子（折れ線形でH-S結合の極性が打ち消されずに残るため）","無極性分子（正四面体形のため）","結合に極性がないため無極性分子","分子の形に関係なく無極性分子"], a:0,
+   exp:"H₂SはH₂Oと同様に折れ線形の分子で、H-S結合の極性が打ち消されずに残るため極性分子である。"},
+
+  {q:"二硫化炭素CS₂（CO₂と同じ直線形の分子）は極性分子か、無極性分子か？",
+   choices:["無極性分子（直線形でC=S結合の極性が打ち消しあうため）","極性分子（結合の極性が残るため）","イオン結合をもつため判断できない","中性分子"], a:0,
+   exp:"CS₂はCO₂と同じ直線形の分子であり、2つのC=S結合の極性が互いに打ち消しあうため無極性分子である。"},
+
+  {q:"四塩化炭素CCl₄（正四面体形の分子）は極性分子か、無極性分子か？",
+   choices:["無極性分子（正四面体形でC-Cl結合の極性が対称的に打ち消しあうため）","極性分子（結合の極性が残るため）","結合に極性がないため無極性分子","分子の形とは無関係に極性分子"], a:0,
+   exp:"CCl₄はCH₄と同じ正四面体形の分子であり、4つのC-Cl結合の極性が対称的に打ち消しあうため無極性分子である。"},
+
+  {q:"極性分子からなる物質は、どのような液体に溶けやすいか？",
+   choices:["同じく極性分子からなる液体（例：水）","無極性分子からなる液体のみ","液体には溶けない","気体にしか溶けない"], a:0,
+   exp:"極性分子からなる物質は、同じく極性分子からなる液体に溶けやすい。例えば塩化水素やアンモニアは水に溶けやすい。"},
+
+  {q:"無極性分子からなる水素H₂やメタンCH₄は、水にどの程度溶けるか？",
+   choices:["ほぼ溶けない","非常によく溶ける","水と同じ量だけ溶ける","加熱すればよく溶ける"], a:0,
+   exp:"無極性分子からなる水素やメタンは、極性分子である水にほぼ溶けない。"},
+
+  {q:"分子間にはたらく力を何というか？",
+   choices:["分子間力","静電気力","化学結合","原子価力"], a:0,
+   exp:"分子間にはたらく力を分子間力という。分子間力は化学結合（イオン結合・共有結合・金属結合）よりも非常に弱い。"},
+
+  {q:"分子からなる物質の沸点や融点は、分子間力の強さとどのような関係があるか？",
+   choices:["分子間力が強いほど沸点・融点は高くなる","分子間力が強いほど沸点・融点は低くなる","分子間力とは無関係である","分子間力が強いと沸点のみ下がる"], a:0,
+   exp:"分子からなる物質の沸点や融点は、分子間力が強いほど高くなる。よって沸点や融点を調べることで分子間力の強さが推測できる。"},
+
+  {q:"電荷の瞬間的なかたよりによって、極性によらずすべての分子間にはたらく弱い引力を何というか？",
+   choices:["ファンデルワールス力","水素結合","静電気力（イオン結合）","配位結合"], a:0,
+   exp:"分子の中で電子が動いていることで生じる電荷の瞬間的なかたよりにより、極性によらずすべての分子間にはたらく弱い引力をファンデルワールス力という。"},
+
+  {q:"ファンデルワールス力の強さは、分子の質量（分子量）とどのような関係があるか？",
+   choices:["分子量が大きいほど強い","分子量が大きいほど弱い","分子量とは無関係","分子量が小さいほど強い"], a:0,
+   exp:"ファンデルワールス力は、分子の質量が大きいほど（分子量が大きいほど）強くなる。"},
+
+  {q:"ハロゲン単体F₂、Cl₂、Br₂、I₂を沸点の低い順に並べたものはどれか？",
+   choices:["F₂ < Cl₂ < Br₂ < I₂","I₂ < Br₂ < Cl₂ < F₂","すべて同じ沸点","Cl₂ < F₂ < I₂ < Br₂"], a:0,
+   exp:"ハロゲン単体は分子量が大きいものほどファンデルワールス力が強く、沸点が高くなる。分子量の順はF₂<Cl₂<Br₂<I₂なので、沸点もこの順に高くなる。"},
+
+  {q:"極性分子の分子間には、ファンデルワールス力に加えてどのような引力がはたらくか？",
+   choices:["極性による引力","水素結合のみ","イオン結合","金属結合"], a:0,
+   exp:"極性分子の分子間には、ファンデルワールス力（極性によらない引力）に加えて、極性による引力もはたらく。"},
+
+  {q:"極性分子の塩化水素HCl（沸点-85℃）は、分子量が近い無極性分子のフッ素F₂（沸点-188℃）と比べて沸点が高い。これは何を示しているか？",
+   choices:["極性分子の分子間には、より強い分子間力がはたらいていること","HClのほうが分子量が大きいこと","F₂には分子間力がはたらかないこと","HClはイオン結合をもつこと"], a:0,
+   exp:"分子量が近いにもかかわらずHClの沸点がF₂より高いことから、極性分子の分子間にはより強い分子間力（極性による引力）がはたらいているとわかる。"},
+
+  {q:"非共有電子対をもつ電気陰性度の大きい原子（F、O、N）どうしの間に、H原子をはさんで形成される結合を何というか？",
+   choices:["水素結合","配位結合","イオン結合","金属結合"], a:0,
+   exp:"非共有電子対をもつ電気陰性度の大きい原子（F、O、N）どうしの間に、H原子をはさんで形成される結合を水素結合という。"},
+
+  {q:"水素結合の強さについて正しい説明はどれか？",
+   choices:["化学結合よりは非常に弱いが、ファンデルワールス力よりはかなり強い","化学結合よりも強い","ファンデルワールス力よりも弱い","イオン結合と同じ強さである"], a:0,
+   exp:"水素結合は、化学結合（イオン結合・共有結合・金属結合）よりも非常に弱いが、ファンデルワールス力よりはかなり強い。"},
+
+  {q:"フッ化水素HFの分子間で水素結合が強くはたらく理由は何か？",
+   choices:["H原子とF原子の電気陰性度の差が大きく、非常に大きな極性をもつため","H原子とF原子の電気陰性度が等しいため","フッ素原子に不対電子がないため","HFがイオン結合でできているため"], a:0,
+   exp:"HFはH原子とF原子の電気陰性度の差が大きく、非常に大きな極性をもつため、H原子と別の分子のF原子の非共有電子対との間に強い静電気力（水素結合）がはたらく。"},
+
+  {q:"氷の結晶中で、水分子1個は何個の水分子と水素結合で結びついているか？",
+   choices:["4個","2個","6個","1個"], a:0,
+   exp:"氷の結晶中では、水分子1個当たり4個の水分子と水素結合で引きあい、すき間の多い正四面体構造になっている。"},
+
+  {q:"氷が水に浮くのはなぜか？",
+   choices:["水分子どうしが水素結合で固定され、すき間の多い構造になり密度が液体の水より小さいから","氷は液体の水より重いから","氷には分子間力がはたらかないから","氷はイオン結合でできているから"], a:0,
+   exp:"氷の結晶中では水分子どうしが水素結合で互いに固定され、すき間の多い構造になっているため、氷の密度は液体の水よりも小さく、氷が水に浮く。"},
+
+  {q:"固体が液体に浮くという水の現象は、他の物質と比べてどのような特徴があるか？",
+   choices:["水に特異的で、他のほとんどの物質の固体は液体に沈む","すべての物質で共通して見られる現象である","分子からなる物質では必ず見られる現象である","エタノールでも同じように固体が液体に浮く"], a:0,
+   exp:"固体が液体に浮く現象は水に特異的である。例えばエタノールは固体が液体に沈む。他のほとんどの物質の固体は液体に沈む。"},
+
+  {q:"CH₄、SiH₄、GeH₄、SnH₄のような14族元素の水素化合物（無極性分子）の沸点は、分子量とどのような関係にあるか？",
+   choices:["分子量が大きいほど沸点が高くなる（ファンデルワールス力による）","分子量に関係なくほぼ一定である","分子量が大きいほど沸点が低くなる","水素結合により沸点が異常に高くなる"], a:0,
+   exp:"14族元素の水素化合物は無極性分子であり、分子量が大きいほどファンデルワールス力が強くなり沸点が高くなる。"},
+
+  {q:"NH₃、HF、H₂Oの沸点は、それぞれの分子量から予想される値と比べてどうなっているか？",
+   choices:["異常に高い（分子間に水素結合が形成されているため）","異常に低い","分子量どおりで予想と一致する","予想より少しだけ低い"], a:0,
+   exp:"NH₃、HF、H₂Oの沸点は、分子量から予想される値よりも異常に高い。これは分子間に水素結合が形成されているためと考えられる。"},
+
+  {q:"水素H₂、フッ化水素HF、塩化水素HCl、塩素Cl₂のうち、沸点が最も高いのはどれか？",
+   choices:["フッ化水素HF","水素H₂","塩化水素HCl","塩素Cl₂"], a:0,
+   exp:"HFは分子間に水素結合が形成されるため、分子量が近い他の物質と比べて沸点が異常に高くなり、この中で最も沸点が高い。"},
+
+  {q:"分子どうしが分子間力で引きあい、規則正しく配列してできる結晶を何というか？",
+   choices:["分子結晶","イオン結晶","金属結晶","共有結合の結晶"], a:0,
+   exp:"分子どうしが分子間力で引きあい、規則正しく配列してできる結晶を分子結晶という（例：氷、ドライアイス、ヨウ素）。"},
+
+  {q:"次のうち、分子結晶に分類されるものはどれか？",
+   choices:["ドライアイス（CO₂の固体）","塩化ナトリウムNaCl","鉄Fe","ダイヤモンド"], a:0,
+   exp:"ドライアイスは二酸化炭素分子からなる分子結晶である。塩化ナトリウムはイオン結晶、鉄は金属結晶である。"},
+
+  {q:"分子結晶の一般的な性質として正しいものはどれか？",
+   choices:["やわらかく、くだけやすい","非常に硬く、融点が高い","電気をよく通す","金属光沢がある"], a:0,
+   exp:"分子間力は弱い力なので、分子結晶は一般にやわらかく、くだけやすい。また沸点や融点が低く、常温・常圧で気体や液体であるものが多い。"},
+
+  {q:"二酸化炭素、ヨウ素、ナフタレンなどが昇華しやすいのはなぜか？",
+   choices:["分子間力が非常に弱いから","イオン結合が弱いから","分子量が非常に小さいから","水素結合が強いから"], a:0,
+   exp:"二酸化炭素・ヨウ素・ナフタレンなどは分子間力が非常に弱いので、固体から直接気体になる昇華が起こりやすい。"},
+
+  {q:"分子からなる物質は電気を通すか？",
+   choices:["通さない","よく通す","水に溶かさなくても通す","固体のときのみ通す"], a:0,
+   exp:"分子からなる物質は電気を通さない。"},
+
+  {q:"塩化水素や酢酸のような分子からなる物質の電解質は、どのようなときに電気を通すようになるか？",
+   choices:["水に溶けて電離したとき","固体のとき","液体（融解）のとき","加熱したとき（電離せずに）"], a:0,
+   exp:"塩化水素や酢酸のような分子からなる物質の電解質は、固体や液体では電気を通さないが、水に溶けると電離してイオンに分かれ、電気を通すようになる。"}
+];
+
+let session=[], idx=0, score=0, results=[], studentId="";
+
+document.getElementById("totalBadge").textContent="全"+ALL_Q.length+"問収録";
+
+function shuffle(arr){
+  let a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function shuffleChoices(q){
+  const order=shuffle([0,1,2,3]);
+  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
+}
+
+function showOnly(id){
+  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
+}
+
+function toHalfWidthDigits(s){
+  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+}
+
+function startQuiz(){
+  const idInput=document.getElementById("studentId");
+  const normalized=toHalfWidthDigits(idInput.value.trim());
+  if(!/^[0-9]{4}$/.test(normalized)){
+    alert("学籍番号は半角数字4桁で入力してください（例：1年1組4番→1104）。");
+    idInput.focus();
+    return;
+  }
+  idInput.value=normalized;
+  studentId=normalized;
+  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
+  idx=0; score=0; results=[];
+  showOnly("quiz");
+  renderQ();
+}
+
+function renderQ(){
+  const q=session[idx];
+  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
+  document.getElementById("qnum").textContent=(idx+1)+"/10";
+  document.getElementById("qtext").textContent=q.q;
+  document.getElementById("exp").style.display="none";
+  document.getElementById("nextBtn").style.display="none";
+
+  const ci=document.getElementById("choices");
+  ci.innerHTML="";
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement("button");
+    btn.className="choice-btn";
+    btn.textContent=c;
+    btn.onclick=()=>select(i);
+    ci.appendChild(btn);
+  });
+}
+
+function select(chosen){
+  const q=session[idx];
+  const btns=document.querySelectorAll(".choice-btn");
+  btns.forEach(b=>b.disabled=true);
+  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
+  if(chosen!==q.a) btns[q.a].classList.add("correct");
+
+  if(chosen===q.a) score++;
+  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
+
+  const expBox=document.getElementById("exp");
+  expBox.textContent=q.exp;
+  expBox.style.display="block";
+  document.getElementById("nextBtn").style.display="block";
+  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+}
+
+function next(){
+  idx++;
+  if(idx>=10){showResult();return;}
+  renderQ();
+}
+
+function showResult(){
+  showOnly("result");
+  document.getElementById("scoreBig").textContent=score;
+
+  const pct=score/10*100;
+  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
+  const arc=document.getElementById("donut-arc");
+  arc.setAttribute("stroke",color);
+  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+
+  const passed=score>=PASS_THRESHOLD;
+  const passBadge=document.getElementById("passBadge");
+  passBadge.textContent=passed?"合格":"不合格";
+  passBadge.className="pass-badge "+(passed?"pass":"fail");
+
+  const list=document.getElementById("reviewList");
+  list.innerHTML="";
+  results.forEach((r,i)=>{
+    const div=document.createElement("div");
+    div.className="review-item"+(r.correct?"":" miss");
+    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
+      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
+      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
+    list.appendChild(div);
+  });
+
+  submitResult();
+}
+
+function submitResult(){
+  const statusEl=document.getElementById("submitStatus");
+  if(!SUBMIT_URL){
+    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
+    return;
+  }
+  const payload={
+    studentId:studentId,
+    quizName:QUIZ_NAME,
+    score:score,
+    total:10,
+    passed:score>=PASS_THRESHOLD?"合格":"不合格",
+    timestamp:new Date().toISOString(),
+    missed:results.filter(r=>!r.correct).map(r=>r.q)
+  };
+  try{
+    fetch(SUBMIT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){
+    statusEl.textContent="※通信エラーのため記録できませんでした";
+  }
+}
+</script>
+</body>
+</html>
