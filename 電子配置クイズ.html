@@ -33,9 +33,11 @@
       cursor: pointer; transition: all .2s;
     }
     .btn-primary { background: #4f46e5; color: #fff; }
-    .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
     .btn-secondary { background: #e5e7eb; color: #374151; margin-top: 10px; }
-    .btn-secondary:hover { background: #d1d5db; }
+    @media (hover: hover) {
+      .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+      .btn-secondary:hover { background: #d1d5db; }
+    }
 
     .progress-text {
       display: flex; justify-content: space-between;
@@ -69,10 +71,14 @@
       cursor: pointer; transition: all .15s; background: #fff;
       text-align: left; font-size: .95rem; color: #374151; width: 100%;
     }
-    .choice:hover { border-color: #4f46e5; background: #f5f3ff; }
+    @media (hover: hover) {
+      .choice:not(:disabled):hover { border-color: #4f46e5; background: #f5f3ff; }
+    }
     .choice.correct  { border-color: #10b981; background: #d1fae5; color: #065f46; }
     .choice.wrong    { border-color: #ef4444; background: #fee2e2; color: #991b1b; }
     .choice.reveal   { border-color: #10b981; background: #d1fae5; color: #065f46; }
+    .choice:disabled { cursor: default; }
+    .choice:disabled:not(.correct):not(.wrong):not(.reveal) { opacity: .5; }
 
     .explanation {
       margin-top: 16px; padding: 14px;
@@ -110,10 +116,11 @@
       <h1>電子配置クイズ</h1>
       <p class="subtitle">第1編第2章「物質の構成粒子」</p>
       <div class="info-box">
-        全38問からランダムに <strong>10問</strong> 出題<br>
-        🔵 知識問題 ＋ 🟢 用語問題 ＋ 🟡 思考力問題<br>
+        全43問からランダムに <strong>10問</strong> 出題<br>
+        🔵 知識問題6問 ＋ 🟢 用語問題2問 ＋ 🟡 思考力問題2問<br>
         電子殻・電子配置・価電子・貴ガスを確認しよう
       </div>
+      <p id="best-score" style="text-align:center;color:#4f46e5;font-size:.9rem;margin-bottom:14px;"></p>
       <button class="btn btn-primary" onclick="startQuiz()">スタート</button>
     </div>
   </div>
@@ -315,13 +322,15 @@ const ALL_Q = [
   },
   {
     type: "知識",
-    q: "最外殻に最大数の電子が満たされた非常に安定な状態を何というか。",
+    group: "heikaku",
+    q: "電子殻が，その殻に入ることのできる最大数の電子で満たされた状態を何というか。",
     choices: ["閉殻", "価電子", "オクテット", "最外殻電子"],
     a: 0,
     exp: "最大数の電子で満たされた電子殻を閉殻（へいかく）という。閉殻状態の原子は非常に安定である。"
   },
   {
     type: "知識",
+    group: "kadenshi",
     q: "価電子の説明として正しいものはどれか。",
     choices: [
       "最外殻電子のうち，化学結合などに重要なはたらきをする電子",
@@ -374,6 +383,7 @@ const ALL_Q = [
   },
   {
     type: "用語",
+    group: "heikaku",
     q: "「閉殻」の説明として正しいものはどれか。",
     choices: [
       "最大数の電子で満たされている電子殻の状態",
@@ -410,6 +420,7 @@ const ALL_Q = [
   },
   {
     type: "用語",
+    group: "kadenshi",
     q: "「価電子」の説明として正しいものはどれか。",
     choices: [
       "最外殻電子のうち，化学結合やイオン化に重要なはたらきをする電子",
@@ -488,11 +499,77 @@ const ALL_Q = [
     ],
     a: 0,
     exp: "価電子は化学結合やイオン化などの化学反応に直接かかわる電子。価電子数が同じ原子は同様の反応をしやすく，化学的性質が似る。例：Li(価電子1)とNa(価電子1)はどちらも水と激しく反応する。"
+  },
+  {
+    type: "思考力",
+    q: "電子配置がK:2, L:8, M:7 である原子Xがある。Xと化学的性質がよく似ている原子はどれか。",
+    choices: [
+      "フッ素 ₉F（電子配置 K:2, L:7）",
+      "硫黄 ₁₆S（電子配置 K:2, L:8, M:6）",
+      "アルゴン ₁₈Ar（電子配置 K:2, L:8, M:8）",
+      "ナトリウム ₁₁Na（電子配置 K:2, L:8, M:1）"
+    ],
+    a: 0,
+    exp: "Xは最外殻(M殻)に7個 → 価電子数7。価電子数が同じ原子は化学的性質が似る。Fも価電子7個なのでXとよく似た性質を示す。なおXは₁₇Cl（塩素）である。"
+  },
+  {
+    type: "思考力",
+    q: "マグネシウム(₁₂Mg)とカルシウム(₂₀Ca)は化学的性質がよく似ている。その理由として最も適切なものはどれか。",
+    choices: [
+      "どちらも価電子の数が2個で等しいから",
+      "どちらも最外殻がM殻だから",
+      "原子番号の差がちょうど8だから",
+      "どちらも電子殻の数が同じだから"
+    ],
+    a: 0,
+    exp: "Mgは K:2, L:8, M:2，Caは K:2, L:8, M:8, N:2。最外殻は異なるが，価電子数はどちらも2個。化学的性質は価電子数で決まるため，性質がよく似る（同族元素）。"
+  },
+  {
+    type: "思考力",
+    q: "原子番号1〜20の原子のうち，価電子の数が0個であるものはいくつあるか。",
+    choices: ["3つ", "1つ", "2つ", "4つ"],
+    a: 0,
+    exp: "価電子数が0なのは貴ガス。原子番号1〜20の範囲では ₂He・₁₀Ne・₁₈Ar の3つ。安定な電子配置をもつため価電子数は0個と定義される。"
+  },
+  {
+    type: "思考力",
+    q: "ナトリウム原子(₁₁Na)は電子を1個放出して陽イオンになりやすい。その理由として最も適切なものはどれか。",
+    choices: [
+      "電子を1個放出すると，貴ガスのNeと同じ安定な電子配置になるから",
+      "M殻の電子はK殻の電子より軽いから",
+      "電子を1個受け取るとM殻が閉殻になるから",
+      "陽子の数が減って原子が安定になるから"
+    ],
+    a: 0,
+    exp: "₁₁Naの電子配置はK:2, L:8, M:1。最外殻の電子1個を放出すると K:2, L:8 となり，貴ガス₁₀Neと同じ安定な電子配置になる。イオンになっても陽子の数は変わらないことに注意。"
+  },
+  {
+    type: "思考力",
+    q: "カルシウムイオン(Ca²⁺)と同じ電子配置をもつ原子はどれか。",
+    choices: [
+      "アルゴン ₁₈Ar",
+      "ネオン ₁₀Ne",
+      "カリウム ₁₉K",
+      "マグネシウム ₁₂Mg"
+    ],
+    a: 0,
+    exp: "₂₀Caの電子配置は K:2, L:8, M:8, N:2。電子を2個失ったCa²⁺は K:2, L:8, M:8 となり，これは貴ガス₁₈Arと同じ電子配置である。"
   }
 ];
 
 // ── クイズ状態 ──
 let session = [], idx = 0, score = 0, results = [];
+const BEST_KEY = 'quiz-denshihaichi-best';
+
+// スタート画面に自己ベストを表示
+(function showBest() {
+  try {
+    const best = localStorage.getItem(BEST_KEY);
+    if (best !== null) {
+      document.getElementById('best-score').textContent = `🏆 自己ベスト: ${best} / 10`;
+    }
+  } catch (e) { /* 記録なし・使用不可なら何も表示しない */ }
+})();
 
 function shuffle(arr) {
   const a = [...arr];
@@ -510,11 +587,32 @@ function showOnly(id) {
 }
 
 function startQuiz() {
-  // 毎回：思考力1問＋用語2問＋知識7問 = 10問（セッション内でシャッフル）
+  // 毎回：思考力2問＋用語2問＋知識6問 = 10問（セッション内でシャッフル）
   const thinking  = shuffle(ALL_Q.filter(q => q.type === '思考力'));
   const vocab     = shuffle(ALL_Q.filter(q => q.type === '用語'));
   const knowledge = shuffle(ALL_Q.filter(q => q.type === '知識'));
-  session = shuffle([thinking[0], ...vocab.slice(0, 2), ...knowledge.slice(0, 7)]);
+
+  // 同じ概念(group)の問題が同一セッションに重複しないようにする
+  const picked = [...thinking.slice(0, 2), ...vocab.slice(0, 2)];
+  const usedGroups = new Set(picked.map(q => q.group).filter(Boolean));
+  const knowledgePicked = [];
+  for (const q of knowledge) {
+    if (knowledgePicked.length >= 6) break;
+    if (q.group && usedGroups.has(q.group)) continue;
+    if (q.group) usedGroups.add(q.group);
+    knowledgePicked.push(q);
+  }
+
+  // 各問題の選択肢をシャッフルし、正解位置を追従させる
+  session = shuffle([...picked, ...knowledgePicked]).map(q => {
+    const order = shuffle(q.choices.map((_, i) => i));
+    return {
+      ...q,
+      choices: order.map(i => q.choices[i]),
+      a: order.indexOf(q.a)
+    };
+  });
+
   idx = 0; score = 0; results = [];
   renderQ();
   showOnly('s-quiz');
@@ -549,7 +647,11 @@ function renderQ() {
 function select(chosen) {
   const q = session[idx];
   const btns = document.querySelectorAll('.choice');
-  btns.forEach(b => { b.onclick = null; });
+  btns.forEach(b => { b.onclick = null; b.disabled = true; });
+
+  // 回答した時点で進捗バーを更新（最終問題で100%になる）
+  document.getElementById('prog').style.width =
+    `${((idx + 1) / session.length) * 100}%`;
 
   const correct = chosen === q.a;
   if (correct) score++;
@@ -580,10 +682,22 @@ function next() {
 function showResult() {
   document.getElementById('r-score').textContent = score;
   const pct = score / session.length;
-  const msg = pct === 1   ? '満点！完璧です！'
-            : pct >= 0.8  ? 'よくできました！'
-            : pct >= 0.6  ? 'もう少しです。'
-            : '復習しましょう！';
+  let msg = pct === 1   ? '満点！完璧です！'
+          : pct >= 0.8  ? 'よくできました！'
+          : pct >= 0.6  ? 'もう少しです。'
+          : '復習しましょう！';
+
+  // 自己ベストの保存（localStorageが使えない環境でも動作は継続）
+  try {
+    const best = Number(localStorage.getItem(BEST_KEY) || -1);
+    if (score > best) {
+      localStorage.setItem(BEST_KEY, score);
+      if (best >= 0) msg += ' 🎉 自己ベスト更新！';
+    } else if (best >= 0) {
+      msg += `（自己ベスト: ${best}/10）`;
+    }
+  } catch (e) { /* プライベートモード等では記録しない */ }
+
   document.getElementById('r-msg').textContent = msg;
 
   // ドーナツグラフ
