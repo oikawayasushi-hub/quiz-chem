@@ -33,6 +33,10 @@
   .category-list li::before { content: "●"; position: absolute; left: 0; color: var(--primary); font-size: .6em; top: 6px; }
   .btn { display: inline-block; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 1.05rem; cursor: pointer; font-weight: 700; transition: background .15s; }
   .btn:hover { background: var(--primary-dark); }
+  .id-label { display: block; font-size: .85rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-align: left; }
+  .id-input { width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: .95rem; margin-bottom: 20px; }
+  .id-input:focus { outline: none; border-color: var(--primary); }
+  .submit-status { margin-top: 14px; text-align: center; font-size: .8rem; color: var(--muted); }
 
   /* ── QUIZ ── */
   #quiz { gap: 0; }
@@ -88,6 +92,8 @@
       <li>物質の成分・同素体</li>
       <li>成分元素の検出</li>
     </ul>
+    <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
+    <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
     <button class="btn" onclick="startQuiz()">スタート</button>
   </div>
 </div>
@@ -117,6 +123,7 @@
     <button class="btn btn-retry" onclick="startQuiz()">もう一度（ランダム10問）</button>
     <br><br>
     <button class="btn" style="background:#64748b" onclick="showOnly('start')">トップへ戻る</button>
+    <div class="submit-status" id="submitStatus"></div>
   </div>
 </div>
 
@@ -297,8 +304,12 @@ const ALL_Q = [
 ]; // END ALL_Q
 
 // ───────────────────────────────────────────────────────
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const QUIZ_NAME = "物質の成分・同素体、成分元素の検出";
+const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+
 const LABELS = ["ア","イ","ウ","エ"];
-let session = [], cur = 0, score = 0, answered = [];
+let session = [], cur = 0, score = 0, answered = [], studentId = "";
 
 function showOnly(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -314,7 +325,20 @@ function shuffle(arr) {
   return a;
 }
 
+function toHalfWidthDigits(s) {
+  return s.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+}
+
 function startQuiz() {
+  const idInput = document.getElementById('studentId');
+  const normalized = toHalfWidthDigits(idInput.value.trim());
+  if (!/^[0-9]{4}$/.test(normalized)) {
+    alert('学籍番号は半角数字4桁で入力してください（例：1年1組4番→1104）。');
+    idInput.focus();
+    return;
+  }
+  idInput.value = normalized;
+  studentId = normalized;
   session = shuffle(ALL_Q).slice(0, 10);
   cur = 0; score = 0; answered = [];
   showOnly('quiz');
@@ -390,6 +414,36 @@ function showResult() {
         ${!a.ok ? `　正解：${LABELS[a.correct]}（${a.choices[a.correct]}）` : ''}
       </div>
     </div>`).join('');
+
+  submitResult();
+}
+
+function submitResult() {
+  const statusEl = document.getElementById('submitStatus');
+  if (!SUBMIT_URL) {
+    statusEl.textContent = '※送信先が未設定のため、この結果は記録されていません';
+    return;
+  }
+  const payload = {
+    studentId: studentId,
+    quizName: QUIZ_NAME,
+    score: score,
+    total: 10,
+    passed: score >= PASS_THRESHOLD ? '合格' : '不合格',
+    timestamp: new Date().toISOString(),
+    missed: answered.filter(a => !a.ok).map(a => a.q)
+  };
+  try {
+    fetch(SUBMIT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    statusEl.textContent = '学籍番号: ' + studentId + '｜記録しました';
+  } catch (err) {
+    statusEl.textContent = '※通信エラーのため記録できませんでした';
+  }
 }
 </script>
 </body>

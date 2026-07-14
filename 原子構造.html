@@ -12,8 +12,12 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
 #start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
 #start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
 .total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
+.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+.id-input:focus{outline:none;border-color:#4299e1}
 .start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
 .start-btn:hover{opacity:.9}
+.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
 #quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
 .progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
@@ -39,6 +43,9 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
 .review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
 .review-item .ra{font-size:.85rem;color:#718096}
 .review-item.miss .rq{color:#c53030}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+.pass-badge.pass{background:#f0fff4;color:#276749}
+.pass-badge.fail{background:#fff5f5;color:#c53030}
 .retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
 .retry-btn:hover{opacity:.9}
 .hidden{display:none}
@@ -51,6 +58,8 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
   <h1>化学基礎クイズ</h1>
   <p class="sub">原子の構造｜毎回ランダム10問</p>
   <div class="total-badge">全35問収録</div>
+  <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
+  <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
   <button class="start-btn" onclick="startQuiz()">スタート</button>
 </div>
 
@@ -76,15 +85,21 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
     <div>
       <div class="score-big" id="scoreBig"></div>
       <div class="score-sub">/ 10問正解</div>
+      <div class="pass-badge" id="passBadge"></div>
     </div>
   </div>
   <div class="review-title">解説</div>
   <div class="review-list" id="reviewList"></div>
   <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+  <div class="submit-status" id="submitStatus"></div>
 </div>
 
 </div>
 <script>
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const QUIZ_NAME = "原子の構造";
+const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+
 const ALL_Q = [
   {q:"原子の中心にある部分を何というか？",
    choices:["原子核","電子殻","核外電子","分子核"], a:0,
@@ -227,7 +242,7 @@ const ALL_Q = [
    exp:"電気的に中性な原子では、正の電荷（陽子数）と負の電荷（電子数）が釣り合い、陽子数＝電子数となります。"}
 ];
 
-let session=[], idx=0, score=0, results=[];
+let session=[], idx=0, score=0, results=[], studentId="";
 
 function shuffle(arr){
   let a=[...arr];
@@ -244,7 +259,20 @@ function showOnly(id){
   ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
 }
 
+function toHalfWidthDigits(s){
+  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+}
+
 function startQuiz(){
+  const idInput=document.getElementById("studentId");
+  const normalized=toHalfWidthDigits(idInput.value.trim());
+  if(!/^[0-9]{4}$/.test(normalized)){
+    alert("学籍番号は半角数字4桁で入力してください（例：1年1組4番→1104）。");
+    idInput.focus();
+    return;
+  }
+  idInput.value=normalized;
+  studentId=normalized;
   session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
   idx=0; score=0; results=[];
   showOnly("quiz");
@@ -303,6 +331,11 @@ function showResult(){
   arc.setAttribute("stroke",color);
   arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
 
+  const passed=score>=PASS_THRESHOLD;
+  const passBadge=document.getElementById("passBadge");
+  passBadge.textContent=passed?"合格":"不合格";
+  passBadge.className="pass-badge "+(passed?"pass":"fail");
+
   const list=document.getElementById("reviewList");
   list.innerHTML="";
   results.forEach((r,i)=>{
@@ -313,6 +346,36 @@ function showResult(){
       <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
     list.appendChild(div);
   });
+
+  submitResult();
+}
+
+function submitResult(){
+  const statusEl=document.getElementById("submitStatus");
+  if(!SUBMIT_URL){
+    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
+    return;
+  }
+  const payload={
+    studentId:studentId,
+    quizName:QUIZ_NAME,
+    score:score,
+    total:10,
+    passed:score>=PASS_THRESHOLD?"合格":"不合格",
+    timestamp:new Date().toISOString(),
+    missed:results.filter(r=>!r.correct).map(r=>r.q)
+  };
+  try{
+    fetch(SUBMIT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){
+    statusEl.textContent="※通信エラーのため記録できませんでした";
+  }
 }
 </script>
 </body>
