@@ -78,6 +78,8 @@
   .mark.ok { color: var(--correct); }
   .mark.ng { color: var(--wrong); }
   .btn-retry { margin-top: 8px; }
+  .home-link { display: block; text-align: center; margin-top: 14px; color: var(--primary); font-size: .85rem; text-decoration: none; }
+  .home-link:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -125,6 +127,7 @@
     <button class="btn btn-retry" onclick="startQuiz()">もう一度（ランダム10問）</button>
     <br><br>
     <button class="btn" style="background:#64748b" onclick="showOnly('start')">トップへ戻る</button>
+    <a href="index.html" class="home-link">← クイズ一覧に戻る</a>
   </div>
 </div>
 
