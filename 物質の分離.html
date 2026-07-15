@@ -347,7 +347,7 @@ function select(idx) {
   const correct = q._newCorrect;
   const shuffledTexts = q._shuffled.map(c => c.text);
   const btns = document.querySelectorAll('.choice');
-  btns.forEach(b => b.classList.add('disabled'));
+  btns.forEach(b => { b.classList.add('disabled'); b.onclick = null; });
   btns[idx].classList.add(idx === correct ? 'correct' : 'wrong');
   if (idx !== correct) btns[correct].classList.add('correct');
   if (idx === correct) score++;
