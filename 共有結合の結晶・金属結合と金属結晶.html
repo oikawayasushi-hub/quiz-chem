@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ｜共有結合の結晶・金属結合と金属結晶</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:640px}
+.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
+#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
+.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
+.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+.id-input:focus{outline:none;border-color:#4299e1}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
+.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
+.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
+.choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
+.choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
+.choice-btn:disabled{cursor:default}
+.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
+.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
+.donut-svg{width:120px;height:120px}
+.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.9rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+.pass-badge.pass{background:#f0fff4;color:#276749}
+.pass-badge.fail{background:#fff5f5;color:#c53030}
+.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
+.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.review-item .ra{font-size:.85rem;color:#718096}
+.review-item.miss .rq{color:#c53030}
+.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.retry-btn:hover{opacity:.9}
+.home-link{display:block;text-align:center;margin-top:14px;color:#2b6cb0;font-size:.85rem;text-decoration:none}
+.home-link:hover{text-decoration:underline}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="start" class="card">
+  <h1>化学基礎クイズ</h1>
+  <p class="sub">共有結合の結晶・金属結合と金属結晶｜毎回ランダム10問</p>
+  <div class="total-badge" id="totalBadge"></div>
+  <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
+  <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
+  <button class="start-btn" onclick="startQuiz()">スタート</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="header">
+    <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+    <div class="q-num" id="qnum"></div>
+  </div>
+  <div id="qtext" class="q-text"></div>
+  <div id="choices" class="choices"></div>
+  <div id="exp" class="exp-box"></div>
+  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+</div>
+
+<div id="result" class="card hidden">
+  <div class="r-title">結果発表</div>
+  <div class="donut-wrap">
+    <svg class="donut-svg" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
+      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+        stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+    </svg>
+    <div>
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-sub">/ 10問正解</div>
+      <div class="pass-badge" id="passBadge"></div>
+    </div>
+  </div>
+  <div class="review-title">解説</div>
+  <div class="review-list" id="reviewList"></div>
+  <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+  <div class="submit-status" id="submitStatus"></div>
+  <a href="index.html" class="home-link">← クイズ一覧に戻る</a>
+</div>
+
+</div>
+<script>
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const QUIZ_NAME = "共有結合の結晶・金属結合と金属結晶";
+const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+
+const ALL_Q = [
+  {q:"多数の非金属元素の原子が次々に共有結合でつながってできる結晶を何というか？",
+   choices:["共有結合の結晶","イオン結晶","分子結晶","金属結晶"], a:0,
+   exp:"多数の非金属元素の原子が次々に共有結合でつながってできる結晶を共有結合の結晶という。"},
+
+  {q:"共有結合の結晶を化学式で表すときには、分子式ではなく何を用いるか？",
+   choices:["組成式","示性式","電子式","構造式"], a:0,
+   exp:"共有結合の結晶を構成する原子の数は決まっていないので、化学式で表すときには分子式ではなく組成式を用いる。"},
+
+  {q:"共有結合の結晶の一般的な性質として正しいものはどれか？",
+   choices:["融点が非常に高く、きわめて硬い","やわらかく融点が低い","電気をよく通すものが多い","水によく溶ける"], a:0,
+   exp:"共有結合の結晶は結晶全体が共有結合によって強く結びついているので、一般に融点が非常に高く、きわめて硬い。また水に溶けにくく、電気を通さないものが多い。"},
+
+  {q:"ダイヤモンドCの結晶構造の説明として正しいものはどれか？",
+   choices:["炭素原子が4個の価電子すべてを使い次々に共有結合でつながった正四面体構造","炭素原子が価電子を放出してできた金属結晶","炭素原子が3個の価電子を使った平面構造","炭素原子どうしがイオン結合でつながった構造"], a:0,
+   exp:"ダイヤモンドCの結晶は、炭素原子Cが4個の価電子すべてを使い次々に共有結合でつながってできる。C原子でできた正四面体が三次元的にくり返された構造である。"},
+
+  {q:"黒鉛Cの結晶構造の説明として正しいものはどれか？",
+   choices:["炭素原子が4個の価電子のうち3個を使い共有結合で正六角形の網目状平面構造をつくり、平面どうしが分子間力で層状に重なる","炭素原子が4個の価電子すべてを使い正四面体構造をつくる","炭素原子が自由電子によって結合した金属結晶である","炭素原子と酸素原子が共有結合でつながった構造である"], a:0,
+   exp:"黒鉛Cの結晶は、C原子が4個の価電子のうち3個を使い次々に共有結合でつながって正六角形の網目状の平面構造となり、その平面構造どうしが分子間力で引きあい層状に重なってできる。"},
+
+  {q:"黒鉛が電気を通す理由は何か？",
+   choices:["各C原子の残り1個の価電子が平面構造の中を自由に動けるから","黒鉛はイオン結晶だから","黒鉛には自由電子が全くないから","黒鉛は金属元素からできているから"], a:0,
+   exp:"黒鉛では各C原子の残りの1個ずつの価電子が平面構造の中を動けるので、黒鉛は電気を通す。"},
+
+  {q:"ダイヤモンドと黒鉛は互いにどのような関係にあるか？",
+   choices:["同素体","異性体","同位体","合金"], a:0,
+   exp:"ダイヤモンドと黒鉛はどちらも炭素Cのみからなるが結晶構造が異なる同素体である。"},
+
+  {q:"単体のケイ素Siの結晶構造の特徴は何か？",
+   choices:["ダイヤモンドと同じく正四面体構造をもつ共有結合の結晶","黒鉛と同じ平面構造をもつ共有結合の結晶","自由電子によってできる金属結晶","分子間力で結びついた分子結晶"], a:0,
+   exp:"単体のケイ素Siの結晶は、ダイヤモンドと同じく正四面体構造をもつ共有結合の結晶である。"},
+
+  {q:"ケイ素Siの電気伝導性の特徴として正しいものはどれか？",
+   choices:["導体（金属）と絶縁体（非金属）の中間であり、半導体とよばれる","金属と同じくよく電気を通す導体である","電気を全く通さない絶縁体である","温度によらず常に電気を通さない"], a:0,
+   exp:"ケイ素Siの電気伝導性は導体（金属）と絶縁体（非金属）の中間であり、半導体とよばれる。"},
+
+  {q:"二酸化ケイ素SiO₂の結晶はどのような結合でできているか？",
+   choices:["Si原子とO原子の共有結合(Si-O)が三次元的にくり返された共有結合の結晶","SiとOのイオン結合でできたイオン結晶","SiO₂分子が分子間力で集まった分子結晶","Si原子が自由電子で結合した金属結晶"], a:0,
+   exp:"二酸化ケイ素SiO₂の結晶も共有結合の結晶であり、Si原子とO原子の共有結合Si-Oが三次元的にくり返されてできる。"},
+
+  {q:"二酸化ケイ素SiO₂は天然にどのような形で存在しているか？",
+   choices:["石英・水晶・けい砂など","純粋な単体の気体としてのみ","液体としてのみ地下に存在","天然にはほとんど存在しない"], a:0,
+   exp:"二酸化ケイ素は、石英・水晶・けい砂などとして天然に存在している。"},
+
+  {q:"二酸化ケイ素の組成式がSiO₄ではなくSiO₂になるのはなぜか？",
+   choices:["O原子が2個のSi原子と結合しているため、O原子を0.5個分として数えるとSi:O=1:0.5×4=1:2となるから","Si原子とO原子の質量比がちょうど1:2だから","SiO₄という分子は不安定で存在しないから","二酸化ケイ素は分子式で表すのが決まりだから"], a:0,
+   exp:"Si原子を中心にO原子が正四面体の頂点の位置にあるが、O原子は2つのSi原子と結合しているので0.5個分として考えると、Si:O=1:0.5×4=1:2となり、組成式はSiO₂となる。"},
+
+  {q:"ダイヤモンド・黒鉛・ケイ素・二酸化ケイ素のうち、電気を通すものはどれか？",
+   choices:["黒鉛のみ","ダイヤモンドのみ","すべて通す","すべて通さない"], a:0,
+   exp:"電気伝導性があるのは黒鉛のみで、ダイヤモンド・二酸化ケイ素は電気を通さず、ケイ素は半導体である。"},
+
+  {q:"二酸化ケイ素SiO₂の利用例として正しいものはどれか？",
+   choices:["窓ガラスや光ファイバーの原料","集積回路、太陽電池","鉛筆の芯、電池の電極","宝石、研磨材、カッター"], a:0,
+   exp:"二酸化ケイ素SiO₂は窓ガラスや光ファイバーの原料として利用される。"},
+
+  {q:"ケイ素Siの利用例として正しいものはどれか？",
+   choices:["集積回路、太陽電池","窓ガラスや光ファイバーの原料","鉛筆の芯、電池の電極","宝石、研磨材、カッター"], a:0,
+   exp:"ケイ素Siは半導体としての性質を利用し、集積回路や太陽電池に利用される。"},
+
+  {q:"黒鉛の利用例として正しいものはどれか？",
+   choices:["鉛筆の芯、電池の電極","窓ガラスや光ファイバーの原料","集積回路、太陽電池","宝石、研磨材、カッター"], a:0,
+   exp:"黒鉛は電気を通す性質などを利用して、鉛筆の芯や電池の電極に利用される。"},
+
+  {q:"ダイヤモンドの利用例として正しいものはどれか？",
+   choices:["宝石、研磨材、カッター","窓ガラスや光ファイバーの原料","集積回路、太陽電池","鉛筆の芯、電池の電極"], a:0,
+   exp:"ダイヤモンドはきわめて硬いという性質を利用して、宝石、研磨材、カッターなどに利用される。"},
+
+  {q:"金属元素の原子の特徴として正しいものはどれか？",
+   choices:["陽性が強く、価電子が原子から離れやすい","陰性が強く、価電子を強く引きつける","貴ガスと同じく安定で結合しにくい","価電子をもたない"], a:0,
+   exp:"金属元素の原子は陽性が強く、価電子が原子から離れやすい。"},
+
+  {q:"金属中で価電子が特定の原子間に共有されず、すべての原子に共有されて自由に移動できるとき、この価電子を何というか？",
+   choices:["自由電子","不対電子","非共有電子対","陽イオン"], a:0,
+   exp:"金属元素の原子が集まると、価電子が各原子の電子殻を横断して自由に移動できるようになる。このような価電子を自由電子という。"},
+
+  {q:"自由電子によってできる原子どうしの結合を何というか？",
+   choices:["金属結合","共有結合","イオン結合","配位結合"], a:0,
+   exp:"自由電子によってできる原子どうしの結合を金属結合という。"},
+
+  {q:"金属結合・イオン結合・共有結合（配位結合を含む）のような原子どうしの結合を総称して何というか？",
+   choices:["化学結合","分子間力","水素結合","静電結合"], a:0,
+   exp:"金属結合・イオン結合・共有結合（配位結合を含む）のような、原子どうしの結合を総称して化学結合という。"},
+
+  {q:"原子どうしが金属結合で引きあい、規則正しく配列してできる結晶を何というか？",
+   choices:["金属結晶","イオン結晶","分子結晶","共有結合の結晶"], a:0,
+   exp:"原子どうしが金属結合で引きあい、規則正しく配列してできる結晶を金属結晶という。例えば銀Agや銅Cuの結晶は金属結晶である。"},
+
+  {q:"金属を化学式で表すときに用いるのは何か？",
+   choices:["組成式","分子式","示性式","構造式"], a:0,
+   exp:"金属を化学式で表すときには、分子式ではなく組成式を用いる（例：金の組成式はAu）。"},
+
+  {q:"金属が展性（たたくと薄く広がる性質）や延性（引っ張ると細長く延びる性質）を示すのはなぜか？",
+   choices:["自由電子が結晶全体を移動できるので、原子の位置が少しずれても金属結合が切れないから","金属原子どうしが強く反発しあうから","金属にはイオン結合が存在するから","金属原子には価電子が存在しないから"], a:0,
+   exp:"金属はイオン結晶と異なり自由電子が結晶全体を移動できるので、力が加わって原子の位置が少しずれても金属結合が切れない。そのため展性・延性を示す。"},
+
+  {q:"金属の展性・延性の説明は、教科書本文でどの結晶と比較して述べられているか？",
+   choices:["イオン結晶","分子結晶","共有結合の結晶","貴ガスの結晶"], a:0,
+   exp:"教科書本文では「イオン結晶と異なり自由電子が結晶全体を移動できるので、原子の位置が少しずれても金属結合が切れない」と、イオン結晶と比較して説明されている。"},
+
+  {q:"金属に特有の輝きを何というか？",
+   choices:["金属光沢","結晶光沢","自由光沢","電子光沢"], a:0,
+   exp:"金属には金属光沢とよばれる特有の輝きがある。"},
+
+  {q:"金属光沢が生じる理由は何か？",
+   choices:["自由電子のはたらきによって外部からの光がよく反射されるから","金属原子の色がもともと明るいから","金属結晶の表面が必ず滑らかだから","金属にはイオンが含まれているから"], a:0,
+   exp:"金属光沢は、自由電子のはたらきによって外部からの光がよく反射されるために生じる。"},
+
+  {q:"金属が熱や電気をよく通すのはなぜか？",
+   choices:["自由電子が結晶中を移動して熱や電気をよく伝えるから","金属原子自体が熱や電気の性質をもつから","金属にはイオン結合が存在するから","金属結晶には隙間が全くないから"], a:0,
+   exp:"金属が熱や電気をよく通すのは、自由電子が結晶中を移動して熱や電気をよく伝えるからである。"},
+
+  {q:"金属のように電気をよく通す物質を導体というが、逆に電気をほとんど通さない物質を何というか？",
+   choices:["絶縁体","半導体","超伝導体","誘電体"], a:0,
+   exp:"電気をほとんど通さない物質を絶縁体という。金属のように電気をよく通すものは導体という。"},
+
+  {q:"熱伝導性・電気伝導性がともに最大の金属はどれか？",
+   choices:["銀Ag","銅Cu","金Au","アルミニウムAl"], a:0,
+   exp:"熱伝導性・電気伝導性はともに銀Agが最大である。"},
+
+  {q:"銀Agに次いで熱伝導性・電気伝導性が大きい金属はどれか？",
+   choices:["銅Cu","金Au","アルミニウムAl","亜鉛Zn"], a:0,
+   exp:"熱伝導性・電気伝導性は銀Agに次いで銅Cuが大きい。"},
+
+  {q:"銅Cuの性質として正しいものはどれか？",
+   choices:["赤色の金属で、銀に次いで熱伝導性・電気伝導性が大きい","銀白色の軽い金属で、電気を通さない","常温・常圧で唯一液体の金属である","すべての金属の中で展性・延性が最大である"], a:0,
+   exp:"銅Cuは赤色の金属で、銀Agに次いで熱伝導性と電気伝導性が大きい。銅はやわらかい金属だが、他の金属との合金は硬いことが多い。"},
+
+  {q:"銅とスズSnの合金を何というか？",
+   choices:["青銅（ブロンズ）","黄銅（真ちゅう）","ステンレス鋼","ジュラルミン"], a:0,
+   exp:"銅とスズの合金を青銅（ブロンズ）といい、人類の歴史上、石器にかわって利用された重要な材料である。"},
+
+  {q:"鉄Feの性質として正しいものはどれか？",
+   choices:["灰白色の金属で地殻中に多く存在し、金属材料として最も多く利用される","銀白色で軽くやわらかい金属である","常温・常圧で液体である唯一の金属である","黄金色の金属で化学的に非常に安定している"], a:0,
+   exp:"鉄Feは灰白色の金属である。地殻中に多く存在し、製錬や加工が容易なので、金属材料として最も多く利用されている。湿った空気中に放置すると赤いさびが生じやすい。"},
+
+  {q:"アルミニウムAlがさびにくい理由は何か？",
+   choices:["表面の緻密な酸化被膜が内部を保護するから","アルミニウムは化学的にきわめて不活性な元素だから","アルミニウムには自由電子が存在しないから","アルミニウムは非金属元素だから"], a:0,
+   exp:"アルミニウムは表面にできる緻密な酸化被膜が内部を保護するので、さびにくい。"},
+
+  {q:"すべての金属の中で展性・延性が最も大きい金属はどれか？",
+   choices:["金Au","銀Ag","銅Cu","鉄Fe"], a:0,
+   exp:"金Auはすべての金属の中で展性・延性が最も大きい。化学的に安定で、さびない。"},
+
+  {q:"すべての金属の中で熱伝導性と電気伝導性が最も大きい金属はどれか？",
+   choices:["銀Ag","金Au","銅Cu","アルミニウムAl"], a:0,
+   exp:"銀Agはすべての金属の中で熱伝導性と電気伝導性が最も大きい。展性・延性も金に次いで2番目に大きい。"},
+
+  {q:"常温・常圧で液体である唯一の金属はどれか？",
+   choices:["水銀Hg","ガリウムGa","セシウムCs","スズSn"], a:0,
+   exp:"水銀Hgは常温・常圧で液体である唯一の金属である。水銀と他の多くの金属との合金はアマルガムとよばれる。"},
+
+  {q:"銀Agが硫黄と反応するとどうなるか？",
+   choices:["硫化して黒くなる","酸化して赤くなる","気体になって消える","展性・延性を失って硬くなる"], a:0,
+   exp:"銀Agは硫黄と反応すると、硫化して黒くなる。"},
+
+  {q:"金属に他の元素の単体を混ぜたものを何というか？",
+   choices:["合金","化合物","同素体","混晶"], a:0,
+   exp:"金属に他の元素の単体を混ぜたものを合金という。合金にすると、さびにくくなったり電気伝導性が変化したりするなど、もとの金属にはないさまざまな性質をもつ材料になる。"},
+
+  {q:"ステンレス鋼（成分：Fe-Cr-Ni-C）の特徴として正しいものはどれか？",
+   choices:["さびにくい","電気抵抗が非常に大きい","融点が非常に低く型に流しやすい","加熱すると変形前の形にもどる"], a:0,
+   exp:"ステンレス鋼はFe-Cr-Ni-Cを成分とする合金で、さびにくく、台所用品や工具、鉄道車両に利用される。"},
+
+  {q:"ジュラルミン（成分：Al-Cu-Mg-Mn）の特徴と利用例として正しいものはどれか？",
+   choices:["軽くて強く、航空機の機体に利用される","電気抵抗が大きく、電熱線に利用される","融点が適度に低く、美術工芸品に利用される","水素を吸収・放出し、電池に利用される"], a:0,
+   exp:"ジュラルミンはAl-Cu-Mg-Mnを成分とする合金で、軽くて強く、航空機の機体に利用される。"},
+
+  {q:"形状記憶合金（成分：Ni-Ti）の性質として正しいものはどれか？",
+   choices:["変形しても、加熱するともとの形にもどる","加工しやすく、美しい光沢をもつ","融点が適度に低く、金属どうしの接合に使われる","電気抵抗が適度に大きい"], a:0,
+   exp:"形状記憶合金（Ni-Ti）は、変形しても加熱するともとの形にもどる性質をもち、温度センサーなどに利用される。"},
+
+  {q:"低温で金属や合金・化合物の電気抵抗がある温度以下で0になる現象を何というか？",
+   choices:["超伝導","金属光沢","自由電子効果","展性現象"], a:0,
+   exp:"低温では金属原子の熱運動が穏やかになり自由電子の移動を妨げるはたらきが弱まり、電気抵抗が小さくなる。合金や化合物にはある温度以下で電気抵抗が0になるものがあり、この現象を超伝導という。"},
+
+  {q:"次のうち、共有結合の結晶に分類されるものはどれか？",
+   choices:["ダイヤモンド","塩化ナトリウム","鉄","ドライアイス"], a:0,
+   exp:"ダイヤモンドは炭素原子が共有結合で三次元的につながった共有結合の結晶である。塩化ナトリウムはイオン結晶、鉄は金属結晶、ドライアイスは分子結晶である。"},
+
+  {q:"次のうち、金属結晶に分類されるものはどれか？",
+   choices:["銅","ダイヤモンド","塩化ナトリウム","二酸化ケイ素"], a:0,
+   exp:"銅は自由電子による金属結合で規則正しく配列した金属結晶である。ダイヤモンドと二酸化ケイ素は共有結合の結晶、塩化ナトリウムはイオン結晶である。"},
+
+  {q:"イオン結晶・分子結晶・共有結合の結晶・金属結晶のうち、一般に融点が最も高い傾向にあるのはどれか？",
+   choices:["共有結合の結晶","分子結晶","金属結晶","イオン結晶"], a:0,
+   exp:"共有結合の結晶は結晶全体が共有結合によって強く結びついているため、一般に融点が非常に高い（例：ダイヤモンド3550℃）。"},
+
+  {q:"共有結合の結晶（黒鉛を除く）・イオン結晶（固体）・分子結晶・金属結晶のうち、固体の状態で電気を通すものはどれか？",
+   choices:["金属結晶のみ","イオン結晶のみ","分子結晶のみ","すべて通す"], a:0,
+   exp:"金属結晶は自由電子により固体のままでも電気を通す。イオン結晶は固体では電気を通さず、共有結合の結晶（黒鉛を除く）や分子結晶も電気を通さない。"},
+
+  {q:"塩化ナトリウムのようなイオン結晶は固体では電気を通さないが、どうすると電気を通すようになるか？",
+   choices:["融解させるか、水に溶かして電離させると電気を通す","強くたたいて変形させると電気を通す","冷却して固体のまま保つと電気を通す","光を当てると電気を通す"], a:0,
+   exp:"イオン結晶は固体では電気を通さないが、融解させるか水に溶かして電離させるとイオンが自由に動けるようになり、電気を通すようになる。"},
+
+  {q:"金属の展性・延性とイオン結晶の割れやすさの違いを説明するうえで重要なキーワードはどれか？",
+   choices:["自由電子","分子間力","水素結合","配位結合"], a:0,
+   exp:"金属は自由電子が結晶全体を移動できるため原子の位置がずれても結合が切れず展性・延性を示すが、イオン結晶にはこの自由電子がなく、ずれると同符号のイオンどうしが反発して割れやすい。"}
+];
+
+let session=[], idx=0, score=0, results=[], studentId="";
+
+document.getElementById("totalBadge").textContent="全"+ALL_Q.length+"問収録";
+
+function shuffle(arr){
+  let a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function shuffleChoices(q){
+  const order=shuffle([0,1,2,3]);
+  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
+}
+
+function showOnly(id){
+  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
+}
+
+function toHalfWidthDigits(s){
+  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+}
+
+function startQuiz(){
+  const idInput=document.getElementById("studentId");
+  const normalized=toHalfWidthDigits(idInput.value.trim());
+  if(!/^(2000|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(normalized)){
+    alert("学籍番号が正しくありません。\n1桁目は学年「1」、2桁目は組「1〜6」、3・4桁目は出席番号「01〜40」です（例：1年1組4番→1104）。");
+    idInput.focus();
+    return;
+  }
+  idInput.value=normalized;
+  studentId=normalized;
+  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
+  idx=0; score=0; results=[];
+  showOnly("quiz");
+  renderQ();
+}
+
+function renderQ(){
+  const q=session[idx];
+  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
+  document.getElementById("qnum").textContent=(idx+1)+"/10";
+  document.getElementById("qtext").textContent=q.q;
+  document.getElementById("exp").style.display="none";
+  document.getElementById("nextBtn").style.display="none";
+
+  const ci=document.getElementById("choices");
+  ci.innerHTML="";
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement("button");
+    btn.className="choice-btn";
+    btn.textContent=c;
+    btn.onclick=()=>select(i);
+    ci.appendChild(btn);
+  });
+}
+
+function select(chosen){
+  const q=session[idx];
+  const btns=document.querySelectorAll(".choice-btn");
+  btns.forEach(b=>{b.disabled=true;b.onclick=null;});
+  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
+  if(chosen!==q.a) btns[q.a].classList.add("correct");
+
+  if(chosen===q.a) score++;
+  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
+
+  const expBox=document.getElementById("exp");
+  expBox.textContent=q.exp;
+  expBox.style.display="block";
+  document.getElementById("nextBtn").style.display="block";
+  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+}
+
+function next(){
+  idx++;
+  if(idx>=10){showResult();return;}
+  renderQ();
+}
+
+function showResult(){
+  showOnly("result");
+  document.getElementById("scoreBig").textContent=score;
+
+  const pct=score/10*100;
+  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
+  const arc=document.getElementById("donut-arc");
+  arc.setAttribute("stroke",color);
+  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+
+  const passed=score>=PASS_THRESHOLD;
+  const passBadge=document.getElementById("passBadge");
+  passBadge.textContent=passed?"合格":"不合格";
+  passBadge.className="pass-badge "+(passed?"pass":"fail");
+
+  const list=document.getElementById("reviewList");
+  list.innerHTML="";
+  results.forEach((r,i)=>{
+    const div=document.createElement("div");
+    div.className="review-item"+(r.correct?"":" miss");
+    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
+      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
+      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
+    list.appendChild(div);
+  });
+
+  submitResult();
+}
+
+function submitResult(){
+  const statusEl=document.getElementById("submitStatus");
+  if(!SUBMIT_URL){
+    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
+    return;
+  }
+  const payload={
+    studentId:studentId,
+    quizName:QUIZ_NAME,
+    score:score,
+    total:10,
+    passed:score>=PASS_THRESHOLD?"合格":"不合格",
+    timestamp:new Date().toISOString(),
+    missed:results.filter(r=>!r.correct).map(r=>r.q)
+  };
+  try{
+    fetch(SUBMIT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){
+    statusEl.textContent="※通信エラーのため記録できませんでした";
+  }
+}
+</script>
+</body>
+</html>
