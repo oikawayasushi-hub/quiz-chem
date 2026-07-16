@@ -54,3 +54,42 @@ function doPost(e) {
     lock.releaseLock();
   }
 }
+
+/**
+ * 取り組み状況の読み取りAPI (取り組み状況.html から使用)
+ *
+ * GET ?studentId=1104 に対して、その生徒のクイズごとの合否と挑戦回数を返す。
+ * プライバシー配慮のため、得点・日時などの詳細は返さない。
+ * 例: {"ok":true,"quizzes":{"113 元素記号と元素名（原子番号1〜20）":{"passed":true,"attempts":3}}}
+ */
+function doGet(e) {
+  const studentId = String((e.parameter && e.parameter.studentId) || '').trim();
+  if (!/^(2000|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(studentId)) {
+    return jsonOut_({ ok: false, error: 'invalid studentId' });
+  }
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Responses');
+  const quizzes = {};
+
+  if (sheet && sheet.getLastRow() >= 2) {
+    // 列: 受信日時, 学籍番号, クイズ名, 得点, 問題数, 合否, ...
+    const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+    rows.forEach(function (row) {
+      if (String(row[1]) !== studentId) return;
+      const name = String(row[2]);
+      const passed = String(row[5]) === '合格';
+      if (!quizzes[name]) quizzes[name] = { passed: false, attempts: 0 };
+      quizzes[name].attempts++;
+      if (passed) quizzes[name].passed = true;
+    });
+  }
+
+  return jsonOut_({ ok: true, quizzes: quizzes });
+}
+
+function jsonOut_(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
