@@ -64,7 +64,7 @@ function doPost(e) {
  */
 function doGet(e) {
   const studentId = String((e.parameter && e.parameter.studentId) || '').trim();
-  if (!/^(2000|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(studentId)) {
+  if (!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(studentId)) {
     return jsonOut_({ ok: false, error: 'invalid studentId' });
   }
 
