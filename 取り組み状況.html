@@ -95,7 +95,7 @@ async function checkStatus(){
   const msg=document.getElementById("statusMsg");
   const btn=document.getElementById("checkBtn");
   const normalized=toHalfWidthDigits(idInput.value.trim());
-  if(!/^(2000|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(normalized)){
+  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(normalized)){
     msg.textContent="学籍番号が正しくありません（例：1年1組4番→1104）。";
     msg.className="status-msg err";
     idInput.focus();
