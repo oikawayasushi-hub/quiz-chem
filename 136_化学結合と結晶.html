@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>化学基礎クイズ｜136 化学結合と結晶（4種類の結晶の比較）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:660px}
+.card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+sub{font-size:.72em}sup{font-size:.72em}
+#start h1{font-size:1.4rem;font-weight:700;color:#2b6cb0;margin-bottom:6px}
+#start .sub{color:#718096;font-size:.92rem;margin-bottom:18px;line-height:1.6}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;background:#ebf8ff;color:#2b6cb0}
+.badge.key{background:#2b6cb0;color:#fff}
+.target{background:#fffaf0;border:1px solid #feebc8;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.83rem;color:#975a16;line-height:1.6}
+.target b{color:#7b341e}
+.kc-preview{background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:18px}
+.kc-preview .t{font-size:.8rem;font-weight:700;color:#4a5568;margin-bottom:8px}
+.kc-preview ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.kc-preview li{font-size:.83rem;color:#4a5568;padding-left:16px;position:relative;line-height:1.5}
+.kc-preview li::before{content:"";position:absolute;left:0;top:.45em;width:7px;height:7px;border-radius:50%;background:#90cdf4}
+.id-label{display:block;font-size:.83rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:16px}
+.id-input:focus{outline:none;border-color:#4299e1}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer}
+.start-btn:hover{opacity:.9}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
+.q-num{font-size:.82rem;color:#718096;white-space:nowrap}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px}
+.chip.kc{background:#edf2f7;color:#4a5568}
+.chip.lv{background:#faf5ff;color:#6b46c1}
+.chip.fill{background:#fffaf0;color:#975a16}
+.q-text{font-size:1.08rem;font-weight:600;line-height:1.65;margin-bottom:16px}
+.stem{background:#f7fafc;border-left:4px solid #90cdf4;border-radius:0 8px 8px 0;padding:10px 14px;font-size:.9rem;line-height:1.6;color:#4a5568;margin-bottom:14px}
+.step-done{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.step-row{display:flex;gap:10px;align-items:flex-start;font-size:.87rem;padding:9px 12px;border-radius:8px;background:#f0fff4;border:1px solid #c6f6d5;line-height:1.5}
+.step-row.given{background:#fffaf0;border-color:#feebc8}
+.step-row.miss{background:#fff5f5;border-color:#fed7d7}
+.step-tag{font-weight:700;color:#4a5568;white-space:nowrap}
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s;line-height:1.5}
+.choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
+.choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
+.choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
+.choice-btn:disabled{cursor:default}
+.hint-box{margin-top:14px;padding:12px 16px;background:#ebf8ff;border-left:4px solid #4299e1;border-radius:0 8px 8px 0;font-size:.88rem;color:#2a4365;line-height:1.6;display:none}
+.hint-box .hl{font-weight:700;display:block;margin-bottom:3px;font-size:.78rem;color:#2b6cb0}
+.exp-box{margin-top:14px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.88rem;color:#7b341e;line-height:1.65;display:none}
+.next-btn{margin-top:16px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none}
+.next-btn:hover{opacity:.9}
+#result .r-title{font-size:1.25rem;font-weight:700;text-align:center;margin-bottom:18px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:22px;margin-bottom:8px}
+.donut-svg{width:112px;height:112px}
+.score-big{font-size:2.3rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.85rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.82rem;font-weight:700}
+.pass-badge.pass{background:#f0fff4;color:#276749}
+.pass-badge.fail{background:#fff5f5;color:#c53030}
+.pass-note{text-align:center;font-size:.78rem;color:#a0aec0;margin-bottom:14px}
+.sec-title{font-weight:700;margin:22px 0 10px;color:#2d3748;font-size:.98rem;padding-bottom:5px;border-bottom:2px solid #e2e8f0}
+.sec-note{font-size:.78rem;color:#a0aec0;margin:-6px 0 10px;line-height:1.5}
+.kc-list{display:flex;flex-direction:column;gap:7px}
+.kc-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #e2e8f0;border-radius:9px}
+.kc-mark{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;color:#fff}
+.kc-mark.ok{background:#48bb78}.kc-mark.mid{background:#ed8936}.kc-mark.ng{background:#f56565}
+.kc-body{flex:1;min-width:0}
+.kc-name{font-size:.86rem;font-weight:600;line-height:1.4}
+.kc-bar{height:5px;background:#edf2f7;border-radius:3px;margin-top:5px;overflow:hidden}
+.kc-bar i{display:block;height:100%;border-radius:3px}
+.kc-score{font-size:.78rem;color:#718096;white-space:nowrap}
+.tag-list{display:flex;flex-direction:column;gap:8px}
+.tag-row{padding:11px 13px;border-radius:9px;background:#fff5f5;border:1px solid #fed7d7}
+.tag-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tag-name{font-size:.9rem;font-weight:700;color:#c53030}
+.tag-count{font-size:.76rem;color:#e53e3e;white-space:nowrap}
+.tag-advice{font-size:.82rem;color:#742a2a;margin-top:5px;line-height:1.55}
+.empty{font-size:.85rem;color:#718096;padding:10px 0}
+.todo{background:#ebf8ff;border:1px solid #bee3f8;border-radius:10px;padding:14px 16px;font-size:.88rem;color:#2a4365;line-height:1.7}
+.todo b{color:#2b6cb0}
+.summary-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.summary{border-collapse:collapse;font-size:.78rem;min-width:600px;width:100%}
+table.summary th,table.summary td{border:1px solid #e2e8f0;padding:7px 9px;text-align:left;line-height:1.5;vertical-align:top}
+table.summary thead th{background:#2b6cb0;color:#fff;font-weight:700;white-space:nowrap}
+table.summary tbody th{background:#f7fafc;font-weight:700;white-space:nowrap;color:#2b6cb0}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto;padding-right:4px}
+.review-item{padding:11px 13px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.87rem;font-weight:600;margin-bottom:4px;line-height:1.5}
+.review-item .ra{font-size:.8rem;color:#718096;line-height:1.5}
+.review-item.miss{border-color:#fed7d7;background:#fffafa}
+.review-item.miss .rq{color:#c53030}
+.review-item.half{border-color:#feebc8;background:#fffdf7}
+.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
+.retry-btn:hover{opacity:.9}
+.home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.85rem;text-decoration:none}
+.home-link:hover{text-decoration:underline}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="start" class="card">
+  <h1>136 化学結合と結晶</h1>
+  <p class="sub">イオン結晶・分子結晶・共有結合の結晶・金属結晶の4種類を、横に並べて比べられるようにする回。<br>毎回ランダム10問（選択8問＋結晶の分類ステップ問題2問）。</p>
+  <div class="badges">
+    <span class="badge key" id="totalBadge"></span>
+    <span class="badge">毎回10問・8点以上で合格</span>
+    <span class="badge">ヒント→再挑戦</span>
+    <span class="badge">ステップ分解採点</span>
+  </div>
+  <div class="target">
+    <b>ねらい</b>　教科書 p.101 章末問題 5「結晶とその性質」（構成粒子・結びつき・物質の例・化学式の種類・性質の表を埋める問題）を、自力で解けるようにします。ステップ問題は、その表を埋める手順そのものです。
+  </div>
+  <div class="kc-preview">
+    <div class="t">この回で測る力</div>
+    <ul id="kcPreview"></ul>
+  </div>
+  <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
+  <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
+  <button class="start-btn" onclick="startQuiz()">スタート</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="header">
+    <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+    <div class="q-num" id="qnum"></div>
+  </div>
+  <div class="meta-row" id="metaRow"></div>
+  <div id="stemBox"></div>
+  <div id="stepDone" class="step-done"></div>
+  <div id="qtext" class="q-text"></div>
+  <div id="choices" class="choices"></div>
+  <div id="hint" class="hint-box"></div>
+  <div id="exp" class="exp-box"></div>
+  <button id="nextBtn" class="next-btn" onclick="next()">次へ →</button>
+</div>
+
+<div id="result" class="card hidden">
+  <div class="r-title">結果</div>
+  <div class="donut-wrap">
+    <svg class="donut-svg" viewBox="0 0 36 36">
+      <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
+      <circle id="donutArc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+        stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+    </svg>
+    <div>
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-sub" id="scoreSub"></div>
+      <div class="pass-badge" id="passBadge"></div>
+    </div>
+  </div>
+  <div class="pass-note">合格ライン：10点満点中 8点以上（正答率80%）／ヒントを見て正解した問題は0.5点</div>
+
+  <div class="sec-title">力ごとの定着</div>
+  <div class="sec-note">◯＝ほぼ定着／△＝あと一歩／×＝要復習。本当の定着判定は「別の日に2回続けて正解」で行います。</div>
+  <div class="kc-list" id="kcList"></div>
+
+  <div class="sec-title">つまずきの型</div>
+  <div class="sec-note">誤答の選択肢からミスの型を判定しています。</div>
+  <div class="tag-list" id="tagList"></div>
+
+  <div class="sec-title">次にやること</div>
+  <div class="todo" id="todoBox"></div>
+
+  <div class="sec-title">4種類の結晶まとめ表</div>
+  <div class="sec-note">教科書 p.101 章末問題5 の表と同じ形。横に並べて覚えること。</div>
+  <div class="summary-wrap">
+    <table class="summary">
+      <thead><tr><th></th><th>イオン結晶</th><th>分子結晶</th><th>共有結合の結晶</th><th>金属結晶</th></tr></thead>
+      <tbody>
+        <tr><th>A 構成粒子</th><td>陽イオンと陰イオン</td><td>分子</td><td>原子</td><td>原子（金属イオンと自由電子）</td></tr>
+        <tr><th>B 結びつき</th><td>静電気力<br>（イオン結合）</td><td>分子間力</td><td>原子間で電子対を共有<br>（共有結合）</td><td>自由電子を共有<br>（金属結合）</td></tr>
+        <tr><th>C 物質の例</th><td>塩化マグネシウム<br>MgCl<sub>2</sub></td><td>ヨウ素<br>I<sub>2</sub></td><td>ダイヤモンド<br>C</td><td>銀<br>Ag</td></tr>
+        <tr><th>D 化学式</th><td>組成式</td><td>分子式</td><td>組成式</td><td>組成式</td></tr>
+        <tr><th>E 性質</th><td>固体では電気を通さないが、水に溶かしたり融解させたりすると電気をよく通す</td><td>融点が低く、昇華しやすいものもある。やわらかい</td><td>融点がきわめて高い。一般的に、非常に硬い</td><td>熱や電気をよく通し、展性や延性を示す</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-title">全問の解説</div>
+  <div class="review-list" id="reviewList"></div>
+
+  <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+  <a href="index.html" class="home-link">← クイズ一覧に戻る</a>
+</div>
+
+</div>
+<script>
+/* =========================================================
+   136 化学結合と結晶 ― 定着版
+   教科書 p.101 章末問題5「結晶とその性質」に対応
+   ・毎回ランダム10問（選択8問＋分類ステップ2問）／8点以上で合格
+   ・問題・選択肢とも毎回シャッフル
+   ・KC（知識要素）ごとに正誤を集計／誤答選択肢につまずきタグ
+   ・誤答時はヒント→再挑戦（2回目正解で0.5点）
+   ========================================================= */
+
+const QUIZ_NAME  = "136 化学結合と結晶（定着版）";
+const N_MCQ      = 8;
+const PASS_SCORE = 8;
+
+const KC = {
+  K1:{short:"構成粒子",   name:"4種類の結晶それぞれの構成粒子を答えられる"},
+  K2:{short:"結びつき",   name:"構成粒子を結びつけている力（結合）を答えられる"},
+  K3:{short:"結晶の分類", name:"物質名からどの結晶かを判定できる"},
+  K4:{short:"化学式の種類",name:"分子式で表すか組成式で表すかを判別できる"},
+  K5:{short:"結晶の性質", name:"結晶の種類から、融点・硬さ・電気伝導などの性質を説明できる"},
+  K6:{short:"性質からの逆推定",name:"観察された性質から、どの結晶かを特定できる"},
+  K7:{short:"例外と発展", name:"黒鉛・多原子イオンなど、単純な分類に収まらない例を扱える"}
+};
+
+const TAG = {
+  covcrystal:{name:"分子結晶と共有結合の結晶の混同",back:"K3",advice:"どちらも共有結合が関わりますが、<b>分子という単位があるか</b>が分かれ目です。CO<sub>2</sub> は CO<sub>2</sub> 分子が集まった分子結晶、SiO<sub>2</sub> は結晶全体が共有結合でつながった共有結合の結晶。"},
+  ionvsmol:  {name:"イオン結晶を分子とみなす",      back:"K1",advice:"イオン結晶に分子は存在しません。NaCl 結晶の中では Na<sup>+</sup> と Cl<sup>−</sup> が交互に並び続けていて、「NaCl 分子」という単位はありません。"},
+  metalmix:  {name:"金属結晶との取り違え",          back:"K2",advice:"自由電子があるのは金属結晶だけです。自由電子＝熱・電気をよく通す＋展性・延性、と結びつけて覚えましょう。"},
+  conduct:   {name:"電気伝導の条件混同",            back:"K5",advice:"固体のまま通すのは金属結晶だけ。イオン結晶は水に溶かすか融かせば通し、分子結晶と共有結合の結晶は通しません（黒鉛は例外）。"},
+  mp:        {name:"融点の高低の取り違え",          back:"K5",advice:"共有結合の結晶＞イオン結晶＞分子結晶、が融点の目安。金属結晶は物質によって幅が広く、この順に当てはめられません。"},
+  hardness:  {name:"硬さ・もろさ・展性の取り違え",  back:"K5",advice:"「硬いがもろい」はイオン結晶と共有結合の結晶、「たたくと広がる（展性・延性）」は金属結晶、「やわらかい」は分子結晶。"},
+  formula:   {name:"組成式と分子式の取り違え",      back:"K4",advice:"分子式で書けるのは分子結晶だけ。他の3つは分子が存在しないので、個数の比を表す組成式で書きます。"},
+  bondinside:{name:"多原子イオン内部の結合の見落とし",back:"K7",advice:"NH<sub>4</sub>Cl や CaSO<sub>4</sub> のように多原子イオンを含む結晶には、<b>イオン結合と共有結合の両方</b>があります。「すべて答えよ」という設問で落としやすい点です。"},
+  graphite:  {name:"黒鉛の例外を扱えない",          back:"K7",advice:"黒鉛は共有結合の結晶ですが、価電子1個が余って動けるため電気を通し、層が分子間力で重なっているためやわらかい。例外としてセットで覚えます。"}
+};
+
+/* ================= 選択問題プール ================= */
+const POOL = [
+/* ---------- K1 構成粒子 ---------- */
+{kc:"K1",lv:"L1",q:"イオン結晶の構成粒子はどれか。",
+ c:[{t:"陽イオンと陰イオン"},{t:"分子",tag:"ionvsmol"},{t:"原子",tag:"covcrystal"},{t:"自由電子",tag:"metalmix"}],a:0,
+ h:"イオン結合でできた結晶。並んでいる粒子はイオンか、それとも分子か。",
+ e:"イオン結晶は<b>陽イオンと陰イオン</b>が交互に並んでできている。分子という単位は存在しない。"},
+
+{kc:"K1",lv:"L1",q:"分子結晶の構成粒子はどれか。",
+ c:[{t:"分子"},{t:"原子",tag:"covcrystal"},{t:"陽イオンと陰イオン",tag:"ionvsmol"},{t:"金属イオンと自由電子",tag:"metalmix"}],a:0,
+ h:"名前がそのままヒントになっている。",
+ e:"分子結晶は<b>分子</b>が規則正しく並んでできている。分子の内部は共有結合、分子どうしは分子間力。"},
+
+{kc:"K1",lv:"L1",q:"共有結合の結晶の構成粒子はどれか。",
+ c:[{t:"原子"},{t:"分子",tag:"covcrystal"},{t:"陽イオンと陰イオン",tag:"ionvsmol"},{t:"自由電子",tag:"metalmix"}],a:0,
+ h:"多数の原子が次々に共有結合してできている。分子という単位はあるだろうか。",
+ e:"共有結合の結晶は<b>原子</b>が共有結合で次々につながってできており、分子の単位がない。だから化学式も組成式で書く。"},
+
+{kc:"K1",lv:"L1",q:"金属結晶の構成粒子として、教科書の表で答えるものはどれか。",
+ c:[{t:"原子"},{t:"分子",tag:"ionvsmol"},{t:"陽イオンと陰イオン",tag:"ionvsmol"},{t:"共有電子対",tag:"covcrystal"}],a:0,
+ h:"章末問題のA群は「分子・原子・陽イオンと陰イオン」の3つ。金属はどれに当たるか。",
+ e:"金属結晶の構成粒子は<b>原子</b>（金属原子）。より正確には、価電子を放した金属イオンと、それを結びつける自由電子からできている。共有結合の結晶と同じく「原子」と答える点に注意。"},
+
+{kc:"K1",lv:"L2",q:"ヨウ素の結晶を構成している粒子はどれか。",
+ c:[{t:"I<sub>2</sub> 分子"},{t:"ヨウ素原子",tag:"covcrystal"},{t:"I<sup>+</sup> と I<sup>−</sup>",tag:"ionvsmol"},{t:"ヨウ素イオンと自由電子",tag:"metalmix"}],a:0,
+ h:"ヨウ素の化学式は I<sub>2</sub>。この単位のまま結晶に並んでいる。",
+ e:"ヨウ素は <b>I<sub>2</sub> 分子</b>が並んだ分子結晶。分子どうしは弱い分子間力で結ばれているので、昇華しやすくやわらかい。"},
+
+{kc:"K1",lv:"L2",q:"ダイヤモンドを構成している粒子はどれか。",
+ c:[{t:"炭素原子"},{t:"炭素分子",tag:"covcrystal"},{t:"C<sup>4+</sup> と C<sup>4−</sup>",tag:"ionvsmol"},{t:"炭素イオンと自由電子",tag:"metalmix"}],a:0,
+ h:"1個の炭素原子が4個の炭素原子と共有結合し、それが果てしなく続いている。",
+ e:"ダイヤモンドは<b>炭素原子</b>が正四面体状に共有結合してつながった共有結合の結晶。「ダイヤモンド分子」というものは存在しない。"},
+
+{kc:"K1",lv:"L2",q:"塩化ナトリウムの結晶を構成している粒子はどれか。",
+ c:[{t:"Na<sup>+</sup> と Cl<sup>−</sup>"},{t:"NaCl 分子",tag:"ionvsmol"},{t:"Na 原子と Cl 原子",tag:"covcrystal"},{t:"Na<sup>+</sup> と自由電子",tag:"metalmix"}],a:0,
+ h:"結晶の中で、特定の Na と Cl がペアを組んでいるだろうか。",
+ e:"<b>Na<sup>+</sup> と Cl<sup>−</sup></b>が交互に並び続けている。「この Na<sup>+</sup> とこの Cl<sup>−</sup> が1組」という分子は存在しないので、NaCl は組成式。"},
+
+{kc:"K1",lv:"L3",q:"二酸化ケイ素 SiO<sub>2</sub>（水晶の成分）の結晶を構成している粒子はどれか。",
+ c:[{t:"ケイ素原子と酸素原子"},{t:"SiO<sub>2</sub> 分子",tag:"covcrystal"},{t:"Si<sup>4+</sup> と O<sup>2−</sup>",tag:"ionvsmol"},{t:"ケイ素イオンと自由電子",tag:"metalmix"}],a:0,
+ h:"同じ「〜O<sub>2</sub>」でも、CO<sub>2</sub> とは結晶のつくりがまったく違う。",
+ e:"SiO<sub>2</sub> は<b>Si 原子と O 原子</b>が共有結合で次々につながった共有結合の結晶で、分子は存在しない。CO<sub>2</sub>（分子結晶）との違いは、この単元で最も間違えやすい点。"},
+
+/* ---------- K2 結びつき ---------- */
+{kc:"K2",lv:"L1",q:"イオン結晶で、粒子を結びつけている力はどれか。",
+ c:[{t:"静電気力（クーロン力）"},{t:"分子間力",tag:"ionvsmol"},{t:"原子間で電子対を共有する力",tag:"covcrystal"},{t:"自由電子による結合",tag:"metalmix"}],a:0,
+ h:"＋の電気を帯びた粒子と−の電気を帯びた粒子の間にはたらく力。",
+ e:"陽イオンと陰イオンの間の<b>静電気力</b>（＝イオン結合）。この力が強いのでイオン結晶は融点が高い。"},
+
+{kc:"K2",lv:"L1",q:"分子結晶で、分子どうしを結びつけている力はどれか。",
+ c:[{t:"分子間力"},{t:"共有結合",tag:"covcrystal"},{t:"静電気力",tag:"ionvsmol"},{t:"金属結合",tag:"metalmix"}],a:0,
+ h:"分子の「内部」ではなく、分子と分子の「あいだ」にはたらく力。",
+ e:"分子どうしは弱い<b>分子間力</b>で集まっている。だから融点が低く、やわらかい。"},
+
+{kc:"K2",lv:"L1",q:"共有結合の結晶で、原子を結びつけているものはどれか。",
+ c:[{t:"原子間で電子対を共有する共有結合"},{t:"分子間力",tag:"covcrystal"},{t:"静電気力",tag:"ionvsmol"},{t:"自由電子",tag:"metalmix"}],a:0,
+ h:"名前のとおりの結合。",
+ e:"原子どうしが<b>電子対を共有</b>して結びついている。この強い結合が結晶全体に広がっているため、融点がきわめて高く非常に硬い。"},
+
+{kc:"K2",lv:"L1",q:"金属結晶で、原子を結びつけているものはどれか。",
+ c:[{t:"自由電子を共有する金属結合"},{t:"原子間で電子対を共有する共有結合",tag:"covcrystal"},{t:"静電気力",tag:"ionvsmol"},{t:"分子間力",tag:"ionvsmol"}],a:0,
+ h:"結晶全体を動き回る電子が、原子どうしをつなぎとめている。",
+ e:"金属原子が価電子を放し、その電子が結晶全体を自由に動き回る（<b>自由電子</b>）ことで原子が結びついている。これが金属結合。"},
+
+{kc:"K2",lv:"L2",q:"分子結晶の中に共有結合は存在するか。",
+ c:[{t:"分子の内部には共有結合があり、分子どうしは分子間力で結ばれている"},{t:"分子の内部も分子どうしも共有結合である",tag:"covcrystal"},{t:"共有結合は存在しない",tag:"bondinside"},{t:"分子の内部はイオン結合である",tag:"ionvsmol"}],a:0,
+ h:"「分子をつくる結合」と「分子を集める力」は別のもの。",
+ e:"たとえばヨウ素では、I と I の間は<b>共有結合</b>、I<sub>2</sub> 分子どうしは<b>分子間力</b>。結晶を融かすときに切れるのは弱い分子間力のほうなので、融点が低い。"},
+
+{kc:"K2",lv:"L2",q:"分子結晶を加熱して融かすとき、切れるのはどれか。",
+ c:[{t:"分子間力"},{t:"分子内の共有結合",tag:"covcrystal"},{t:"イオン結合",tag:"ionvsmol"},{t:"金属結合",tag:"metalmix"}],a:0,
+ h:"融けても分子そのものは壊れていない。氷が水になっても H<sub>2</sub>O のままである。",
+ e:"融解で切れるのは<b>分子間力</b>だけで、分子そのものは壊れない。分子間力が弱いため、分子結晶は融点が低い。"},
+
+{kc:"K2",lv:"L2",q:"自由電子とはどのようなものか。",
+ c:[{t:"金属原子が放した価電子が、特定の原子に固定されず結晶全体を動き回るもの"},{t:"2個の原子に共有されている電子対",tag:"covcrystal"},{t:"結晶中を動き回るイオン",tag:"ionvsmol"},{t:"原子核のまわりに固定されている電子",tag:"metalmix"}],a:0,
+ h:"金属が電気をよく通す理由になっているもの。",
+ e:"金属では価電子が特定の原子に属さず<b>結晶全体を自由に動き回る</b>。これが電気・熱をよく通す理由であり、展性・延性の理由でもある。"},
+
+{kc:"K2",lv:"L3",q:"塩化アンモニウム NH<sub>4</sub>Cl の結晶中にある化学結合を、すべて挙げるとどれか。",
+ c:[{t:"イオン結合と共有結合"},{t:"イオン結合のみ",tag:"bondinside"},{t:"共有結合のみ",tag:"covcrystal"},{t:"金属結合と共有結合",tag:"metalmix"}],a:0,
+ h:"NH<sub>4</sub><sup>+</sup> の内側では、N と H はどう結びついている？",
+ e:"NH<sub>4</sub><sup>+</sup> の内部は<b>共有結合</b>（1か所は配位結合）で、NH<sub>4</sub><sup>+</sup> と Cl<sup>−</sup> の間は<b>イオン結合</b>。多原子イオンを含む結晶では2種類の結合が同居する。"},
+
+{kc:"K2",lv:"L3",q:"硫酸カルシウム CaSO<sub>4</sub> の結晶中にある化学結合を、すべて挙げるとどれか。",
+ c:[{t:"イオン結合と共有結合"},{t:"イオン結合のみ",tag:"bondinside"},{t:"共有結合のみ",tag:"covcrystal"},{t:"イオン結合と分子間力",tag:"ionvsmol"}],a:0,
+ h:"SO<sub>4</sub><sup>2−</sup> の内部の S と O は、どちらも非金属元素。",
+ e:"SO<sub>4</sub><sup>2−</sup> の内部は<b>共有結合</b>、Ca<sup>2+</sup> と SO<sub>4</sub><sup>2−</sup> の間は<b>イオン結合</b>。「結合をすべて答えよ」という設問では、多原子イオンの内側を必ず確認すること。"},
+
+/* ---------- K3 結晶の分類 ---------- */
+{kc:"K3",lv:"L1",q:"塩化マグネシウム MgCl<sub>2</sub> の結晶はどれに分類されるか。",
+ c:[{t:"イオン結晶"},{t:"分子結晶",tag:"ionvsmol"},{t:"共有結合の結晶",tag:"covcrystal"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"Mg は金属元素、Cl は非金属元素。この組合せは何結合だったか。",
+ e:"金属＋非金属なのでイオン結合、つまり<b>イオン結晶</b>。Mg<sup>2+</sup> と Cl<sup>−</sup> が並んでいる。"},
+
+{kc:"K3",lv:"L1",q:"ヨウ素 I<sub>2</sub> の結晶はどれに分類されるか。",
+ c:[{t:"分子結晶"},{t:"イオン結晶",tag:"ionvsmol"},{t:"共有結合の結晶",tag:"covcrystal"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"I<sub>2</sub> という分子の単位があるかどうか。",
+ e:"I<sub>2</sub> 分子が分子間力で集まった<b>分子結晶</b>。昇華しやすいのが特徴。"},
+
+{kc:"K3",lv:"L1",q:"ダイヤモンドはどれに分類されるか。",
+ c:[{t:"共有結合の結晶"},{t:"分子結晶",tag:"covcrystal"},{t:"イオン結晶",tag:"ionvsmol"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"炭素原子が果てしなく共有結合でつながっている。",
+ e:"<b>共有結合の結晶</b>。強い共有結合が結晶全体に広がるため、天然で最も硬く、融点もきわめて高い。"},
+
+{kc:"K3",lv:"L1",q:"銀 Ag はどれに分類されるか。",
+ c:[{t:"金属結晶"},{t:"イオン結晶",tag:"ionvsmol"},{t:"共有結合の結晶",tag:"covcrystal"},{t:"分子結晶",tag:"ionvsmol"}],a:0,
+ h:"金属元素だけからできている単体。",
+ e:"<b>金属結晶</b>。自由電子があるため、熱・電気をよく通し、展性・延性を示す。"},
+
+{kc:"K3",lv:"L2",q:"ドライアイス（二酸化炭素 CO<sub>2</sub> の固体）はどれに分類されるか。",
+ c:[{t:"分子結晶"},{t:"共有結合の結晶",tag:"covcrystal"},{t:"イオン結晶",tag:"ionvsmol"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"CO<sub>2</sub> という分子の単位があり、その分子が集まって固まっている。",
+ e:"CO<sub>2</sub> 分子が分子間力で集まった<b>分子結晶</b>。分子間力が弱いので、液体にならずそのまま昇華する。"},
+
+{kc:"K3",lv:"L2",q:"二酸化ケイ素 SiO<sub>2</sub>（石英・水晶）はどれに分類されるか。",
+ c:[{t:"共有結合の結晶"},{t:"分子結晶",tag:"covcrystal"},{t:"イオン結晶",tag:"ionvsmol"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"CO<sub>2</sub> と式は似ているが、結晶のつくりはまったく違う。SiO<sub>2</sub> という分子は存在するだろうか。",
+ e:"Si と O が次々に共有結合してつながった<b>共有結合の結晶</b>。SiO<sub>2</sub> 分子は存在せず、SiO<sub>2</sub> は個数の比を表す組成式。だから硬く、融点も約1700℃と非常に高い。"},
+
+{kc:"K3",lv:"L2",q:"酸化カルシウム CaO（生石灰）はどれに分類されるか。",
+ c:[{t:"イオン結晶"},{t:"共有結合の結晶",tag:"covcrystal"},{t:"分子結晶",tag:"ionvsmol"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"Ca は金属元素、O は非金属元素。",
+ e:"Ca<sup>2+</sup> と O<sup>2−</sup> からなる<b>イオン結晶</b>。2価どうしで静電気力が強く、融点は約2570℃と非常に高い。"},
+
+{kc:"K3",lv:"L2",q:"氷（水の結晶）はどれに分類されるか。",
+ c:[{t:"分子結晶"},{t:"共有結合の結晶",tag:"covcrystal"},{t:"イオン結晶",tag:"ionvsmol"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"氷が融けても H<sub>2</sub>O という分子は壊れない。",
+ e:"H<sub>2</sub>O 分子が集まった<b>分子結晶</b>。氷の場合、分子間力の中でも比較的強い水素結合がはたらいている。"},
+
+{kc:"K3",lv:"L2",q:"ケイ素 Si の単体はどれに分類されるか。",
+ c:[{t:"共有結合の結晶"},{t:"金属結晶",tag:"metalmix"},{t:"分子結晶",tag:"covcrystal"},{t:"イオン結晶",tag:"ionvsmol"}],a:0,
+ h:"Si はダイヤモンドと同じ14族。結晶の構造もダイヤモンドによく似ている。",
+ e:"ケイ素はダイヤモンドと同じ構造をもつ<b>共有結合の結晶</b>。金属光沢があるので金属と間違えやすいが、非金属元素である。"},
+
+{kc:"K3",lv:"L3",q:"CO<sub>2</sub> は分子結晶なのに SiO<sub>2</sub> は共有結合の結晶である。この違いの説明として正しいものはどれか。",
+ c:[{t:"CO<sub>2</sub> は CO<sub>2</sub> という分子が単位になって集まるが、SiO<sub>2</sub> は Si と O が次々に共有結合し、結晶全体がひとつながりになっているから"},{t:"CO<sub>2</sub> は常温で気体だから",tag:"covcrystal"},{t:"SiO<sub>2</sub> はイオン結合でできているから",tag:"ionvsmol"},{t:"SiO<sub>2</sub> には自由電子があるから",tag:"metalmix"}],a:0,
+ h:"分かれ目は「分子という単位が存在するかどうか」。",
+ e:"どちらも共有結合を使っているが、CO<sub>2</sub> は<b>分子で完結</b>し、SiO<sub>2</sub> は<b>結晶全体がひとつの巨大な分子のように</b>つながっている。この違いが融点の差（ドライアイスは−79℃で昇華、石英は約1700℃）に直結する。"},
+
+{kc:"K3",lv:"L3",q:"次のうち、共有結合の結晶で<b>ない</b>ものはどれか。",
+ c:[{t:"ナフタレン"},{t:"ダイヤモンド",tag:"covcrystal"},{t:"ケイ素",tag:"covcrystal"},{t:"二酸化ケイ素",tag:"covcrystal"}],a:0,
+ h:"防虫剤に使われ、置いておくと小さくなっていく物質がある。",
+ e:"ナフタレンは分子からなる物質で<b>分子結晶</b>（昇華性がある）。他の3つは共有結合の結晶。"},
+
+{kc:"K3",lv:"L3",q:"水銀 Hg は常温で液体だが、固体にしたときはどの結晶に分類されるか。",
+ c:[{t:"金属結晶"},{t:"分子結晶",tag:"mp"},{t:"イオン結晶",tag:"ionvsmol"},{t:"共有結合の結晶",tag:"covcrystal"}],a:0,
+ h:"融点の高さで結晶の種類を決めることはできない。何の元素からできているかで考えよう。",
+ e:"水銀は金属元素の単体なので<b>金属結晶</b>。融点が−39℃と低くても金属結合であることは変わらない。「金属＝融点が高い」と決めつけないこと。"},
+
+/* ---------- K4 化学式の種類 ---------- */
+{kc:"K4",lv:"L1",q:"4種類の結晶のうち、分子式で表すものはどれか。",
+ c:[{t:"分子結晶"},{t:"イオン結晶",tag:"formula"},{t:"共有結合の結晶",tag:"formula"},{t:"金属結晶",tag:"formula"}],a:0,
+ h:"分子式で書けるのは、分子という単位が実在するものだけ。",
+ e:"分子が実在するのは<b>分子結晶</b>だけなので、分子式で表せるのもこれだけ。残りの3つは組成式。"},
+
+{kc:"K4",lv:"L1",q:"イオン結晶を表す化学式の種類はどれか。",
+ c:[{t:"組成式"},{t:"分子式",tag:"formula"},{t:"構造式",tag:"formula"},{t:"電子式",tag:"formula"}],a:0,
+ h:"NaCl は「Na と Cl が1：1で並んでいる」ことを表している。",
+ e:"イオン結晶には分子が存在しないので、粒子の個数の比を表す<b>組成式</b>で書く。"},
+
+{kc:"K4",lv:"L2",q:"金属結晶を表す化学式の種類はどれか。",
+ c:[{t:"組成式"},{t:"分子式",tag:"formula"},{t:"構造式",tag:"formula"},{t:"示性式",tag:"formula"}],a:0,
+ h:"Ag や Fe のように元素記号1つで書く。これは分子1個を表しているだろうか。",
+ e:"金属結晶にも分子はないので<b>組成式</b>。Ag は「銀原子が集まったもの」を代表して書いているだけで、Ag 分子ではない。"},
+
+{kc:"K4",lv:"L2",q:"共有結合の結晶を表す化学式の種類はどれか。",
+ c:[{t:"組成式"},{t:"分子式",tag:"formula"},{t:"構造式",tag:"formula"},{t:"電子式",tag:"formula"}],a:0,
+ h:"SiO<sub>2</sub> という分子は存在するだろうか。",
+ e:"共有結合の結晶にも分子の単位がないので<b>組成式</b>。SiO<sub>2</sub> は「Si：O＝1：2」という比を表している。"},
+
+{kc:"K4",lv:"L2",q:"次の化学式のうち、分子式であるものはどれか。",
+ c:[{t:"H<sub>2</sub>O"},{t:"KCl",tag:"formula"},{t:"SiO<sub>2</sub>",tag:"formula"},{t:"Cu",tag:"formula"}],a:0,
+ h:"分子として実在するものを選ぶ。KCl はイオン結晶、SiO<sub>2</sub> は共有結合の結晶、Cu は金属結晶。",
+ e:"<b>H<sub>2</sub>O</b> だけが分子式。KCl・SiO<sub>2</sub>・Cu はいずれも分子が存在しないので組成式。教科書 p.101 章末問題4(1) と同じ形の問い。"},
+
+{kc:"K4",lv:"L2",q:"次の化学式のうち、分子式で<b>ない</b>ものはどれか。",
+ c:[{t:"NaCl"},{t:"HCl",tag:"formula"},{t:"CO<sub>2</sub>",tag:"formula"},{t:"NH<sub>3</sub>",tag:"formula"}],a:0,
+ h:"金属元素を含んでいるものが1つだけある。",
+ e:"<b>NaCl</b> はイオン結晶なので組成式。HCl・CO<sub>2</sub>・NH<sub>3</sub> は非金属どうしの分子で、分子式。"},
+
+{kc:"K4",lv:"L3",q:"SiO<sub>2</sub> という化学式が表しているものはどれか。",
+ c:[{t:"結晶中の Si 原子と O 原子の個数の比"},{t:"SiO<sub>2</sub> 分子1個の構成",tag:"formula"},{t:"1 mol あたりの質量",tag:"formula"},{t:"Si 原子1個の電子配置",tag:"formula"}],a:0,
+ h:"SiO<sub>2</sub> という分子は存在しない。では 1：2 は何の比か。",
+ e:"共有結合の結晶なので、SiO<sub>2</sub> は<b>個数の比（Si：O＝1：2）</b>を表す組成式。CO<sub>2</sub> のように分子1個の組み立てを表しているのではない。"},
+
+{kc:"K4",lv:"L3",q:"イオン結晶・金属結晶・共有結合の結晶を、いずれも組成式で表すのはなぜか。",
+ c:[{t:"分子という単位が存在せず、構成粒子の個数の比しか表せないから"},{t:"構成粒子が小さすぎて数えられないから",tag:"formula"},{t:"分子が大きすぎて書ききれないから",tag:"formula"},{t:"電気を通す物質だから",tag:"conduct"}],a:0,
+ h:"3つに共通するのは「分子がない」ということ。",
+ e:"この3種類の結晶では、粒子が結晶全体に途切れなく並んでいて<b>分子という区切りがない</b>。そのため、書けるのは個数の比＝組成式だけになる。"},
+
+/* ---------- K5 結晶の性質 ---------- */
+{kc:"K5",lv:"L1",q:"イオン結晶の性質として正しいものはどれか。",
+ c:[{t:"融点が高く、硬いが強い力を加えると割れやすい"},{t:"融点が低く、やわらかい",tag:"mp"},{t:"たたくと薄く広がり、引き延ばすことができる",tag:"hardness"},{t:"固体のままでも電気をよく通す",tag:"conduct"}],a:0,
+ h:"静電気力が強い＝融点が高い。イオンが交互に並ぶ＝ずれると反発する。",
+ e:"静電気力が強いので<b>融点が高く硬い</b>が、面がずれると同符号のイオンが反発して<b>割れる（もろい）</b>。展性・延性は金属結晶の性質。"},
+
+{kc:"K5",lv:"L1",q:"分子結晶の性質として正しいものはどれか。",
+ c:[{t:"融点が低く、やわらかい。昇華しやすいものもある"},{t:"融点がきわめて高く、非常に硬い",tag:"mp"},{t:"熱や電気をよく通し、展性や延性を示す",tag:"metalmix"},{t:"水に溶かすと電気をよく通す",tag:"conduct"}],a:0,
+ h:"分子どうしを結びつけている力は、4種類の中で最も弱い。",
+ e:"分子間力が弱いため<b>融点が低くやわらかい</b>。ヨウ素やドライアイス、ナフタレンのように昇華するものもある。電気は通さない。"},
+
+{kc:"K5",lv:"L1",q:"共有結合の結晶の性質として正しいものはどれか。",
+ c:[{t:"融点がきわめて高く、一般に非常に硬い"},{t:"融点が低く、やわらかい",tag:"mp"},{t:"展性・延性に富む",tag:"hardness"},{t:"固体のままで電気をよく通す",tag:"conduct"}],a:0,
+ h:"強い共有結合が結晶全体に広がっている。それをばらばらにするには？",
+ e:"強い共有結合が結晶全体に及ぶため<b>融点がきわめて高く、非常に硬い</b>。ダイヤモンドの融点は約3550℃。電気は通さない（黒鉛は例外）。"},
+
+{kc:"K5",lv:"L1",q:"金属結晶の性質として正しいものはどれか。",
+ c:[{t:"熱や電気をよく通し、展性や延性を示す"},{t:"固体では電気を通さないが、水に溶かすと通す",tag:"conduct"},{t:"融点が低く、昇華しやすい",tag:"mp"},{t:"硬いが、たたくと割れやすい",tag:"hardness"}],a:0,
+ h:"自由電子があることから、どんな性質が出てくるか。",
+ e:"自由電子が動けるので<b>熱・電気をよく通し</b>、原子の位置がずれても結合が保たれるので<b>展性・延性</b>を示す。金属光沢もこの自由電子による。"},
+
+{kc:"K5",lv:"L2",q:"「固体では電気を通さないが、水に溶かしたり融解させたりすると電気をよく通す」のはどの結晶か。",
+ c:[{t:"イオン結晶"},{t:"分子結晶",tag:"conduct"},{t:"共有結合の結晶",tag:"conduct"},{t:"金属結晶",tag:"conduct"}],a:0,
+ h:"電気を運ぶのはイオン。固体の中でイオンは動けるだろうか。",
+ e:"<b>イオン結晶</b>。固体ではイオンが固定されて動けないが、水に溶かすか融かすとイオンが動けるようになり電気を通す。章末問題5のE群（セ）にあたる。"},
+
+{kc:"K5",lv:"L2",q:"4種類の結晶のうち、固体のままで電気をよく通すのはどれか。",
+ c:[{t:"金属結晶"},{t:"イオン結晶",tag:"conduct"},{t:"分子結晶",tag:"conduct"},{t:"共有結合の結晶",tag:"conduct"}],a:0,
+ h:"固体の中で動ける荷電粒子をもっているのはどれか。",
+ e:"<b>金属結晶</b>だけ。自由電子が固体の中を動けるため。他の3つは固体では電気を通さない（黒鉛だけが例外）。"},
+
+{kc:"K5",lv:"L2",q:"昇華しやすい物質があるのは、どの結晶か。",
+ c:[{t:"分子結晶"},{t:"イオン結晶",tag:"mp"},{t:"共有結合の結晶",tag:"mp"},{t:"金属結晶",tag:"mp"}],a:0,
+ h:"固体から直接気体になるには、粒子をつなぐ力が弱くなければならない。",
+ e:"分子間力が弱い<b>分子結晶</b>。ヨウ素、ドライアイス、ナフタレンが代表例。"},
+
+{kc:"K5",lv:"L2",q:"展性・延性を示すのは、どの結晶か。",
+ c:[{t:"金属結晶"},{t:"イオン結晶",tag:"hardness"},{t:"分子結晶",tag:"hardness"},{t:"共有結合の結晶",tag:"hardness"}],a:0,
+ h:"たたいて薄く広げても壊れない理由は、自由電子にある。",
+ e:"<b>金属結晶</b>。原子の位置がずれても自由電子が結合を保つので、たたけば広がり（展性）、引けば伸びる（延性）。"},
+
+{kc:"K5",lv:"L2",q:"イオン結晶が硬いのに、強い力を加えると割れやすいのはなぜか。",
+ c:[{t:"面がずれると同符号のイオンが向かい合い、反発しあうから"},{t:"自由電子が動き回っているから",tag:"metalmix"},{t:"分子間力が弱いから",tag:"ionvsmol"},{t:"イオンの間に隙間が多いから"}],a:0,
+ h:"陽イオンと陰イオンが交互に並んでいる。一段ずらすと、どのイオンが隣り合う？",
+ e:"配列が一段ずれると<b>同符号のイオンどうしが接して反発</b>し、その面で割れる。金属が自由電子のおかげで変形できるのと正反対の性質。"},
+
+{kc:"K5",lv:"L2",q:"金属が展性・延性を示すのはなぜか。",
+ c:[{t:"原子の位置がずれても、自由電子が結合を保ち続けるから"},{t:"陽イオンどうしが反発しないから",tag:"ionvsmol"},{t:"分子間力が強いから",tag:"ionvsmol"},{t:"共有結合が切れないから",tag:"covcrystal"}],a:0,
+ h:"金属結合は、特定の相手と結びつく結合ではない。",
+ e:"金属結合は特定の原子間の結合ではなく、<b>自由電子が全体をつなぎとめている</b>ので、原子の並びがずれても結合が切れない。だから変形できる。"},
+
+{kc:"K5",lv:"L3",q:"分子結晶の融点が低いのはなぜか。",
+ c:[{t:"融解のときに切れるのは、弱い分子間力だけだから"},{t:"分子内の共有結合が弱いから",tag:"covcrystal"},{t:"イオンの価数が小さいから",tag:"ionvsmol"},{t:"自由電子が動き回っているから",tag:"metalmix"}],a:0,
+ h:"融けたあとも分子そのものは残っている。では何が切れたのか。",
+ e:"分子内の共有結合は強いが、融解で切れるのは<b>分子間力だけ</b>。この力が弱いので、少しの熱で融ける。強い結合をもっているのに融点が低い、という点が理解のポイント。"},
+
+{kc:"K5",lv:"L3",q:"4種類の結晶の融点について、一般的な傾向として正しいものはどれか。",
+ c:[{t:"共有結合の結晶＞イオン結晶＞分子結晶 の順に高く、金属結晶は物質による幅が大きい"},{t:"金属結晶が常に最も高い",tag:"mp"},{t:"分子結晶が最も高い",tag:"mp"},{t:"イオン結晶が最も低い",tag:"mp"}],a:0,
+ h:"金属には、水銀（−39℃）もタングステン（3400℃）もある。",
+ e:"共有結合の結晶が最も高く、次いでイオン結晶、分子結晶が最も低い。<b>金属結晶はこの序列に当てはめられない</b>（水銀のように常温で液体のものもある）。"},
+
+/* ---------- K6 性質からの逆推定 ---------- */
+{kc:"K6",lv:"L2",q:"「電気を通さない硬い固体で、融点が3000℃を超える」物質は、どの結晶か。",
+ c:[{t:"共有結合の結晶"},{t:"イオン結晶",tag:"mp"},{t:"金属結晶",tag:"conduct"},{t:"分子結晶",tag:"mp"}],a:0,
+ h:"融点が飛び抜けて高く、しかも電気を通さない。",
+ e:"<b>共有結合の結晶</b>。イオン結晶も融点は高いが3000℃を超えるものはまれで、金属なら電気を通すはず。"},
+
+{kc:"K6",lv:"L2",q:"「固体では電気を通さないが、水に溶かすと電気を通す。融点は801℃」の物質は、どの結晶か。",
+ c:[{t:"イオン結晶"},{t:"共有結合の結晶",tag:"conduct"},{t:"金属結晶",tag:"conduct"},{t:"分子結晶",tag:"mp"}],a:0,
+ h:"水に溶かすと電気を通す＝溶けたときに動ける荷電粒子ができる。",
+ e:"<b>イオン結晶</b>（塩化ナトリウムのこと）。水に溶けてイオンに分かれるため電気を通す。共有結合の結晶は水に溶けず、溶かしても電気を通さない。"},
+
+{kc:"K6",lv:"L2",q:"「加熱すると液体にならずに気体になり、やわらかい」物質は、どの結晶か。",
+ c:[{t:"分子結晶"},{t:"イオン結晶",tag:"mp"},{t:"共有結合の結晶",tag:"mp"},{t:"金属結晶",tag:"mp"}],a:0,
+ h:"昇華する物質は、粒子を結びつける力が弱い。",
+ e:"<b>分子結晶</b>。ヨウ素やドライアイスがこれにあたる。"},
+
+{kc:"K6",lv:"L2",q:"「たたくと薄い箔にのばすことができ、電気をよく通す」物質は、どの結晶か。",
+ c:[{t:"金属結晶"},{t:"イオン結晶",tag:"hardness"},{t:"共有結合の結晶",tag:"conduct"},{t:"分子結晶",tag:"conduct"}],a:0,
+ h:"変形しても壊れず、しかも固体のまま電気を通す。",
+ e:"<b>金属結晶</b>。展性・延性と電気伝導は、どちらも自由電子によるもの。金箔がその代表例。"},
+
+{kc:"K6",lv:"L3",q:"物質Xは、固体では電気を通さなかったが、加熱して融解させると電気を通した。X の結晶はどれか。",
+ c:[{t:"イオン結晶"},{t:"分子結晶",tag:"conduct"},{t:"共有結合の結晶",tag:"conduct"},{t:"金属結晶",tag:"conduct"}],a:0,
+ h:"融かしたら通るようになった＝動けるようになった荷電粒子がある。それは電子か、イオンか。",
+ e:"<b>イオン結晶</b>。融解によってイオンが動けるようになったため。分子結晶と共有結合の結晶は融かしても電気を通さず、金属なら固体のときから通す。"},
+
+{kc:"K6",lv:"L3",q:"物質Yは、融点が−50℃と低く、固体でも液体でも電気を通さなかった。Y の結晶はどれか。",
+ c:[{t:"分子結晶"},{t:"イオン結晶",tag:"mp"},{t:"共有結合の結晶",tag:"mp"},{t:"金属結晶",tag:"conduct"}],a:0,
+ h:"融点が低い＝粒子を結びつける力が弱い。電気を通さない＝動ける荷電粒子がない。",
+ e:"<b>分子結晶</b>。分子は電荷をもたないので、固体でも液体でも電気を通さない。この2つの情報だけで分子結晶と決められる。"},
+
+{kc:"K6",lv:"L3",q:"物質Zは、非常に硬く、水に溶けず、融解させても電気を通さなかった。Z の結晶はどれか。",
+ c:[{t:"共有結合の結晶"},{t:"イオン結晶",tag:"conduct"},{t:"金属結晶",tag:"conduct"},{t:"分子結晶",tag:"hardness"}],a:0,
+ h:"イオン結晶も硬いが、融解させれば電気を通すはず。ここが決め手になる。",
+ e:"<b>共有結合の結晶</b>。融解させても電気を通さないことが、イオン結晶との決定的な違い。「硬い」だけではイオン結晶と区別できない点に注意。"},
+
+{kc:"K6",lv:"L3",q:"石灰石や貝殻の主成分である炭酸カルシウム CaCO<sub>3</sub> は、どの結晶か。",
+ c:[{t:"イオン結晶"},{t:"分子結晶",tag:"ionvsmol"},{t:"共有結合の結晶",tag:"covcrystal"},{t:"金属結晶",tag:"metalmix"}],a:0,
+ h:"Ca<sup>2+</sup> と CO<sub>3</sub><sup>2−</sup> からできている。",
+ e:"<b>イオン結晶</b>。CO<sub>3</sub><sup>2−</sup> の内部は共有結合だが、結晶としてはイオンが並んだイオン結晶。多原子イオンを含んでも分類はイオン結晶。"},
+
+/* ---------- K7 例外と発展 ---------- */
+{kc:"K7",lv:"L2",q:"黒鉛が電気を通すのはなぜか。",
+ c:[{t:"炭素の価電子4個のうち3個が共有結合に使われ、残り1個が平面内を動けるから"},{t:"自由電子をもつ金属だから",tag:"metalmix"},{t:"イオンが動けるから",tag:"ionvsmol"},{t:"分子間力がはたらいているから",tag:"covcrystal"}],a:0,
+ h:"ダイヤモンドは価電子4個すべてを共有結合に使う。黒鉛は何個使っているか。",
+ e:"黒鉛では価電子4個のうち3個だけが共有結合に使われ、<b>残り1個が層の中を動ける</b>ため電気を通す。共有結合の結晶なのに電気を通す、数少ない例外。"},
+
+{kc:"K7",lv:"L2",q:"黒鉛がやわらかく、はがれやすいのはなぜか。",
+ c:[{t:"平面状につながった層どうしが、弱い分子間力で重なっているから"},{t:"共有結合そのものが弱いから",tag:"covcrystal"},{t:"イオン結合でできているから",tag:"ionvsmol"},{t:"自由電子が層をずらすから",tag:"metalmix"}],a:0,
+ h:"鉛筆で字が書けるのは、何かがはがれて紙につくから。",
+ e:"層の中の共有結合は強いが、<b>層と層の間は弱い分子間力</b>なので簡単にずれてはがれる。鉛筆の芯に使われるのはこのため。"},
+
+{kc:"K7",lv:"L2",q:"ダイヤモンドが電気を通さないのはなぜか。",
+ c:[{t:"価電子4個すべてが共有結合に使われ、動ける電子がないから"},{t:"自由電子をもたない金属だから",tag:"metalmix"},{t:"イオンが動けないから",tag:"ionvsmol"},{t:"分子でできているから",tag:"covcrystal"}],a:0,
+ h:"電気を通すには、動ける荷電粒子が必要。ダイヤモンドの中に余っている電子はあるか。",
+ e:"ダイヤモンドは各炭素原子が<b>4個の価電子すべてを共有結合に使っている</b>ので、動ける電子がなく電気を通さない。黒鉛との違いはここにある。"},
+
+{kc:"K7",lv:"L3",q:"ダイヤモンドと黒鉛の関係を正しく述べているものはどれか。",
+ c:[{t:"どちらも炭素の単体で、原子の結びつき方が異なる同素体である"},{t:"中性子の数が異なる同位体である",tag:"covcrystal"},{t:"まったく同じ物質で、呼び方が違うだけである",tag:"covcrystal"},{t:"炭素と別の元素からできた化合物である",tag:"ionvsmol"}],a:0,
+ h:"同じ元素からできているが、性質はまったく違う。この関係を何と呼ぶか。",
+ e:"どちらも炭素だけからできた単体で、<b>結びつき方が違う同素体</b>。同じ元素でも構造が違えば性質がまるで変わる、という代表例。"},
+
+{kc:"K7",lv:"L3",q:"黒鉛は共有結合の結晶に分類されるが、共有結合の結晶の一般的な性質から外れているのはどの点か。",
+ c:[{t:"電気を通し、やわらかいこと"},{t:"融点が高いこと",tag:"mp"},{t:"硬いこと",tag:"hardness"},{t:"水に溶けること"}],a:0,
+ h:"共有結合の結晶は普通、電気を通さず非常に硬い。黒鉛はどうか。",
+ e:"共有結合の結晶は通常「電気を通さない・非常に硬い」だが、黒鉛は<b>電気を通し、やわらかい</b>。融点が高い点は共通している。例外としてセットで覚えること。"},
+
+{kc:"K7",lv:"L3",q:"塩化アンモニウム NH<sub>4</sub>Cl は非金属元素だけからできているのに、イオン結晶に分類される。その理由はどれか。",
+ c:[{t:"NH<sub>4</sub><sup>+</sup> という陽イオンと Cl<sup>−</sup> という陰イオンからできているから"},{t:"共有結合しか存在しないから",tag:"bondinside"},{t:"NH<sub>4</sub>Cl という分子が集まっているから",tag:"ionvsmol"},{t:"自由電子が存在するから",tag:"metalmix"}],a:0,
+ h:"「金属＋非金属」は目安にすぎない。本質は陽イオンと陰イオンがあるかどうか。",
+ e:"非金属だけでも、<b>アンモニウムイオン NH<sub>4</sub><sup>+</sup></b> という陽イオンができるためイオン結晶になる。「金属＋非金属」という判定法の例外として重要。"},
+
+{kc:"K7",lv:"L3",q:"硫酸ナトリウム Na<sub>2</sub>SO<sub>4</sub> の結晶において、SO<sub>4</sub><sup>2−</sup> の内部で S と O を結びつけている結合はどれか。",
+ c:[{t:"共有結合"},{t:"イオン結合",tag:"bondinside"},{t:"金属結合",tag:"metalmix"},{t:"分子間力",tag:"ionvsmol"}],a:0,
+ h:"S も O も非金属元素。非金属どうしの結合は？",
+ e:"SO<sub>4</sub><sup>2−</sup> の内部は<b>共有結合</b>。そのかたまりが Na<sup>+</sup> とイオン結合している。結晶全体としてはイオン結晶に分類される。"},
+
+{kc:"K7",lv:"L3",q:"塩化ナトリウムを「NaCl という分子でできている」と言えないのはなぜか。",
+ c:[{t:"結晶中では Na<sup>+</sup> と Cl<sup>−</sup> が交互に並び続けており、特定の1組という区切りがないから"},{t:"NaCl 分子が小さすぎて観察できないから",tag:"ionvsmol"},{t:"イオンが動き回っているから",tag:"conduct"},{t:"NaCl が組成式で書かれているから",tag:"formula"}],a:0,
+ h:"結晶の中で、ある Na<sup>+</sup> は何個の Cl<sup>−</sup> と接しているだろうか。",
+ e:"1個の Na<sup>+</sup> は複数の Cl<sup>−</sup> に囲まれており、<b>特定の相手とペアを組んでいない</b>。だから分子という単位がなく、化学式は組成式になる。"}
+];
+
+/* ================= ステップ分解問題（章末問題5と同じ流れ） =================
+   S1 結晶の種類 → S2 構成粒子 → S3 結びつき → S4 化学式の種類 → S5 性質
+   fill:true … S1・S2 を提示し、S3〜S5 を解かせる                          */
+
+const C_TYPE=[{t:"イオン結晶"},{t:"分子結晶"},{t:"共有結合の結晶"},{t:"金属結晶"}];
+const C_PART=[{t:"陽イオンと陰イオン"},{t:"分子"},{t:"原子"},{t:"自由電子のみ"}];
+const C_BOND=[{t:"静電気力"},{t:"分子間力"},{t:"原子間で電子対を共有"},{t:"自由電子を共有"}];
+const C_FORM=[{t:"組成式"},{t:"分子式"},{t:"構造式"},{t:"電子式"}];
+const C_PROP=[
+ {t:"固体の状態では電気を通さないが、水に溶かしたり融解させたりすると、電気をよく通す。"},
+ {t:"融点が低く、昇華しやすいものもある。やわらかい。"},
+ {t:"融点がきわめて高い。一般的に、非常に硬い。"},
+ {t:"熱や電気をよく通し、展性や延性を示す。"}];
+
+/* 各群の正解を先頭に並べ替えるヘルパ（a:0 で統一するため） */
+function rc(list, ansIdx, tags){
+  const out=[list[ansIdx]];
+  list.forEach((x,i)=>{ if(i!==ansIdx) out.push({t:x.t, tag:tags[i]||undefined}); });
+  return out;
+}
+
+const STEPS=[
+/* ---- 穴埋め版（S1・S2 提示） ---- */
+{type:"step",kc:"K3",lv:"L2",fill:true,
+ stem:"塩化マグネシウム MgCl<sub>2</sub> について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[{label:"S1 結晶の種類",text:"金属元素 Mg と非金属元素 Cl の組合せ → <b>イオン結晶</b>"},
+        {label:"S2 構成粒子",text:"<b>陽イオンと陰イオン</b>（Mg<sup>2+</sup> と Cl<sup>−</sup>）"}],
+ steps:[
+  {label:"S3 結びつき",q:"構成粒子を結びつけているものを選べ。",
+   c:rc(C_BOND,0,{1:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"＋のイオンと−のイオンの間にはたらく力。",
+   e:"陽イオンと陰イオンの間の<b>静電気力</b>（イオン結合）。"},
+  {label:"S4 化学式の種類",q:"MgCl<sub>2</sub> はどの種類の化学式か。",
+   c:rc(C_FORM,0,{1:"formula",2:"formula",3:"formula"}),a:0,
+   h:"MgCl<sub>2</sub> という分子は存在するだろうか。",
+   e:"分子が存在しないので<b>組成式</b>。Mg：Cl＝1：2 という個数の比を表している。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,0,{1:"mp",2:"mp",3:"conduct"}),a:0,
+   h:"固体ではイオンが動けないが、水に溶かしたり融かしたりすると動けるようになる。",
+   e:"<b>固体では電気を通さないが、水溶液や融解液は電気をよく通す</b>。章末問題5のE群（セ）にあたる。"}]},
+
+{type:"step",kc:"K3",lv:"L2",fill:true,
+ stem:"ヨウ素 I<sub>2</sub> について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[{label:"S1 結晶の種類",text:"I<sub>2</sub> という分子の単位がある → <b>分子結晶</b>"},
+        {label:"S2 構成粒子",text:"<b>分子</b>（I<sub>2</sub> 分子）"}],
+ steps:[
+  {label:"S3 結びつき",q:"分子どうしを結びつけているものを選べ。",
+   c:rc(C_BOND,1,{0:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"分子の「内部」ではなく、分子と分子の「あいだ」にはたらく力。",
+   e:"分子どうしは弱い<b>分子間力</b>で集まっている。I と I の間は共有結合だが、それは分子の内部の話。"},
+  {label:"S4 化学式の種類",q:"I<sub>2</sub> はどの種類の化学式か。",
+   c:rc(C_FORM,1,{0:"formula",2:"formula",3:"formula"}),a:0,
+   h:"分子1個の組み立てをそのまま表せる、唯一の結晶。",
+   e:"分子が実在するので<b>分子式</b>。4種類の結晶のうち、分子式で書けるのは分子結晶だけ。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,1,{0:"conduct",2:"mp",3:"metalmix"}),a:0,
+   h:"分子間力は4種類の中で最も弱い。",
+   e:"<b>融点が低く、昇華しやすいものもある。やわらかい。</b>ヨウ素は加熱すると液体にならずに紫色の気体になる。"}]},
+
+{type:"step",kc:"K3",lv:"L2",fill:true,
+ stem:"銀 Ag について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[{label:"S1 結晶の種類",text:"金属元素だけからなる単体 → <b>金属結晶</b>"},
+        {label:"S2 構成粒子",text:"<b>原子</b>（正確には金属イオンと自由電子）"}],
+ steps:[
+  {label:"S3 結びつき",q:"構成粒子を結びつけているものを選べ。",
+   c:rc(C_BOND,3,{0:"ionvsmol",1:"ionvsmol",2:"covcrystal"}),a:0,
+   h:"結晶全体を動き回る電子が、原子をつなぎとめている。",
+   e:"<b>自由電子を共有</b>する金属結合。特定の原子間の結合ではない点が、共有結合との大きな違い。"},
+  {label:"S4 化学式の種類",q:"Ag はどの種類の化学式か。",
+   c:rc(C_FORM,0,{1:"formula",2:"formula",3:"formula"}),a:0,
+   h:"Ag は「銀分子1個」を表しているだろうか。",
+   e:"金属にも分子はないので<b>組成式</b>。元素記号1つで、その金属原子が集まった物質を表している。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,3,{0:"conduct",1:"mp",2:"mp"}),a:0,
+   h:"自由電子があると、電気・熱の伝導と変形のしやすさの両方が出てくる。",
+   e:"<b>熱や電気をよく通し、展性や延性を示す。</b>銀は金属の中で最も電気をよく通す。"}]},
+
+{type:"step",kc:"K3",lv:"L2",fill:true,
+ stem:"ダイヤモンド C について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[{label:"S1 結晶の種類",text:"炭素原子が次々に共有結合してつながる → <b>共有結合の結晶</b>"},
+        {label:"S2 構成粒子",text:"<b>原子</b>（炭素原子）"}],
+ steps:[
+  {label:"S3 結びつき",q:"構成粒子を結びつけているものを選べ。",
+   c:rc(C_BOND,2,{0:"ionvsmol",1:"covcrystal",3:"metalmix"}),a:0,
+   h:"名前がそのまま結びつき方を表している。",
+   e:"<b>原子間で電子対を共有</b>する共有結合。1個の炭素原子が4個の炭素原子と結合し、それが結晶全体に広がっている。"},
+  {label:"S4 化学式の種類",q:"C はどの種類の化学式か。",
+   c:rc(C_FORM,0,{1:"formula",2:"formula",3:"formula"}),a:0,
+   h:"「ダイヤモンド分子」というものは存在しない。",
+   e:"分子が存在しないので<b>組成式</b>。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,2,{0:"conduct",1:"mp",3:"metalmix"}),a:0,
+   h:"強い共有結合が結晶全体に広がっている。ばらばらにするには大量の熱がいる。",
+   e:"<b>融点がきわめて高い。一般的に、非常に硬い。</b>ダイヤモンドは天然で最も硬い物質。"}]},
+
+/* ---- 自力版（S1 から） ---- */
+{type:"step",kc:"K3",lv:"L3",fill:false,
+ stem:"塩化ナトリウム NaCl について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[],
+ steps:[
+  {label:"S1 結晶の種類",q:"NaCl の結晶はどれに分類されるか。",
+   c:rc(C_TYPE,0,{1:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"Na は金属元素、Cl は非金属元素。この組合せは何結合か。",
+   e:"金属＋非金属なのでイオン結合、つまり<b>イオン結晶</b>。"},
+  {label:"S2 構成粒子",q:"構成粒子はどれか。",
+   c:rc(C_PART,0,{1:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"結晶の中に「NaCl 分子」という単位はあるだろうか。",
+   e:"<b>陽イオンと陰イオン</b>（Na<sup>+</sup> と Cl<sup>−</sup>）が交互に並んでいる。"},
+  {label:"S3 結びつき",q:"構成粒子を結びつけているものを選べ。",
+   c:rc(C_BOND,0,{1:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"＋と−の電気の間にはたらく力。",
+   e:"<b>静電気力</b>（イオン結合）。"},
+  {label:"S4 化学式の種類",q:"NaCl はどの種類の化学式か。",
+   c:rc(C_FORM,0,{1:"formula",2:"formula",3:"formula"}),a:0,
+   h:"分子が存在しないなら、書けるのは個数の比だけ。",
+   e:"<b>組成式</b>。Na：Cl＝1：1 という比を表している。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,0,{1:"mp",2:"mp",3:"conduct"}),a:0,
+   h:"食塩水は電気を通すが、食塩の固体は通さない。",
+   e:"<b>固体では電気を通さないが、水に溶かしたり融解させたりすると電気をよく通す。</b>"}]},
+
+{type:"step",kc:"K3",lv:"L3",fill:false,
+ stem:"ドライアイス（二酸化炭素 CO<sub>2</sub> の固体）について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[],
+ steps:[
+  {label:"S1 結晶の種類",q:"ドライアイスはどれに分類されるか。",
+   c:rc(C_TYPE,1,{0:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"CO<sub>2</sub> という分子の単位があるかどうかで考える。",
+   e:"CO<sub>2</sub> 分子が集まってできた<b>分子結晶</b>。同じ「〜O<sub>2</sub>」でも SiO<sub>2</sub> とは別の分類になる。"},
+  {label:"S2 構成粒子",q:"構成粒子はどれか。",
+   c:rc(C_PART,1,{0:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"固体になっても CO<sub>2</sub> という単位は壊れていない。",
+   e:"<b>分子</b>（CO<sub>2</sub> 分子）。"},
+  {label:"S3 結びつき",q:"分子どうしを結びつけているものを選べ。",
+   c:rc(C_BOND,1,{0:"ionvsmol",2:"covcrystal",3:"metalmix"}),a:0,
+   h:"分子の内部は共有結合。では分子と分子の間は？",
+   e:"<b>分子間力</b>。この力が弱いので、ドライアイスは液体にならずに昇華する。"},
+  {label:"S4 化学式の種類",q:"CO<sub>2</sub> はどの種類の化学式か。",
+   c:rc(C_FORM,1,{0:"formula",2:"formula",3:"formula"}),a:0,
+   h:"分子1個の組み立てを表せるかどうか。",
+   e:"<b>分子式</b>。CO<sub>2</sub> 分子1個が C 1個と O 2個からできていることを表している。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,1,{0:"conduct",2:"mp",3:"metalmix"}),a:0,
+   h:"−79℃で、液体を経ずに気体になる。",
+   e:"<b>融点が低く、昇華しやすいものもある。やわらかい。</b>"}]},
+
+{type:"step",kc:"K3",lv:"L3",fill:false,
+ stem:"二酸化ケイ素 SiO<sub>2</sub>（水晶）について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[],
+ steps:[
+  {label:"S1 結晶の種類",q:"SiO<sub>2</sub> はどれに分類されるか。",
+   c:rc(C_TYPE,2,{0:"ionvsmol",1:"covcrystal",3:"metalmix"}),a:0,
+   h:"SiO<sub>2</sub> という分子は存在しない。Si と O が次々につながっている。",
+   e:"<b>共有結合の結晶</b>。CO<sub>2</sub> が分子結晶なのと対照的で、この対比がこの単元の山場。"},
+  {label:"S2 構成粒子",q:"構成粒子はどれか。",
+   c:rc(C_PART,2,{0:"ionvsmol",1:"covcrystal",3:"metalmix"}),a:0,
+   h:"分子の単位がないなら、並んでいるのは何か。",
+   e:"<b>原子</b>（Si 原子と O 原子）。"},
+  {label:"S3 結びつき",q:"構成粒子を結びつけているものを選べ。",
+   c:rc(C_BOND,2,{0:"ionvsmol",1:"covcrystal",3:"metalmix"}),a:0,
+   h:"Si も O も非金属元素。",
+   e:"<b>原子間で電子対を共有</b>する共有結合。1個の Si が4個の O と結合し、網の目のようにつながっている。"},
+  {label:"S4 化学式の種類",q:"SiO<sub>2</sub> はどの種類の化学式か。",
+   c:rc(C_FORM,0,{1:"formula",2:"formula",3:"formula"}),a:0,
+   h:"分子がないので、表せるのは比だけ。",
+   e:"<b>組成式</b>。SiO<sub>2</sub> は Si：O＝1：2 という個数の比を表している。CO<sub>2</sub>（分子式）との違いに注意。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,2,{0:"conduct",1:"mp",3:"metalmix"}),a:0,
+   h:"水晶は硬く、融かすには非常に高い温度が必要。",
+   e:"<b>融点がきわめて高い。一般的に、非常に硬い。</b>石英の融点は約1700℃。"}]},
+
+{type:"step",kc:"K3",lv:"L3",fill:false,
+ stem:"銅 Cu について、教科書 p.101 章末問題5 の表を埋めよ。",
+ given:[],
+ steps:[
+  {label:"S1 結晶の種類",q:"銅はどれに分類されるか。",
+   c:rc(C_TYPE,3,{0:"ionvsmol",1:"ionvsmol",2:"covcrystal"}),a:0,
+   h:"金属元素だけからできた単体。",
+   e:"<b>金属結晶</b>。赤色の光沢があり、熱をよく伝えるので調理器具にも使われる。"},
+  {label:"S2 構成粒子",q:"構成粒子はどれか。",
+   c:rc(C_PART,2,{0:"ionvsmol",1:"ionvsmol",3:"metalmix"}),a:0,
+   h:"章末問題のA群では、金属結晶も共有結合の結晶と同じ語を使う。",
+   e:"<b>原子</b>（銅原子）。より正確には、価電子を放した銅イオンと自由電子からできている。"},
+  {label:"S3 結びつき",q:"構成粒子を結びつけているものを選べ。",
+   c:rc(C_BOND,3,{0:"ionvsmol",1:"ionvsmol",2:"covcrystal"}),a:0,
+   h:"結晶全体を動き回る電子が接着剤の役割をしている。",
+   e:"<b>自由電子を共有</b>する金属結合。"},
+  {label:"S4 化学式の種類",q:"Cu はどの種類の化学式か。",
+   c:rc(C_FORM,0,{1:"formula",2:"formula",3:"formula"}),a:0,
+   h:"Cu 分子というものはない。",
+   e:"<b>組成式</b>。"},
+  {label:"S5 性質",q:"この結晶の性質として当てはまるものを選べ。",
+   c:rc(C_PROP,3,{0:"conduct",1:"mp",2:"mp"}),a:0,
+   h:"電線に使われている理由を考えよう。",
+   e:"<b>熱や電気をよく通し、展性や延性を示す。</b>銅は銀に次いで電気をよく通し、加工しやすいので電線に使われる。"}]}
+];
+
+/* ================= 出題の組み立て ================= */
+let session=[], idx=0, records=[], studentId="", attempt=1;
+
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function pickMcq(n){
+  const byKc={};
+  POOL.forEach((it,i)=>{(byKc[it.kc]=byKc[it.kc]||[]).push(i);});
+  let picked=[];
+  shuffle(Object.keys(KC)).forEach(k=>{ if(byKc[k] && picked.length<n) picked.push(shuffle(byKc[k])[0]); });
+  const rest=shuffle(POOL.map((_,i)=>i).filter(i=>picked.indexOf(i)<0));
+  while(picked.length<n && rest.length) picked.push(rest.pop());
+  picked=shuffle(picked).slice(0,n);
+  return picked.map(i=>{
+    const it=POOL[i], order=shuffle(it.c.map((_,j)=>j));
+    return {type:"mcq", src:it, order:order, a:order.indexOf(it.a)};
+  });
+}
+function makeStep(def){
+  return {type:"step", src:def, sub:0, subResults:[],
+    steps:def.steps.map(st=>{const order=shuffle(st.c.map((_,j)=>j));return {src:st,order:order,a:order.indexOf(st.a)};})};
+}
+function buildSession(){
+  const m=pickMcq(N_MCQ);
+  const fill=shuffle(STEPS.filter(s=>s.fill))[0];
+  const free=shuffle(STEPS.filter(s=>!s.fill))[0];
+  const s=[];
+  m.slice(0,3).forEach(q=>s.push(q));
+  s.push(makeStep(fill));
+  m.slice(3,7).forEach(q=>s.push(q));
+  s.push(makeStep(free));
+  m.slice(7).forEach(q=>s.push(q));
+  return s;
+}
+
+/* ================= 画面制御 ================= */
+function el(id){return document.getElementById(id);}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  el('kcPreview').innerHTML=Object.keys(KC).map(k=>`<li>${KC[k].name}</li>`).join('');
+  el('totalBadge').textContent=`全${POOL.length+STEPS.length}問収録`;
+});
+
+function startQuiz(){
+  studentId=(el('studentId').value||'').trim();
+  session=buildSession(); idx=0; records=[];
+  el('start').classList.add('hidden');
+  el('result').classList.add('hidden');
+  el('quiz').classList.remove('hidden');
+  window.scrollTo(0,0);
+  render();
+}
+
+function render(){
+  const item=session[idx];
+  attempt=1;
+  el('pbar').style.width=(idx/session.length*100)+'%';
+  el('qnum').textContent=`${idx+1} / ${session.length}`;
+  el('hint').style.display='none'; el('exp').style.display='none';
+  el('nextBtn').style.display='none';
+  el('stepDone').innerHTML=''; el('stemBox').innerHTML='';
+  if(item.type==='mcq'){
+    const it=item.src;
+    el('metaRow').innerHTML=`<span class="chip kc">${KC[it.kc].short}</span><span class="chip lv">${it.lv}</span>`;
+    el('qtext').innerHTML=it.q;
+    el('choices').innerHTML=item.order.map((oi,k)=>
+      `<button class="choice-btn" data-k="${k}" onclick="answerMcq(${k})">${it.c[oi].t}</button>`).join('');
+  }else{
+    renderStep();
+  }
+}
+
+function renderStep(){
+  const item=session[idx], def=item.src, st=item.steps[item.sub];
+  el('metaRow').innerHTML=
+    `<span class="chip kc">${KC[def.kc].short}</span><span class="chip lv">${def.lv}</span>`+
+    (def.fill?`<span class="chip fill">穴埋め（S1・S2 は提示）</span>`:`<span class="chip fill">ステップ分解</span>`);
+  el('stemBox').innerHTML=`<div class="stem">${def.stem}</div>`;
+  let done=def.given.map(g=>`<div class="step-row given"><span class="step-tag">${g.label}</span><span>${g.text}</span></div>`);
+  item.subResults.forEach((r,i)=>{
+    const s=item.steps[i];
+    done.push(`<div class="step-row ${r.score<1?'miss':''}"><span class="step-tag">${s.src.label}</span><span>${s.src.c[s.src.a].t}${r.score<1?'　<b>（誤答→修正）</b>':''}</span></div>`);
+  });
+  el('stepDone').innerHTML=done.join('');
+  el('qtext').innerHTML=`<span style="color:#6b46c1">［${st.src.label}］</span> ${st.src.q}`;
+  el('choices').innerHTML=st.order.map((oi,k)=>
+    `<button class="choice-btn" data-k="${k}" onclick="answerStep(${k})">${st.src.c[oi].t}</button>`).join('');
+}
+
+/* ---- 採点：1回目誤答 → ヒント → 再挑戦（2回目正解は0.5点） ---- */
+function judge(chosenK, srcQ, orderArr, correctK, onDone){
+  const btns=[...el('choices').querySelectorAll('.choice-btn')];
+  if(chosenK===correctK){
+    btns.forEach(b=>b.disabled=true);
+    btns[chosenK].classList.add('correct');
+    onDone(attempt===1?1:0.5,null);
+    showExp(srcQ);
+    return;
+  }
+  const tag=srcQ.c[orderArr[chosenK]].tag||null;
+  btns[chosenK].classList.add('wrong'); btns[chosenK].disabled=true;
+  if(attempt===1){
+    attempt=2;
+    el('hint').innerHTML=`<span class="hl">ヒント</span>${srcQ.h}`;
+    el('hint').style.display='block';
+    onDone(null,tag);
+  }else{
+    btns.forEach(b=>b.disabled=true);
+    btns[correctK].classList.add('correct');
+    onDone(0,tag);
+    showExp(srcQ);
+  }
+}
+function showExp(srcQ){
+  el('exp').innerHTML=`<b>解説</b>　${srcQ.e}`;
+  el('exp').style.display='block';
+  el('nextBtn').style.display='block';
+  el('nextBtn').textContent=(idx===session.length-1 && !isMidStep())?'結果を見る →':'次へ →';
+}
+function isMidStep(){
+  const item=session[idx];
+  return item.type==='step' && item.sub<item.steps.length-1;
+}
+function answerMcq(k){
+  const item=session[idx], it=item.src;
+  if(!item.tags) item.tags=[];
+  judge(k,it,item.order,item.a,(score,tag)=>{
+    if(tag) item.tags.push(tag);
+    if(score!==null) records.push({kc:it.kc,q:it.q,correct:it.c[it.a].t,score:score,tags:item.tags.slice(),exp:it.e,label:null});
+  });
+}
+function answerStep(k){
+  const item=session[idx], st=item.steps[item.sub];
+  if(!st.tags) st.tags=[];
+  judge(k,st.src,st.order,st.a,(score,tag)=>{
+    if(tag) st.tags.push(tag);
+    if(score!==null) item.subResults.push({score:score,tags:st.tags.slice()});
+  });
+}
+function next(){
+  const item=session[idx];
+  if(item.type==='step' && item.sub<item.steps.length-1){
+    item.sub++; attempt=1;
+    el('hint').style.display='none'; el('exp').style.display='none'; el('nextBtn').style.display='none';
+    renderStep(); return;
+  }
+  if(item.type==='step'){
+    const scores=item.subResults.map(r=>r.score);
+    const avg=scores.reduce((a,b)=>a+b,0)/scores.length;
+    const tags=item.subResults.reduce((a,r)=>a.concat(r.tags),[]);
+    const detail=item.steps.map((s,i)=>`${s.src.label}：${item.subResults[i].score===1?'○':(item.subResults[i].score===0.5?'△':'×')}`).join('　');
+    records.push({kc:item.src.kc,q:item.src.stem,correct:detail,score:avg,tags:tags,exp:item.steps[item.steps.length-1].src.e,label:'ステップ問題'});
+  }
+  idx++;
+  if(idx>=session.length){ showResult(); return; }
+  render();
+}
+
+/* ================= 結果 ================= */
+function showResult(){
+  el('quiz').classList.add('hidden');
+  el('result').classList.remove('hidden');
+  window.scrollTo(0,0);
+
+  const total=records.length;
+  const raw=records.reduce((a,r)=>a+r.score,0);
+  const score=Math.round(raw*2)/2;
+  const rate=score/total;
+  el('scoreBig').textContent=score+'点';
+  el('scoreSub').textContent=`/ ${total}点（正答率 ${Math.round(rate*100)}%）`;
+  el('donutArc').setAttribute('stroke-dasharray',`${(rate*100).toFixed(1)} ${(100-rate*100).toFixed(1)}`);
+  const pass=score>=PASS_SCORE;
+  const pb=el('passBadge');
+  pb.textContent=pass?'合格':'もう一度';
+  pb.className='pass-badge '+(pass?'pass':'fail');
+
+  const agg={};
+  records.forEach(r=>{(agg[r.kc]=agg[r.kc]||{s:0,n:0});agg[r.kc].s+=r.score;agg[r.kc].n++;});
+  el('kcList').innerHTML=Object.keys(KC).filter(k=>agg[k]).map(k=>{
+    const p=agg[k].s/agg[k].n;
+    const cls=p>=0.8?'ok':(p>=0.5?'mid':'ng');
+    const mark=p>=0.8?'○':(p>=0.5?'△':'×');
+    const col=p>=0.8?'#48bb78':(p>=0.5?'#ed8936':'#f56565');
+    return `<div class="kc-row"><div class="kc-mark ${cls}">${mark}</div>
+      <div class="kc-body"><div class="kc-name">${KC[k].name}</div>
+      <div class="kc-bar"><i style="width:${Math.round(p*100)}%;background:${col}"></i></div></div>
+      <div class="kc-score">${Math.round(agg[k].s*10)/10}/${agg[k].n}</div></div>`;
+  }).join('');
+
+  const tc={};
+  records.forEach(r=>r.tags.forEach(t=>{tc[t]=(tc[t]||0)+1;}));
+  const tags=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]).slice(0,3);
+  el('tagList').innerHTML=tags.length?tags.map(t=>
+    `<div class="tag-row"><div class="tag-head"><span class="tag-name">${TAG[t].name}</span><span class="tag-count">${tc[t]}回</span></div>
+     <div class="tag-advice">${TAG[t].advice}<br><span style="opacity:.7">戻る先：${KC[TAG[t].back].name}</span></div></div>`).join('')
+    :`<div class="empty">今回、決まった型のミスは見つかりませんでした。</div>`;
+
+  const weak=Object.keys(KC).filter(k=>agg[k]&&agg[k].s/agg[k].n<0.8);
+  let todo='';
+  if(pass && weak.length===0){
+    todo=`合格ライン（8点）を超え、測定したすべての力が8割に届いています。<b>教科書 p.101 章末問題5 を、下のまとめ表を見ずに解いてみましょう。</b>そのうえで3日後にもう一度この回に挑戦し、別の日に2回続けて合格できれば「定着」です。`;
+  }else if(pass){
+    todo=`合格ライン（8点）は超えています。ただし次の力はまだ8割に届いていません。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+
+      `<br><br>次の回では、この力を優先して出題します。`;
+  }else{
+    todo=`合格ライン（8点）に届きませんでした。まず次の力から復習しましょう。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+
+      `<br><br>下のまとめ表を横に並べて覚えたうえで、<b>明日もう一度</b>この回に挑戦してください。`;
+  }
+  if(tags.length) todo+=`<br><br>特に <b>${TAG[tags[0]].name}</b> の直し方を、板書ノートで確認しておくこと。`;
+  el('todoBox').innerHTML=todo;
+
+  el('reviewList').innerHTML=records.map((r,i)=>{
+    const cls=r.score===1?'':(r.score>0?'half':'miss');
+    const mark=r.score===1?'○':(r.score>0?'△':'×');
+    return `<div class="review-item ${cls}">
+      <div class="rq">${mark} Q${i+1}${r.label?`（${r.label}）`:''}　${r.q}</div>
+      <div class="ra"><b>正解：</b>${r.correct}<br>${r.exp}</div></div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
