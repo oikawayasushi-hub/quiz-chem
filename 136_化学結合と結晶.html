@@ -99,6 +99,7 @@ table.summary tbody th{background:#f7fafc;font-weight:700;white-space:nowrap;col
 .retry-btn:hover{opacity:.9}
 .home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.85rem;text-decoration:none}
 .home-link:hover{text-decoration:underline}
+.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
 .hidden{display:none}
 </style>
 </head>
@@ -187,6 +188,7 @@ table.summary tbody th{background:#f7fafc;font-weight:700;white-space:nowrap;col
   <div class="review-list" id="reviewList"></div>
 
   <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
+  <div class="submit-status" id="submitStatus"></div>
   <a href="index.html" class="home-link">← クイズ一覧に戻る</a>
 </div>
 
@@ -201,6 +203,7 @@ table.summary tbody th{background:#f7fafc;font-weight:700;white-space:nowrap;col
    ・誤答時はヒント→再挑戦（2回目正解で0.5点）
    ========================================================= */
 
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
 const QUIZ_NAME  = "136 化学結合と結晶（定着版）";
 const N_MCQ      = 8;
 const PASS_SCORE = 8;
@@ -802,8 +805,20 @@ window.addEventListener('DOMContentLoaded',()=>{
   el('totalBadge').textContent=`全${POOL.length+STEPS.length}問収録`;
 });
 
+function toHalfWidthDigits(s){
+  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+}
+
 function startQuiz(){
-  studentId=(el('studentId').value||'').trim();
+  const idInput=el('studentId');
+  const normalized=toHalfWidthDigits((idInput.value||'').trim());
+  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(normalized)){
+    alert("学籍番号が正しくありません。\n1桁目は学年「1」、2桁目は組「1〜6」、3・4桁目は出席番号「01〜40」です（例：1年1組4番→1104）。");
+    idInput.focus();
+    return;
+  }
+  idInput.value=normalized;
+  studentId=normalized;
   session=buildSession(); idx=0; records=[];
   el('start').classList.add('hidden');
   el('result').classList.add('hidden');
@@ -979,6 +994,43 @@ function showResult(){
       <div class="rq">${mark} Q${i+1}${r.label?`（${r.label}）`:''}　${r.q}</div>
       <div class="ra"><b>正解：</b>${r.correct}<br>${r.exp}</div></div>`;
   }).join('');
+
+  submitResult(score,total,pass);
+}
+
+/* ================= 結果の送信 ================= */
+function stripTags(html){
+  const d=document.createElement('div');
+  d.innerHTML=html;
+  return (d.textContent||'').replace(/\s+/g,' ').trim();
+}
+
+function submitResult(score,total,pass){
+  const statusEl=el('submitStatus');
+  if(!SUBMIT_URL){
+    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
+    return;
+  }
+  const payload={
+    studentId:studentId,
+    quizName:QUIZ_NAME,
+    score:score,
+    total:total,
+    passed:pass?"合格":"不合格",
+    timestamp:new Date().toISOString(),
+    missed:records.filter(r=>r.score<1).map(r=>stripTags(r.q))
+  };
+  try{
+    fetch(SUBMIT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){
+    statusEl.textContent="※通信エラーのため記録できませんでした";
+  }
 }
 </script>
 </body>
