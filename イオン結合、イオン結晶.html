@@ -347,6 +347,7 @@ function startQuiz(){
   }
   idInput.value=normalized;
   studentId=normalized;
+  try{localStorage.setItem('quizStudentId',normalized);}catch(e){}
   session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
   idx=0; score=0; results=[];
   showOnly("quiz");
@@ -451,6 +452,14 @@ function submitResult(){
     statusEl.textContent="※通信エラーのため記録できませんでした";
   }
 }
+
+/* 学籍番号の引き継ぎ：前回このブラウザで入力した番号を初期表示する */
+(function(){
+  try{
+    var saved=localStorage.getItem('quizStudentId');
+    if(saved) document.getElementById('studentId').value=saved;
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
