@@ -103,6 +103,7 @@ async function checkStatus(){
     return;
   }
   idInput.value=normalized;
+  try{localStorage.setItem('quizStudentId',normalized);}catch(e){}
   msg.textContent="読み込み中…";
   msg.className="status-msg";
   btn.disabled=true;
@@ -183,6 +184,17 @@ function render(recorded){
 document.getElementById("studentId").addEventListener("keydown",e=>{
   if(e.key==="Enter") checkStatus();
 });
+
+/* 学籍番号の引き継ぎ：前回このブラウザで入力した番号があれば、そのまま表示する */
+(function(){
+  try{
+    const saved=localStorage.getItem('quizStudentId');
+    if(saved){
+      document.getElementById("studentId").value=saved;
+      checkStatus();
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

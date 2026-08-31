@@ -615,6 +615,7 @@ function startQuiz() {
   }
   idInput.value = normalized;
   studentId = normalized;
+  try{localStorage.setItem('quizStudentId',normalized);}catch(e){}
   // 毎回：思考力2問＋用語2問＋知識6問 = 10問（セッション内でシャッフル）
   const thinking  = shuffle(ALL_Q.filter(q => q.type === '思考力'));
   const vocab     = shuffle(ALL_Q.filter(q => q.type === '用語'));
@@ -801,6 +802,14 @@ function submitResult() {
     statusEl.textContent = '※通信エラーのため記録できませんでした';
   }
 }
+
+/* 学籍番号の引き継ぎ：前回このブラウザで入力した番号を初期表示する */
+(function(){
+  try{
+    var saved=localStorage.getItem('quizStudentId');
+    if(saved) document.getElementById('studentId').value=saved;
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
