@@ -3,63 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>化学基礎クイズ｜周期律と周期表</title>
+<title>化学基礎クイズ｜124 周期律と周期表</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
-.wrap{width:100%;max-width:640px}
-.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
-#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
-.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
-.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
-.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:680px}
+.card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+sub{font-size:.72em}sup{font-size:.72em}
+img.qfig{display:block;width:100%;max-width:460px;margin:0 auto 14px;border:1px solid #e2e8f0;border-radius:8px;background:#fff}
+#start h1{font-size:1.35rem;font-weight:700;color:#2b6cb0;margin-bottom:6px}
+#start .sub{color:#718096;font-size:.9rem;margin-bottom:16px;line-height:1.6}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.74rem;font-weight:600;background:#ebf8ff;color:#2b6cb0}
+.badge.key{background:#2b6cb0;color:#fff}
+.flow{display:flex;align-items:center;gap:4px;flex-wrap:wrap;background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:.74rem;color:#4a5568}
+.flow b{background:#fff;border:1px solid #cbd5e0;border-radius:5px;padding:3px 8px;font-weight:700}
+.flow i{color:#a0aec0;font-style:normal}
+.kc-preview{background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.kc-preview .t{font-size:.78rem;font-weight:700;color:#4a5568;margin-bottom:8px}
+.kc-preview ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.kc-preview li{font-size:.82rem;color:#4a5568;padding-left:16px;position:relative;line-height:1.5}
+.kc-preview li::before{content:"";position:absolute;left:0;top:.45em;width:7px;height:7px;border-radius:50%;background:#90cdf4}
+.id-label{display:block;font-size:.82rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:16px}
 .id-input:focus{outline:none;border-color:#4299e1}
-.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer}
 .start-btn:hover{opacity:.9}
-.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
-#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
 .progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
-.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
-.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
-.choices{display:flex;flex-direction:column;gap:10px}
-.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.q-num{font-size:.8rem;color:#718096;white-space:nowrap}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px}
+.chip.kc{background:#edf2f7;color:#4a5568}
+.chip.l1{background:#f0fff4;color:#276749}
+.chip.l2{background:#ebf8ff;color:#2b6cb0}
+.chip.l3{background:#faf5ff;color:#6b46c1}
+.chip.fill{background:#fffaf0;color:#975a16}
+.q-text{font-size:1.05rem;font-weight:600;line-height:1.65;margin-bottom:14px}
+.stem{background:#f7fafc;border-left:4px solid #90cdf4;border-radius:0 8px 8px 0;padding:10px 14px;font-size:.89rem;line-height:1.6;color:#4a5568;margin-bottom:12px}
+.step-done{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.step-row{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;padding:9px 12px;border-radius:8px;background:#f0fff4;border:1px solid #c6f6d5;line-height:1.5}
+.step-row.given{background:#fffaf0;border-color:#feebc8}
+.step-row.miss{background:#fff5f5;border-color:#fed7d7}
+.step-tag{font-weight:700;color:#4a5568;white-space:nowrap}
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s;line-height:1.5}
 .choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
 .choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
 .choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
 .choice-btn:disabled{cursor:default}
-.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
-.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.hint-box{margin-top:14px;padding:12px 16px;background:#ebf8ff;border-left:4px solid #4299e1;border-radius:0 8px 8px 0;font-size:.87rem;color:#2a4365;line-height:1.6;display:none}
+.hint-box .hl{font-weight:700;display:block;margin-bottom:3px;font-size:.76rem;color:#2b6cb0}
+.exp-box{margin-top:14px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.87rem;color:#7b341e;line-height:1.65;display:none}
+.next-btn{margin-top:16px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none}
 .next-btn:hover{opacity:.9}
-#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
-.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
-.donut-svg{width:120px;height:120px}
-.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
-.score-sub{font-size:.9rem;color:#718096}
-.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+#result .r-title{font-size:1.2rem;font-weight:700;text-align:center;margin-bottom:16px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:22px;margin-bottom:8px}
+.donut-svg{width:110px;height:110px}
+.score-big{font-size:2.2rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.84rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.8rem;font-weight:700}
 .pass-badge.pass{background:#f0fff4;color:#276749}
 .pass-badge.fail{background:#fff5f5;color:#c53030}
-.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
-.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
-.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
-.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
-.review-item .ra{font-size:.85rem;color:#718096}
+.pass-note{text-align:center;font-size:.76rem;color:#a0aec0;margin-bottom:12px}
+.sec-title{font-weight:700;margin:20px 0 9px;color:#2d3748;font-size:.96rem;padding-bottom:5px;border-bottom:2px solid #e2e8f0}
+.sec-note{font-size:.76rem;color:#a0aec0;margin:-5px 0 9px;line-height:1.5}
+.kc-list{display:flex;flex-direction:column;gap:7px}
+.kc-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #e2e8f0;border-radius:9px}
+.kc-mark{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;color:#fff}
+.kc-mark.ok{background:#48bb78}.kc-mark.mid{background:#ed8936}.kc-mark.ng{background:#f56565}
+.kc-body{flex:1;min-width:0}
+.kc-name{font-size:.85rem;font-weight:600;line-height:1.4}
+.kc-bar{height:5px;background:#edf2f7;border-radius:3px;margin-top:5px;overflow:hidden}
+.kc-bar i{display:block;height:100%;border-radius:3px}
+.kc-score{font-size:.77rem;color:#718096;white-space:nowrap}
+.tag-list{display:flex;flex-direction:column;gap:8px}
+.tag-row{padding:11px 13px;border-radius:9px;background:#fff5f5;border:1px solid #fed7d7}
+.tag-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tag-name{font-size:.89rem;font-weight:700;color:#c53030}
+.tag-count{font-size:.75rem;color:#e53e3e;white-space:nowrap}
+.tag-advice{font-size:.81rem;color:#742a2a;margin-top:5px;line-height:1.55}
+.empty{font-size:.84rem;color:#718096;padding:10px 0}
+.todo{background:#ebf8ff;border:1px solid #bee3f8;border-radius:10px;padding:14px 16px;font-size:.87rem;color:#2a4365;line-height:1.7}
+.todo b{color:#2b6cb0}
+.sum-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.sum{border-collapse:collapse;font-size:.78rem;min-width:520px;width:100%}
+table.sum th,table.sum td{border:1px solid #e2e8f0;padding:7px 9px;text-align:left;line-height:1.5;vertical-align:top}
+table.sum thead th{background:#2b6cb0;color:#fff;font-weight:700;white-space:nowrap}
+table.sum tbody th{background:#f7fafc;font-weight:700;white-space:nowrap;color:#2b6cb0}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto;padding-right:4px}
+.review-item{padding:11px 13px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.86rem;font-weight:600;margin-bottom:4px;line-height:1.5}
+.review-item .ra{font-size:.79rem;color:#718096;line-height:1.5}
+.review-item.miss{border-color:#fed7d7;background:#fffafa}
 .review-item.miss .rq{color:#c53030}
-.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.review-item.half{border-color:#feebc8;background:#fffdf7}
+.retry-btn{margin-top:18px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
 .retry-btn:hover{opacity:.9}
-.home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.85rem;text-decoration:none}
+.home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.84rem;text-decoration:none}
 .home-link:hover{text-decoration:underline}
+.submit-status{margin-top:12px;text-align:center;font-size:.78rem;color:#a0aec0}
 .hidden{display:none}
+@media (max-width:480px){.card{padding:20px 16px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <div id="start" class="card">
-  <h1>化学基礎クイズ</h1>
-  <p class="sub">周期律と周期表｜毎回ランダム10問</p>
-  <div class="total-badge" id="totalBadge"></div>
+  <h1 id="uTitle"></h1>
+  <p class="sub" id="uSub"></p>
+  <div class="badges">
+    <span class="badge key" id="totalBadge"></span>
+    <span class="badge">毎回12問・正答率80%で合格</span>
+    <span class="badge">ヒント→再挑戦</span>
+    <span class="badge">ステップ分解採点</span>
+  </div>
+  <div class="flow">
+    <b>基本 ×3</b><i>→</i><b>標準 ×4</b><i>→</i><b>段階（穴埋め）</b><i>→</i><b>発展 ×3</b><i>→</i><b>段階（自力）</b>
+  </div>
+  <div class="kc-preview">
+    <div class="t">この回で測る力</div>
+    <ul id="kcPreview"></ul>
+  </div>
   <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
   <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
   <button class="start-btn" onclick="startQuiz()">スタート</button>
@@ -70,28 +137,49 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
     <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
     <div class="q-num" id="qnum"></div>
   </div>
+  <div class="meta-row" id="metaRow"></div>
+  <div id="stemBox"></div>
+  <div id="figBox"></div>
+  <div id="stepDone" class="step-done"></div>
   <div id="qtext" class="q-text"></div>
   <div id="choices" class="choices"></div>
+  <div id="hint" class="hint-box"></div>
   <div id="exp" class="exp-box"></div>
-  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+  <button id="nextBtn" class="next-btn" onclick="next()">次へ →</button>
 </div>
 
 <div id="result" class="card hidden">
-  <div class="r-title">結果発表</div>
+  <div class="r-title">結果</div>
   <div class="donut-wrap">
     <svg class="donut-svg" viewBox="0 0 36 36">
       <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
-      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+      <circle id="donutArc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
         stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
     </svg>
     <div>
       <div class="score-big" id="scoreBig"></div>
-      <div class="score-sub">/ 10問正解</div>
+      <div class="score-sub" id="scoreSub"></div>
       <div class="pass-badge" id="passBadge"></div>
     </div>
   </div>
-  <div class="review-title">解説</div>
+  <div class="pass-note">合格ライン：正答率80%（12点満点で9.5点以上）／ヒントを見て正解した問題は0.5点</div>
+
+  <div class="sec-title">力ごとの定着</div>
+  <div class="sec-note">◯＝ほぼ定着／△＝あと一歩／×＝要復習。本当の定着判定は「別の日に2回続けて正解」で行います。</div>
+  <div class="kc-list" id="kcList"></div>
+
+  <div class="sec-title">つまずきの型</div>
+  <div class="sec-note">誤答の選択肢からミスの型を判定しています。</div>
+  <div class="tag-list" id="tagList"></div>
+
+  <div class="sec-title">次にやること</div>
+  <div class="todo" id="todoBox"></div>
+
+  <div id="sumSec"></div>
+
+  <div class="sec-title">全問の解説</div>
   <div class="review-list" id="reviewList"></div>
+
   <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
   <div class="submit-status" id="submitStatus"></div>
   <a href="index.html" class="home-link">← クイズ一覧に戻る</a>
@@ -99,299 +187,821 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
 
 </div>
 <script>
-// Apps Scriptデプロイ後、発行されたWebアプリのURLをここに設定（SETUP.md参照）
-const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
-const QUIZ_NAME = "124 周期律と周期表";
-const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+/* ===== 単元データ ===== */
+const FIGS={"ie": {"alt": "第一イオン化エネルギーと原子番号（1〜20）の関係を表したグラフ", "src": "data:image/png;base64,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"}, "valence": {"alt": "価電子の数と原子番号（1〜20）の関係を表したグラフ", "src": "data:image/png;base64,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"}, "ptable": {"alt": "第6周期までの周期表の概略図。領域がアからクに区切られている", "src": "data:image/png;base64,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"}};
+const UNIT={code:"124",title:"周期律と周期表",sub:"教科書 p.54〜63｜イオン化エネルギー・電子親和力・周期律・周期表・原子半径｜毎回ランダム12問"};
 
-const ALL_Q = [
-  {q:"カリウムイオンK⁺（原子番号19）がもつ電子の総数は？",
-   choices:["18個","19個","20個","17個"], a:0,
-   exp:"K原子は電子を19個もちますが、1価の陽イオンになる際に電子を1個失うため、K⁺の電子数は18個になります。"},
+const KC={
+  K1:{short:"イオン化エネルギー",name:"イオン化エネルギーの意味と、周期表上での大小の傾向を説明できる"},
+  K2:{short:"電子親和力",name:"電子親和力の意味と、陰イオンへのなりやすさとの関係を説明できる"},
+  K3:{short:"周期律",name:"周期律が生じる理由を、価電子の数の周期性から説明できる"},
+  K4:{short:"族と価電子",name:"族・周期の構成を答え、族番号から価電子の数を求められる"},
+  K5:{short:"典型元素と遷移元素",name:"典型元素と遷移元素を区別し、それぞれの特徴を答えられる"},
+  K6:{short:"金属と非金属",name:"金属元素と非金属元素を区別し、陽性・陰性の傾向を説明できる"},
+  K7:{short:"同族元素",name:"同族元素の固有名称と、そこに属する元素を答えられる"},
+  K8:{short:"原子半径・イオン半径",name:"原子半径・イオン半径の大小を、規則を使い分けて比較できる"},
+  K9:{short:"位置から元素を特定",name:"周期表の位置から元素を特定し、その分類と性質を答えられる"}
+};
 
-  {q:"フッ化物イオンF⁻（原子番号9）がもつ電子の総数は？",
-   choices:["10個","9個","8個","11個"], a:0,
-   exp:"F原子は電子を9個もちますが、1価の陰イオンになる際に電子を1個受け取るため、F⁻の電子数は10個になります。"},
+const TAG={
+  radius:{name:"半径の規則の混同",back:"K8",advice:"原子半径の規則を、そのままイオン半径に当てはめています。教科書 p.61 がわざわざ注意しているところ。<b>原子どうし／イオンどうし／原子とそのイオン</b>のどの比較なのかを、最初に決めてから規則を選びましょう。"},
+  ieea:{name:"イオン化エネルギーと電子親和力の混同",back:"K1",advice:"イオン化エネルギーは電子を<b>取り去るのに必要</b>なエネルギー、電子親和力は電子を<b>受け取ると放出される</b>エネルギーです。「陽イオンになりやすさ」と「陰イオンになりやすさ」で覚え分けましょう。"},
+  grouprow:{name:"族と周期の取り違え",back:"K4",advice:"縦の列が<b>族</b>、横の行が<b>周期</b>です。性質が似ているのは同じ縦の列どうし、と結びつけて覚えましょう。"},
+  valence:{name:"価電子の数え方",back:"K4",advice:"価電子の数は族番号の一の位に等しく、<b>18族だけは0個</b>です。最外殻電子はあっても、結合に関係しないので価電子は0と数えます。"},
+  typtrans:{name:"典型・遷移の境界",back:"K5",advice:"典型元素は<b>1族・2族と13〜18族</b>、遷移元素は<b>3〜12族</b>です。遷移元素はすべて金属元素であることもセットで覚えましょう。"},
+  posneg:{name:"陽性・陰性の向き",back:"K6",advice:"周期表で左下にいくほど陽性が強く、右上にいくほど陰性が強くなります。陽性は陽イオンへのなりやすさ、と結びつけて向きを確認しましょう。"},
+  family:{name:"同族名の取り違え",back:"K7",advice:"アルカリ金属元素は<b>水素を除く1族</b>、アルカリ土類金属元素は2族、ハロゲン元素は17族、貴ガス元素は18族です。水素だけ仲間外れという点に注意。"},
+  config:{name:"電子配置の取り違え",back:"K8",advice:"イオンが「どの貴ガスと同じ電子配置か」を取り違えています。電子の総数を数えて、Ne型（10個）か Ar型（18個）かを確かめましょう。"},
+  metalnon:{name:"金属・非金属の取り違え",back:"K6",advice:"水素を除く周期表の左側が金属元素で、それ以外が非金属元素です。具体的な元素がどちら側にあるか、周期表で位置を確かめる習慣をつけましょう。"}
+};
 
-  {q:"原子の最も外側の電子殻から電子を1個取り去って1価の陽イオンにするのに必要なエネルギーを何というか？",
-   choices:["イオン化エネルギー","電子親和力","結合エネルギー","格子エネルギー"], a:0,
-   exp:"このエネルギーをイオン化エネルギー（第一イオン化エネルギー）といいます。"},
+const POOL=[
+/* ===== K1 イオン化エネルギー（10問） ===== */
+{kc:"K1",lv:1,q:"原子から電子を1個取り去って1価の陽イオンにするのに必要なエネルギーを何というか。",
+ c:[{t:"イオン化エネルギー"},{t:"電子親和力",tag:"ieea"},{t:"結合エネルギー"},{t:"静電気力"}],a:0,
+ h:"「取り去るのに必要」なエネルギーか、「受け取ると放出される」エネルギーか、で区別します。",
+ e:"原子から電子を1個取り去るのに必要なエネルギーが<b>イオン化エネルギー</b>。正確には第一イオン化エネルギーという。"},
+{kc:"K1",lv:1,q:"イオン化エネルギーが小さい原子ほど、どのような傾向があるか。",
+ c:[{t:"陽イオンになりやすい"},{t:"陰イオンになりやすい",tag:"ieea"},{t:"電子を受け取りやすい",tag:"ieea"},{t:"他の原子と結合しにくい"}],a:0,
+ h:"小さいエネルギーで電子が取れる、ということは何が起こりやすいかを考えます。",
+ e:"イオン化エネルギーが小さい＝わずかなエネルギーで電子が取れる、ということなので<b>陽イオンになりやすい</b>。1族の元素がその代表。"},
+{kc:"K1",lv:1,q:"同じ周期の元素では、原子番号が大きくなるとイオン化エネルギーはどうなる傾向があるか。",
+ c:[{t:"大きくなる"},{t:"小さくなる",tag:"ieea"},{t:"変わらない"},{t:"小さくなったあと大きくなる"}],a:0,
+ h:"同じ周期では右にいくほど陰性が強くなります。電子を手放しにくくなるか、手放しやすくなるか。",
+ e:"同じ周期では右へ進むほど陽子が増えて電子を強く引きつけるため、電子を取り去りにくくなり、イオン化エネルギーは<b>大きくなる</b>。"},
+{kc:"K1",lv:2,q:"同じ族の元素では、原子番号が大きくなるとイオン化エネルギーはどうなる傾向があるか。",
+ c:[{t:"小さくなる"},{t:"大きくなる",tag:"ieea"},{t:"変わらない"},{t:"周期的に増減をくり返す"}],a:0,
+ h:"同じ族では原子番号が大きいほど最も外側の電子殻が遠くなります。遠い電子は取りやすいか、取りにくいか。",
+ e:"同じ族では原子番号が大きいほど最も外側の電子殻が原子核から遠くなり、引きつける力が弱いので電子を取り去りやすい。よってイオン化エネルギーは<b>小さくなる</b>。"},
+{kc:"K1",lv:2,fig:"ie",q:"図は第一イオン化エネルギーと原子番号（1〜20）の関係を表している。グラフで最も高い値を示している点は、どの元素か。",
+ c:[{t:"ヘリウム He"},{t:"水素 H"},{t:"ネオン Ne",tag:"config"},{t:"リチウム Li",tag:"ieea"}],a:0,
+ h:"グラフの左端から2番目の点が最も高くなっています。原子番号2の元素は何か。",
+ e:"グラフの最高点は原子番号2の<b>ヘリウム</b>。閉殻で非常に安定なため、電子を取り去るのに最も大きなエネルギーが要る。"},
+{kc:"K1",lv:2,fig:"ie",q:"図は第一イオン化エネルギーと原子番号（1〜20）の関係を表している。グラフが極小（谷）になっている原子番号3・11・19の元素に共通する分類はどれか。",
+ c:[{t:"アルカリ金属元素"},{t:"貴ガス元素",tag:"family"},{t:"ハロゲン元素",tag:"family"},{t:"遷移元素",tag:"typtrans"}],a:0,
+ h:"原子番号3・11・19 はそれぞれ何という元素か。周期表で同じ縦の列に並びます。",
+ e:"原子番号3・11・19 は Li・Na・K で、いずれも<b>アルカリ金属元素</b>。価電子1個を手放しやすいので、イオン化エネルギーが谷になる。"},
+{kc:"K1",lv:2,q:"ナトリウム Na と塩素 Cl では、どちらの原子のほうがイオン化エネルギーが大きいか。",
+ c:[{t:"塩素 Cl"},{t:"ナトリウム Na",tag:"ieea"},{t:"どちらも同じ"},{t:"温度によって変わる"}],a:0,
+ h:"同じ第3周期の元素です。右にある元素のほうが電子を手放しにくいかどうかを考えます。",
+ e:"どちらも第3周期で、Cl のほうが右にあり陰性が強い。電子を手放しにくいので、イオン化エネルギーは<b>Cl のほうが大きい</b>。"},
+{kc:"K1",lv:3,fig:"ie",q:"図は第一イオン化エネルギーと原子番号（1〜20）の関係を表している。グラフが極大（山）になっている原子番号2・10・18 の元素に共通する特徴はどれか。",
+ c:[{t:"貴ガス元素で、安定な電子配置をもつ"},{t:"アルカリ金属元素で、価電子が1個である",tag:"family"},{t:"遷移元素で、すべて金属である",tag:"typtrans"},{t:"ハロゲン元素で、1価の陰イオンになりやすい",tag:"family"}],a:0,
+ h:"原子番号2・10・18 は He・Ne・Ar です。これらの価電子の数と電子殻の状態を思い出します。",
+ e:"He・Ne・Ar はいずれも<b>貴ガス元素</b>。最も外側の電子殻が満たされた安定な電子配置なので、電子を取り去るのに大きなエネルギーが要る。"},
+{kc:"K1",lv:3,q:"ナトリウム Na の第一イオン化エネルギーは 496 kJ/mol だが、第二イオン化エネルギーは 4562 kJ/mol と非常に大きい。その理由として正しいものはどれか。",
+ c:[{t:"1個放した時点で Ne と同じ安定な電子配置になっており、そこからさらに電子を取るのが難しいから"},{t:"Na が非金属元素だから",tag:"metalnon"},{t:"Na の電子親和力が大きいから",tag:"ieea"},{t:"Na の原子半径が小さいから",tag:"radius"}],a:0,
+ h:"Na は価電子を何個もっているか。1個放した Na⁺ はどんな電子配置になっているかを考えます。",
+ e:"Na は価電子1個。これを放すと <b>Ne と同じ安定な電子配置</b>になるので、2個目を取り去るには非常に大きなエネルギーが必要になる。"},
+{kc:"K1",lv:3,q:"マグネシウム Mg では、第二イオン化エネルギーに比べて第三イオン化エネルギーが非常に大きい。その理由として正しいものはどれか。",
+ c:[{t:"価電子2個を放した時点で Ne と同じ安定な電子配置になっているから"},{t:"Mg が2族の元素で原子半径が大きいから",tag:"radius"},{t:"Mg の電子親和力が非常に大きいから",tag:"ieea"},{t:"Mg が遷移元素だから",tag:"typtrans"}],a:0,
+ h:"Mg の価電子は何個か。2個放したあとの電子配置がどうなっているかがポイントです。",
+ e:"Mg は価電子2個で、2個放すと <b>Ne と同じ電子配置</b>になる。そこからさらに1個取るには大きなエネルギーが要るため、第三イオン化エネルギーが跳ね上がる。"},
 
-  {q:"イオン化エネルギーが小さい原子ほど、どのような傾向があるか？",
-   choices:["陽イオンになりやすい（陽性が強い）","陰イオンになりやすい（陰性が強い）","分子になりやすい","中性を保ちやすい"], a:0,
-   exp:"イオン化エネルギーが小さいほど電子を取り去りやすく、陽イオンになりやすい（陽性が強い）といえます。"},
+/* ===== K2 電子親和力（8問） ===== */
+{kc:"K2",lv:1,q:"原子が最も外側の電子殻に電子を1個受け取って1価の陰イオンになるときに放出されるエネルギーを何というか。",
+ c:[{t:"電子親和力"},{t:"イオン化エネルギー",tag:"ieea"},{t:"融解熱"},{t:"静電気力"}],a:0,
+ h:"電子を「受け取るとき」に出ていくエネルギーのことです。",
+ e:"電子を1個受け取って1価の陰イオンになるときに放出されるエネルギーが<b>電子親和力</b>。"},
+{kc:"K2",lv:1,q:"電子親和力が大きい原子ほど、どのような傾向があるか。",
+ c:[{t:"陰イオンになりやすい"},{t:"陽イオンになりやすい",tag:"ieea"},{t:"電子を放しやすい",tag:"ieea"},{t:"反応しにくい"}],a:0,
+ h:"電子を受け取ったときに大きなエネルギーを出す、ということは、その状態が安定かどうかを表します。",
+ e:"電子親和力が大きい＝電子を受け取った状態が安定、ということなので<b>陰イオンになりやすい</b>（陰性が強い）。"},
+{kc:"K2",lv:1,q:"電子親和力が特に大きい値を示す元素は、周期表のどの族に集まっているか。",
+ c:[{t:"17族（ハロゲン元素）"},{t:"1族（アルカリ金属元素）",tag:"family"},{t:"18族（貴ガス元素）",tag:"family"},{t:"3〜12族（遷移元素）",tag:"typtrans"}],a:0,
+ h:"あと1個電子を受け取れば貴ガスと同じ配置になる族はどれかを考えます。",
+ e:"価電子7個の<b>17族（ハロゲン元素）</b>は、電子をあと1個受け取れば貴ガスと同じ配置になるため、電子親和力が特に大きい。"},
+{kc:"K2",lv:2,q:"リチウム Li とフッ素 F では、どちらの原子のほうが電子親和力が大きいか。",
+ c:[{t:"フッ素 F"},{t:"リチウム Li",tag:"ieea"},{t:"どちらも同じ"},{t:"比べることはできない"}],a:0,
+ h:"どちらが陰イオンになりやすい元素かを考えます。同じ第2周期で、片方は左端、もう片方は右寄りです。",
+ e:"F は17族で、電子を1個受け取ると Ne と同じ配置になり安定する。よって電子親和力は<b>F のほうが大きい</b>。Li は逆に電子を放して陽イオンになりやすい。"},
+{kc:"K2",lv:2,q:"イオン化エネルギーと電子親和力の説明として正しい組合せはどれか。",
+ c:[{t:"イオン化エネルギーは電子を取り去るのに必要、電子親和力は電子を受け取ると放出される"},{t:"イオン化エネルギーは電子を受け取ると放出され、電子親和力は電子を取り去るのに必要",tag:"ieea"},{t:"どちらも電子を取り去るのに必要なエネルギーである",tag:"ieea"},{t:"どちらも電子を受け取ると放出されるエネルギーである",tag:"ieea"}],a:0,
+ h:"エネルギーが「要る」のか「出る」のか、陽イオン側か陰イオン側か、の2点で整理します。",
+ e:"イオン化エネルギーは電子を<b>取り去るのに必要</b>なエネルギー（陽イオン側）、電子親和力は電子を<b>受け取ると放出される</b>エネルギー（陰イオン側）。"},
+{kc:"K2",lv:2,q:"貴ガス元素の電子親和力が小さい理由として正しいものはどれか。",
+ c:[{t:"すでに安定な電子配置になっており、電子を受け取る必要がないから"},{t:"価電子が7個あるから",tag:"valence"},{t:"金属元素だから",tag:"metalnon"},{t:"原子半径が非常に小さいから",tag:"radius"}],a:0,
+ h:"貴ガスの最も外側の電子殻がどうなっているかを思い出します。",
+ e:"貴ガスは最も外側の電子殻が満たされた<b>安定な電子配置</b>なので、電子を受け取ってもかえって不安定になる。そのため電子親和力は小さい。"},
+{kc:"K2",lv:3,q:"イオン化エネルギーと電子親和力についての次の記述のうち、誤りを含むものはどれか。",
+ c:[{t:"電子親和力が大きい原子ほど陽イオンになりやすい"},{t:"イオン化エネルギーが小さい原子ほど陽イオンになりやすい"},{t:"電子親和力が大きい原子ほど陰性が強い"},{t:"ハロゲン元素は電子親和力が大きい"}],a:0,
+ h:"電子親和力は陽イオン側の話か、陰イオン側の話か。そこだけ確かめれば見分けられます。",
+ e:"電子親和力は<b>陰イオン</b>へのなりやすさを表す量で、陽イオンへのなりやすさはイオン化エネルギーが担当する。よって最初の記述が誤り。"},
+{kc:"K2",lv:3,q:"陰性が強い元素は周期表のどのあたりに位置するか（貴ガスを除く）。",
+ c:[{t:"右上にいくほど陰性が強い"},{t:"左下にいくほど陰性が強い",tag:"posneg"},{t:"右下にいくほど陰性が強い",tag:"posneg"},{t:"中央付近が最も陰性が強い",tag:"typtrans"}],a:0,
+ h:"陰性は電子を受け取りやすさのこと。電子親和力が大きい元素がどこに集まっているかと合わせて考えます。",
+ e:"貴ガスを除くと、周期表で右へ、そして上へいくほど陰性が強くなる。フッ素が最も陰性の強い元素。"},
 
-  {q:"原子が最も外側の電子殻に電子を1個受け取って1価の陰イオンになるときに放出されるエネルギーを何というか？",
-   choices:["電子親和力","イオン化エネルギー","結合エネルギー","昇華熱"], a:0,
-   exp:"このエネルギーを電子親和力といいます。"},
+/* ===== K3 周期律（8問） ===== */
+{kc:"K3",lv:1,q:"元素を原子番号の順に並べたとき、性質のよく似た元素が一定の間隔で現れることを何というか。",
+ c:[{t:"周期律"},{t:"周期表",tag:"grouprow"},{t:"同素体"},{t:"同位体"}],a:0,
+ h:"「律」は決まり・規則性のことです。表そのものではなく、現れる規則性のほうを指す語を選びます。",
+ e:"原子番号順に並べたとき性質のよく似た元素が周期的に現れることを<b>周期律</b>という。それを表の形に組んだものが周期表。"},
+{kc:"K3",lv:1,q:"元素に周期律がみられるのはなぜか。",
+ c:[{t:"原子番号の増加にともなって、価電子の数が周期的に変化するから"},{t:"原子番号の増加にともなって、原子の質量が一定の割合で増えるから"},{t:"原子核の中性子の数が周期的に変化するから"},{t:"同位体の存在比が周期的に変化するから"}],a:0,
+ h:"元素の化学的な性質を決めているのは、原子のどの部分かを考えます。",
+ e:"化学的な性質を決めるのは<b>価電子の数</b>。原子番号が増えると価電子の数が1→7→0…と周期的にくり返すため、性質にも周期性が現れる。"},
+{kc:"K3",lv:1,fig:"valence",q:"図は原子番号1〜20 について、あるものの数を縦軸にとったグラフである。縦軸が表しているものはどれか。",
+ c:[{t:"価電子の数"},{t:"陽子の数",tag:"valence"},{t:"電子殻の数",tag:"config"},{t:"中性子の数"}],a:0,
+ h:"原子番号2・10・18 でちょうど 0 に落ち、そのあと1から増えていくことが手がかりです。",
+ e:"原子番号2・10・18（He・Ne・Ar）で 0 になり、その後1から7まで増えてまた0に戻る。これは<b>価電子の数</b>の変化を表している。"},
+{kc:"K3",lv:2,fig:"valence",q:"図のグラフで、原子番号2・10・18 の点が 0 になっている理由として正しいものはどれか。",
+ c:[{t:"貴ガス元素で、最も外側の電子殻が安定しており価電子を0個と数えるから"},{t:"これらの原子には電子が存在しないから"},{t:"これらの原子の最外殻電子が8個を超えているから",tag:"valence"},{t:"これらが遷移元素だから",tag:"typtrans"}],a:0,
+ h:"He・Ne・Ar は最も外側の電子殻がどうなっているかを思い出します。最外殻電子はあるのに、なぜ0と数えるのか。",
+ e:"He・Ne・Ar は貴ガス元素。最も外側の電子殻が安定しており、結合に関与しないので<b>価電子は0個</b>と数える。最外殻電子が無いわけではない点に注意。"},
+{kc:"K3",lv:2,fig:"valence",q:"図のグラフで、原子番号9 と 17 の点は同じ高さ（7）にある。この2つの元素について正しい説明はどれか。",
+ c:[{t:"どちらもハロゲン元素で、1価の陰イオンになりやすい"},{t:"どちらもアルカリ金属元素で、1価の陽イオンになりやすい",tag:"family"},{t:"どちらも貴ガス元素で、反応しにくい",tag:"family"},{t:"どちらも遷移元素で、すべて金属である",tag:"typtrans"}],a:0,
+ h:"価電子7個の原子は、あと何個電子を受け取れば貴ガスと同じ配置になるかを考えます。",
+ e:"原子番号9・17 は F と Cl で、どちらも価電子7個の<b>ハロゲン元素</b>。電子を1個受け取って1価の陰イオンになりやすい。"},
+{kc:"K3",lv:2,q:"メンデレーエフは、当時知られていた元素を何の順に並べて周期表を作成したか。",
+ c:[{t:"原子の質量が小さいものから順"},{t:"原子番号が小さいものから順"},{t:"融点が低いものから順"},{t:"発見された年が古いものから順"}],a:0,
+ h:"当時はまだ原子番号という考え方が確立していませんでした。測定できたのは何かを考えます。",
+ e:"メンデレーエフは<b>原子の質量</b>が小さいものから順に並べ、性質の似た元素が同じ列にくるように表を組んだ。"},
+{kc:"K3",lv:3,q:"現在使われている周期表は、元素を何の順に並べているか。",
+ c:[{t:"原子番号の順"},{t:"原子の質量の順"},{t:"価電子の数の順",tag:"valence"},{t:"電子殻の数の順",tag:"config"}],a:0,
+ h:"メンデレーエフの時代と、現在とで並べる基準が変わっています。陽子の数で決まる量は何か。",
+ e:"現在の周期表は<b>原子番号</b>（＝陽子の数）の順に並べられている。原子の質量の順とはところどころ食い違う。"},
+{kc:"K3",lv:3,q:"メンデレーエフがケイ素の下にくる元素として存在を予測し「エカケイ素」と名づけた元素は、のちに発見されたどの元素と性質がよく一致したか。",
+ c:[{t:"ゲルマニウム Ge"},{t:"ガリウム Ga"},{t:"スズ Sn"},{t:"炭素 C"}],a:0,
+ h:"ケイ素と同じ14族で、ケイ素のすぐ下にくる元素です。",
+ e:"エカケイ素は1886年に発見された<b>ゲルマニウム</b>と性質がよく一致し、メンデレーエフの周期表が高く評価される決め手になった。"},
 
-  {q:"電子親和力が大きい原子ほど、どのような傾向があるか？",
-   choices:["陰イオンになりやすい（陰性が強い）","陽イオンになりやすい（陽性が強い）","中性を保ちやすい","分子を作りやすい"], a:0,
-   exp:"電子親和力が大きいほど陰イオンになるときに多くのエネルギーを放出でき、陰イオンになりやすい（陰性が強い）といえます。"},
+/* ===== K4 族と価電子（11問） ===== */
+{kc:"K4",lv:1,q:"周期表の縦の列を何というか。",
+ c:[{t:"族"},{t:"周期",tag:"grouprow"},{t:"殻"},{t:"系列"}],a:0,
+ h:"性質のよく似た元素が並ぶほうの呼び名です。",
+ e:"周期表の縦の列を<b>族</b>という。同じ族に属する元素（同族元素）は価電子の数が同じで、性質が似ている。"},
+{kc:"K4",lv:1,q:"周期表の横の行を何というか。",
+ c:[{t:"周期"},{t:"族",tag:"grouprow"},{t:"周期律"},{t:"電子殻"}],a:0,
+ h:"同じ行に並ぶ元素は、最も外側の電子殻が同じになります。",
+ e:"周期表の横の行を<b>周期</b>という。第n周期の元素は、最も外側の電子殻が n 番目の電子殻になっている。"},
+{kc:"K4",lv:1,q:"現在、国際的に用いられている周期表は、何族・何周期で構成されているか。",
+ c:[{t:"1〜18族・1〜7周期"},{t:"1〜8族・1〜7周期",tag:"grouprow"},{t:"1〜18族・1〜18周期",tag:"grouprow"},{t:"1〜7族・1〜18周期",tag:"grouprow"}],a:0,
+ h:"縦の列が18本、横の行が7本です。どちらが族でどちらが周期かに注意します。",
+ e:"現在の周期表は<b>1〜18族・1〜7周期</b>で構成されている。縦が18列（族）、横が7行（周期）。"},
+{kc:"K4",lv:1,q:"17族の原子の価電子は何個か。",
+ c:[{t:"7個"},{t:"17個",tag:"valence"},{t:"1個",tag:"valence"},{t:"0個",tag:"valence"}],a:0,
+ h:"典型元素の価電子の数は、族番号の一の位に等しくなります。",
+ e:"典型元素では価電子の数＝族番号の一の位。17族なので価電子は<b>7個</b>。あと1個受け取れば貴ガスと同じ配置になる。"},
+{kc:"K4",lv:2,q:"典型元素のうち、価電子が2個であるのは何族か。",
+ c:[{t:"2族"},{t:"12族",tag:"typtrans"},{t:"16族",tag:"valence"},{t:"18族",tag:"valence"}],a:0,
+ h:"価電子の数と族番号の一の位の関係を使います。ただし遷移元素にはこの関係が当てはまりません。",
+ e:"典型元素で価電子2個なのは<b>2族</b>（アルカリ土類金属元素）。2価の陽イオンになりやすい。12族は遷移元素に含めることが多く、この関係は使えない。"},
+{kc:"K4",lv:2,q:"18族の原子の価電子は何個か。",
+ c:[{t:"0個"},{t:"8個",tag:"valence"},{t:"18個",tag:"valence"},{t:"2個",tag:"valence"}],a:0,
+ h:"最も外側の電子殻は満たされていますが、結合に関与するかどうかで数え方が決まります。",
+ e:"18族（貴ガス元素）の価電子は<b>0個</b>と数える。最外殻電子は8個（He は2個）あるが、安定していて結合に関与しないため。"},
+{kc:"K4",lv:2,q:"16族の原子の価電子は何個か。",
+ c:[{t:"6個"},{t:"16個",tag:"valence"},{t:"2個",tag:"valence"},{t:"0個",tag:"valence"}],a:0,
+ h:"族番号の一の位を見ます。16族なので一の位は6です。",
+ e:"16族の価電子は<b>6個</b>。あと2個受け取れば貴ガスと同じ配置になるので、2価の陰イオンになりやすい。"},
+{kc:"K4",lv:2,q:"典型元素について、原子の価電子の数と族番号の関係として正しいものはどれか。",
+ c:[{t:"価電子の数は族番号の一の位に等しい（18族は0個）"},{t:"価電子の数は族番号そのものに等しい",tag:"valence"},{t:"価電子の数は周期の番号に等しい",tag:"grouprow"},{t:"価電子の数はどの族でも1個または2個である",tag:"typtrans"}],a:0,
+ h:"13族の価電子は3個、17族は7個です。この対応が何を表しているかを読み取ります。",
+ e:"典型元素では<b>価電子の数＝族番号の一の位</b>。ただし18族だけは0個と数える。なお最外殻電子が1個か2個の元素が多いのは遷移元素の特徴。"},
+{kc:"K4",lv:3,q:"第3周期の13族に位置する原子の価電子は何個か。",
+ c:[{t:"3個"},{t:"13個",tag:"valence"},{t:"1個",tag:"valence"},{t:"5個",tag:"grouprow"}],a:0,
+ h:"価電子の数を決めるのは周期ではなく族のほうです。族番号の一の位を見ます。",
+ e:"第3周期13族はアルミニウム Al。価電子は族番号の一の位なので<b>3個</b>で、3価の陽イオン Al<sup>3+</sup> になりやすい。"},
+{kc:"K4",lv:3,fig:"valence",q:"図のグラフで、価電子が7個になっている点の原子番号の組合せとして正しいものはどれか。",
+ c:[{t:"9 と 17"},{t:"2 と 10",tag:"valence"},{t:"3 と 11",tag:"valence"},{t:"10 と 18",tag:"valence"}],a:0,
+ h:"グラフの山の頂点にあたる点です。価電子が最大になる原子番号を読み取ります。",
+ e:"グラフが最も高くなるのは原子番号<b>9（F）と 17（Cl）</b>で、価電子7個。この直後に貴ガスがきて0に落ちる。"},
+{kc:"K4",lv:3,q:"最外殻電子と価電子の関係について、正しい説明はどれか。",
+ c:[{t:"ふつうは同じ数だが、貴ガスでは最外殻電子があっても価電子は0個と数える"},{t:"どんな元素でも最外殻電子の数と価電子の数は必ず一致する",tag:"valence"},{t:"価電子は最外殻電子より必ず1個少ない",tag:"valence"},{t:"価電子は最も内側の電子殻にある電子のことである",tag:"config"}],a:0,
+ h:"He・Ne・Ar の最外殻電子の数と、価電子の数がそれぞれいくつかを比べます。",
+ e:"価電子は結合に関与する電子のこと。ふつうは最外殻電子と同じ数だが、<b>貴ガスは安定なので価電子0個</b>と数える。Ne は最外殻電子8個・価電子0個。"},
 
-  {q:"Naの第一イオン化エネルギー（496kJ/mol）に比べ、第二イオン化エネルギー（4562kJ/mol）が非常に大きいのはなぜか？",
-   choices:["Na⁺が安定な電子配置になっており、さらに電子を取り去るのが困難なため","Na⁺が不安定なため電子が抜けやすいため","電子親和力が非常に大きいため","Naの原子核が極端に小さいため"], a:0,
-   exp:"Naは1個の価電子を失うと安定な電子配置のNa⁺になるため第一イオン化エネルギーは小さいですが、そこからさらに電子を取り去るのは困難なため第二イオン化エネルギーは非常に大きくなります。"},
-
-  {q:"Mgで、第二イオン化エネルギーに比べて第三イオン化エネルギーが非常に大きいのはなぜか？",
-   choices:["Mg²⁺が安定な電子配置であり、さらに電子を取り去るのが困難なため","Mgの原子核が非常に大きいため","電子親和力が小さいため","Mgは遷移元素だから"], a:0,
-   exp:"Mgは2個の価電子を失うと安定な電子配置のMg²⁺になるため、そこからさらに電子を取り去る第三イオン化エネルギーは非常に大きくなります。"},
-
-  {q:"元素を原子番号順に並べたとき、性質のよく似た元素が一定の間隔で現れることを何というか？",
-   choices:["周期律","周期表","同族律","族則"], a:0,
-   exp:"このような性質の周期性を元素の周期律といいます。"},
-
-  {q:"元素に周期律があるのはなぜか？",
-   choices:["原子番号の増加に伴って価電子の数が周期的に変化するため","原子核の質量が周期的に変化するため","電子の総数が常に一定であるため","中性子の数が一定であるため"], a:0,
-   exp:"原子番号の増加に伴い価電子の数が周期的に変化するため、元素の性質にも周期性が現れます。"},
-
-  {q:"周期表の縦の列を何というか？",
-   choices:["族","周期","類","段"], a:0,
-   exp:"周期表の縦の列を族といいます。"},
-
-  {q:"周期表の横の行を何というか？",
-   choices:["周期","族","類","列"], a:0,
-   exp:"周期表の横の行を周期といいます。"},
-
-  {q:"現在、国際的に用いられている周期表は何族・何周期で構成されているか？",
-   choices:["18族・7周期","8族・7周期","18族・6周期","20族・7周期"], a:0,
-   exp:"現在の周期表は1〜18族・1〜7周期で構成されています。"},
-
-  {q:"同じ周期の元素では、原子番号が大きいほどイオン化エネルギーはどのような傾向を示すか？",
-   choices:["大きくなる傾向がある（右上がり）","小さくなる傾向がある（右下がり）","変化しない","不規則に変動する"], a:0,
-   exp:"同じ周期内では、原子番号が大きいほどイオン化エネルギーは右上がりの傾向を示します。"},
-
-  {q:"同じ族の元素では、原子番号が大きいほどイオン化エネルギーはどのような傾向を示すか？",
-   choices:["小さくなる傾向がある（右下がり）","大きくなる傾向がある（右上がり）","変化しない","急激に増加する"], a:0,
-   exp:"同じ族内では、原子番号が大きいほどイオン化エネルギーは右下がりの傾向を示します。"},
-
-  {q:"電子親和力が特に大きい値を示す元素には、どのような特徴があるか？",
-   choices:["17族元素であり、価電子を7個もち陰イオンになりやすい","1族元素であり、価電子を1個もつ","18族元素であり、反応性に乏しい","2族元素であり、価電子を2個もつ"], a:0,
-   exp:"F(9)やCl(17)など17族の元素は価電子を7個もち、陰イオンになりやすい（陰性が強い）ため電子親和力が特に大きくなります。"},
-
-  {q:"原子番号と価電子の数の関係を表すグラフでは、貴ガス（He, Ne, Arなど）の価電子の数はどうなるか？",
-   choices:["0個であり、特に小さい値になる","8個であり、特に大きい値になる","原子番号と同じ数になる","不規則に変動する"], a:0,
-   exp:"貴ガスは価電子の数が0個とされ、グラフ上では特に小さい値を示します。"},
-
-  {q:"周期表の1族、2族と13〜18族の元素を何というか？",
-   choices:["典型元素","遷移元素","希少元素","代表元素"], a:0,
-   exp:"周期表の1・2族と13〜18族の元素を典型元素といいます。"},
-
-  {q:"周期表の3〜12族の元素を何というか？",
-   choices:["遷移元素","典型元素","希土類元素","貴金属元素"], a:0,
-   exp:"典型元素以外、つまり3〜12族の元素を遷移元素といいます。"},
-
-  {q:"典型元素の価電子の数には、どのような特徴があるか？",
-   choices:["族番号の一の位の値に等しい（18族の価電子は0個）","常に1個または2個である","常に族番号と同じ数である","常に8個である"], a:0,
-   exp:"典型元素では、原子の価電子の数は族番号の一の位の値に等しくなります（18族の価電子は0個）。"},
-
-  {q:"遷移元素の原子の最外殻電子の数には、どのような特徴があるか？",
-   choices:["1個または2個の元素が多い","族番号の一の位の値に等しい元素が多い","常に0個である","常に8個である"], a:0,
-   exp:"遷移元素では、原子の最外殻電子の数は1個または2個の元素が多いです。"},
-
-  {q:"遷移元素の性質として正しいものはどれか？",
-   choices:["すべてが金属元素である","すべてが非金属元素である","金属元素と非金属元素が半数ずつある","気体の単体をもつものが多い"], a:0,
-   exp:"典型元素には金属元素も非金属元素もありますが、遷移元素はすべてが金属元素です。"},
-
-  {q:"金属元素の特徴として正しいものはどれか？",
-   choices:["価電子の数が少なく、陽イオンになりやすい","価電子の数が多く、陰イオンになりやすい","すべて典型元素である","周期表の右上に多く分布する"], a:0,
-   exp:"金属元素は価電子の数が少なく、原子が陽イオンになりやすい（周期表の左下にいくほど陽性が強い）という特徴があります。"},
-
-  {q:"非金属元素（18族を除く）の特徴として正しいものはどれか？",
-   choices:["価電子の数が多く、陰イオンになりやすい","価電子の数が少なく、陽イオンになりやすい","すべて遷移元素である","酸化物はアルカリ性を示すものが多い"], a:0,
-   exp:"非金属元素は価電子の数が多く、原子が陰イオンになりやすい（周期表の右上にいくほど陰性が強い）という特徴があります。"},
-
-  {q:"水素を除く1族元素を何というか？",
-   choices:["アルカリ金属元素","アルカリ土類金属元素","ハロゲン元素","貴ガス元素"], a:0,
-   exp:"水素を除く1族元素をアルカリ金属元素といい、価電子を1個もち1価の陽イオンになりやすい元素です。"},
-
-  {q:"2族元素を何というか？",
-   choices:["アルカリ土類金属元素","アルカリ金属元素","ハロゲン元素","貴ガス元素"], a:0,
-   exp:"2族元素をアルカリ土類金属元素といい、価電子を2個もち2価の陽イオンになりやすい元素です。"},
-
-  {q:"17族元素を何というか？",
-   choices:["ハロゲン元素","アルカリ金属元素","アルカリ土類金属元素","貴ガス元素"], a:0,
-   exp:"17族元素をハロゲン元素といい、価電子を7個もち1価の陰イオンになりやすい元素です。"},
-
-  {q:"18族元素を何というか？",
-   choices:["貴ガス元素（希ガス元素）","ハロゲン元素","典型元素","遷移元素"], a:0,
-   exp:"18族元素を貴ガス元素（希ガス元素）といい、価電子は0個で反応性に乏しい（不活性ガスともよばれる）元素です。"},
-
-  {q:"同じ族の元素では、原子番号が大きいほど原子半径はどうなるか？",
-   choices:["大きくなる","小さくなる","変化しない","族によって傾向が異なる"], a:0,
-   exp:"同じ族では原子番号が大きいほど外側の電子殻に電子が入り、原子核と最も外側の電子殻の距離が大きくなるため、原子半径は大きくなります。"},
-
-  {q:"同じ周期の元素では、原子番号が大きいほど原子半径はどうなるか？",
-   choices:["小さくなる","大きくなる","変化しない","不規則に変わる"], a:0,
-   exp:"同じ周期では原子番号が大きいほど陽子の数が増え最外殻電子を引きつける力が強くなるため、原子半径は小さくなります。"},
-
-  {q:"電子配置が同じイオン（例：O²⁻, Na⁺, Al³⁺）では、原子番号が大きいほどイオン半径はどうなるか？",
-   choices:["小さくなる","大きくなる","変化しない","中性子の数だけで決まる"], a:0,
-   exp:"電子配置が同じイオンでは、原子番号が大きいほど原子核の陽子の数が増え最外殻電子を引きつける力が強くなるため、イオン半径は小さくなります。"},
-
-  {q:"原子が陽イオンになると、その半径はどうなるか？",
-   choices:["小さくなる","大きくなる","変化しない","2倍になる"], a:0,
-   exp:"最外殻電子がすべて取り除かれ、最も外側の電子殻が1つ内側になるため、イオン半径は小さくなります。"},
-
-  {q:"原子が陰イオンになると、その半径はどうなるか？",
-   choices:["大きくなる","小さくなる","変化しない","半分になる"], a:0,
-   exp:"最も外側の電子殻に電子が加わり電子間の反発が増大するため、イオン半径は大きくなります。"},
-
-  {q:"メンデレーエフは元素を何の順に並べて周期表を作成したか？",
-   choices:["原子の質量（原子量）の小さいものから順に","原子番号の小さいものから順に","電子親和力の大きいものから順に","発見された年代順に"], a:0,
-   exp:"メンデレーエフは当時発見されていた約60種類の元素を、原子の質量の小さいものから順番に並べて周期表を作成しました。"},
-
-  {q:"メンデレーエフがケイ素の下にくる元素として存在を予測し「エカケイ素」と名づけた元素は、後に発見されたどの元素と性質が一致したか？",
-   choices:["ゲルマニウム","ガリウム","スカンジウム","ヒ素"], a:0,
-   exp:"エカケイ素Esの性質は、1886年に発見されたゲルマニウムGeとよく一致し、メンデレーエフの周期表は高く評価されました。"}
+/* ===== K5 典型元素と遷移元素（9問） ===== */
+{kc:"K5",lv:1,q:"周期表の1族・2族と13〜18族の元素をまとめて何というか。",
+ c:[{t:"典型元素"},{t:"遷移元素",tag:"typtrans"},{t:"同族元素",tag:"family"},{t:"貴ガス元素",tag:"family"}],a:0,
+ h:"周期表の両端に位置するグループのほうです。",
+ e:"1族・2族と13〜18族の元素を<b>典型元素</b>という。価電子の数が族番号の一の位に等しく、同族どうしの性質がよく似ている。"},
+{kc:"K5",lv:1,q:"周期表の3〜12族の元素をまとめて何というか。",
+ c:[{t:"遷移元素"},{t:"典型元素",tag:"typtrans"},{t:"ハロゲン元素",tag:"family"},{t:"アルカリ金属元素",tag:"family"}],a:0,
+ h:"周期表の中央に横長に広がっている区画です。",
+ e:"3〜12族の元素を<b>遷移元素</b>という。なお12族は遷移元素に含める場合と含めない場合がある。"},
+{kc:"K5",lv:1,q:"遷移元素について正しい説明はどれか。",
+ c:[{t:"すべて金属元素である"},{t:"すべて非金属元素である",tag:"metalnon"},{t:"金属元素と非金属元素が半分ずつある",tag:"metalnon"},{t:"すべて気体である"}],a:0,
+ h:"典型元素には金属も非金属もありますが、遷移元素はどうかを考えます。",
+ e:"遷移元素は<b>すべて金属元素</b>。典型元素のほうには金属元素も非金属元素も含まれる、という違いがある。"},
+{kc:"K5",lv:2,q:"典型元素の価電子の数について、正しい説明はどれか。",
+ c:[{t:"族番号の一の位に等しい（18族は0個）"},{t:"どの元素も1個または2個である",tag:"typtrans"},{t:"周期の番号に等しい",tag:"grouprow"},{t:"すべて8個である",tag:"valence"}],a:0,
+ h:"1族は1個、17族は7個、という対応から規則を読み取ります。",
+ e:"典型元素の価電子は<b>族番号の一の位</b>に等しい（18族は0個）。「1個または2個の元素が多い」のは遷移元素の最外殻電子の特徴。"},
+{kc:"K5",lv:2,q:"遷移元素の原子の最外殻電子の数について、正しい説明はどれか。",
+ c:[{t:"1個または2個の元素が多い"},{t:"族番号の一の位に等しい",tag:"typtrans"},{t:"すべて8個である",tag:"valence"},{t:"すべて0個である",tag:"valence"}],a:0,
+ h:"遷移元素では、族が違っても最外殻電子の数があまり変わりません。",
+ e:"遷移元素は最外殻電子が<b>1個または2個</b>の元素が多い。そのため隣り合う元素どうしの性質が似ており、同じ周期の中でも性質が近くなる。"},
+{kc:"K5",lv:2,q:"典型元素と遷移元素の、性質の似方の違いとして正しいものはどれか。",
+ c:[{t:"典型元素は同じ族どうしが似る。遷移元素は同じ周期どうしも似ている場合が多い"},{t:"典型元素は同じ周期どうしが似る。遷移元素は同じ族どうしが似る",tag:"grouprow"},{t:"どちらも同じ周期どうしだけが似る",tag:"grouprow"},{t:"どちらも性質に規則性はない"}],a:0,
+ h:"最外殻電子の数が族ごとに変わるのか、あまり変わらないのか、で説明がつきます。",
+ e:"典型元素は族ごとに価電子が変わるので<b>同族どうし</b>が似る。遷移元素は最外殻電子が1〜2個で変わりにくいので、<b>同一周期</b>の元素どうしも似た性質を示すことが多い。"},
+{kc:"K5",lv:3,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。遷移元素に当てはまる領域はどれか。",
+ c:[{t:"エ"},{t:"イ・ウ",tag:"typtrans"},{t:"オ・カ",tag:"typtrans"},{t:"キ・ク",tag:"family"}],a:0,
+ h:"遷移元素は3〜12族。周期表の中央に横長に広がっている区画を探します。",
+ e:"中央の大きな区画<b>エ</b>が3〜12族の遷移元素。イ・ウは1族・2族、オ・カは13〜16族、キ・クは17族・18族で、いずれも典型元素。"},
+{kc:"K5",lv:3,q:"鉄 Fe は典型元素と遷移元素のどちらに分類されるか。また、金属元素か非金属元素か。",
+ c:[{t:"遷移元素であり、金属元素である"},{t:"典型元素であり、金属元素である",tag:"typtrans"},{t:"遷移元素であり、非金属元素である",tag:"metalnon"},{t:"典型元素であり、非金属元素である",tag:"metalnon"}],a:0,
+ h:"鉄は周期表の中央の区画にあります。その区画の元素は金属か非金属か。",
+ e:"Fe は8族で周期表の中央にあるので<b>遷移元素</b>。遷移元素はすべて金属元素なので、金属元素でもある。"},
+{kc:"K5",lv:3,q:"典型元素と遷移元素についての次の記述のうち、誤りを含むものはどれか。",
+ c:[{t:"典型元素はすべて金属元素である"},{t:"遷移元素はすべて金属元素である"},{t:"典型元素は1族・2族と13〜18族の元素である"},{t:"遷移元素は3〜12族の元素である"}],a:0,
+ h:"典型元素の中に、酸素や塩素のような元素が含まれていないかを確かめます。",
+ e:"典型元素には金属元素も<b>非金属元素も含まれる</b>（酸素・塩素・貴ガスなど）。すべて金属元素なのは遷移元素のほう。"}
 ];
 
-let session=[], idx=0, score=0, results=[], studentId="";
+POOL.push(
+/* ===== K6 金属元素と非金属元素（9問） ===== */
+{kc:"K6",lv:1,q:"水素を除いて、周期表の左側にある元素は何に分類されるか。",
+ c:[{t:"金属元素"},{t:"非金属元素",tag:"metalnon"},{t:"貴ガス元素",tag:"family"},{t:"ハロゲン元素",tag:"family"}],a:0,
+ h:"その単体が金属の性質を示すかどうかで分けます。周期表の左側と右側のどちらが金属側か。",
+ e:"水素を除く周期表の左側の元素は、その単体が金属の性質を示す<b>金属元素</b>。それ以外が非金属元素に分類される。"},
+{kc:"K6",lv:1,q:"金属元素の特徴として正しいものはどれか。",
+ c:[{t:"価電子の数が少なく、原子が陽イオンになりやすい"},{t:"価電子の数が多く、原子が陰イオンになりやすい",tag:"metalnon"},{t:"価電子が0個で、反応しにくい",tag:"family"},{t:"必ず気体として存在する"}],a:0,
+ h:"少ない価電子を手放すのと、たくさん受け取るのと、どちらが起こりやすいかを考えます。",
+ e:"金属元素は価電子が少ないため、それを手放して<b>陽イオンになりやすい</b>。周期表の左下にいくほどこの性質（陽性）が強い。"},
+{kc:"K6",lv:1,q:"非金属元素（18族を除く）の特徴として正しいものはどれか。",
+ c:[{t:"価電子の数が多く、原子が陰イオンになりやすい"},{t:"価電子の数が少なく、原子が陽イオンになりやすい",tag:"metalnon"},{t:"すべて遷移元素である",tag:"typtrans"},{t:"単体はすべて電気をよく通す"}],a:0,
+ h:"価電子が多い原子は、あと数個受け取れば貴ガスと同じ配置になれます。",
+ e:"非金属元素（18族を除く）は価電子が多く、電子を受け取って<b>陰イオンになりやすい</b>。右上にいくほどこの性質（陰性）が強い。"},
+{kc:"K6",lv:2,q:"陽性が最も強くなるのは、周期表のどのあたりか。",
+ c:[{t:"左下"},{t:"右上",tag:"posneg"},{t:"右下",tag:"posneg"},{t:"中央",tag:"typtrans"}],a:0,
+ h:"陽性は陽イオンへのなりやすさ。イオン化エネルギーが最も小さくなる場所を考えます。",
+ e:"周期表で<b>左下</b>にいくほど陽性が強い。左へいくほど価電子が少なく、下へいくほど電子を引きつける力が弱くなるため。"},
+{kc:"K6",lv:2,q:"陰性が最も強くなるのは、周期表のどのあたりか（貴ガスを除く）。",
+ c:[{t:"右上"},{t:"左下",tag:"posneg"},{t:"左上",tag:"posneg"},{t:"中央",tag:"typtrans"}],a:0,
+ h:"陰性は陰イオンへのなりやすさ。電子親和力が最も大きくなる場所を考えます。",
+ e:"貴ガスを除くと<b>右上</b>にいくほど陰性が強い。最も陰性の強い元素はフッ素 F。"},
+{kc:"K6",lv:2,q:"金属元素の酸化物には、どのような性質を示すものが多いか。",
+ c:[{t:"アルカリ性（塩基性）を示すものが多い"},{t:"酸性を示すものが多い",tag:"metalnon"},{t:"中性のものしかない"},{t:"すべて水に溶けない"}],a:0,
+ h:"酸化カルシウム CaO や酸化ナトリウムを水に加えたとき、その水溶液が何性になるかを思い出します。",
+ e:"金属元素の酸化物は<b>アルカリ性（塩基性）</b>を示すものが多い。たとえば酸化カルシウムは水と反応して水酸化カルシウムになる。"},
+{kc:"K6",lv:3,q:"非金属元素の酸化物には、どのような性質を示すものが多いか。",
+ c:[{t:"酸性を示すものが多い"},{t:"アルカリ性（塩基性）を示すものが多い",tag:"metalnon"},{t:"すべて中性である"},{t:"すべて金属光沢をもつ"}],a:0,
+ h:"二酸化炭素を水に溶かした炭酸水が何性かを思い出します。",
+ e:"非金属元素の酸化物は<b>酸性</b>を示すものが多い。二酸化炭素の水溶液（炭酸水）が弱い酸性を示すのがその例。"},
+{kc:"K6",lv:3,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。金属元素に当てはまる領域をすべて選んだものはどれか。",
+ c:[{t:"イ・ウ・エ・オ"},{t:"ア・イ・ウ・エ",tag:"metalnon"},{t:"エ・オ・カ・キ",tag:"metalnon"},{t:"ア・カ・キ・ク",tag:"metalnon"}],a:0,
+ h:"アは水素なので金属ではありません。階段状の境界の左下側が金属側です。",
+ e:"金属元素は<b>イ（1族）・ウ（2族）・エ（遷移元素）・オ（階段の左下側）</b>。アは水素、カ・キ・クは非金属元素。"},
+{kc:"K6",lv:3,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。非金属元素に当てはまる領域をすべて選んだものはどれか。",
+ c:[{t:"ア・カ・キ・ク"},{t:"カ・キ・ク",tag:"metalnon"},{t:"イ・ウ・エ・オ",tag:"metalnon"},{t:"オ・カ・キ・ク",tag:"metalnon"}],a:0,
+ h:"水素がどちら側に分類されるかがポイントです。周期表の左上にある1マスを忘れずに。",
+ e:"非金属元素は<b>ア（水素）・カ・キ（17族）・ク（18族）</b>。水素は周期表では1族の位置にあるが、金属元素ではない。"},
 
-document.getElementById("totalBadge").textContent="全"+ALL_Q.length+"問収録";
+/* ===== K7 同族元素（8問） ===== */
+{kc:"K7",lv:1,q:"水素を除く1族の元素を何というか。",
+ c:[{t:"アルカリ金属元素"},{t:"アルカリ土類金属元素",tag:"family"},{t:"ハロゲン元素",tag:"family"},{t:"貴ガス元素",tag:"family"}],a:0,
+ h:"価電子1個をもち、1価の陽イオンになりやすい仲間です。",
+ e:"水素を除く1族の元素を<b>アルカリ金属元素</b>という。Li・Na・K などで、価電子1個をもち1価の陽イオンになりやすい。"},
+{kc:"K7",lv:1,q:"2族の元素を何というか。",
+ c:[{t:"アルカリ土類金属元素"},{t:"アルカリ金属元素",tag:"family"},{t:"ハロゲン元素",tag:"family"},{t:"遷移元素",tag:"typtrans"}],a:0,
+ h:"価電子2個をもち、2価の陽イオンになりやすい仲間です。",
+ e:"2族の元素を<b>アルカリ土類金属元素</b>という。Be・Mg・Ca などで、2価の陽イオンになりやすい。"},
+{kc:"K7",lv:1,q:"17族の元素を何というか。",
+ c:[{t:"ハロゲン元素"},{t:"貴ガス元素",tag:"family"},{t:"アルカリ金属元素",tag:"family"},{t:"典型元素の金属",tag:"metalnon"}],a:0,
+ h:"価電子7個をもち、1価の陰イオンになりやすい仲間です。",
+ e:"17族の元素を<b>ハロゲン元素</b>という。F・Cl・Br・I などで、電子を1個受け取って1価の陰イオンになりやすい。"},
+{kc:"K7",lv:2,q:"18族の元素を何というか。また、その価電子は何個か。",
+ c:[{t:"貴ガス元素で、価電子は0個"},{t:"ハロゲン元素で、価電子は7個",tag:"family"},{t:"貴ガス元素で、価電子は8個",tag:"valence"},{t:"アルカリ金属元素で、価電子は1個",tag:"family"}],a:0,
+ h:"反応性に乏しく、不活性ガスともよばれる仲間です。価電子の数え方に注意します。",
+ e:"18族は<b>貴ガス元素</b>で、価電子は<b>0個</b>と数える。最外殻電子は8個（He だけ2個）あるが、安定していて結合に関与しない。"},
+{kc:"K7",lv:2,q:"アルカリ金属元素の原子について、価電子の数と生じやすいイオンの組合せとして正しいものはどれか。",
+ c:[{t:"価電子1個・1価の陽イオン"},{t:"価電子1個・1価の陰イオン",tag:"metalnon"},{t:"価電子7個・1価の陰イオン",tag:"family"},{t:"価電子2個・2価の陽イオン",tag:"family"}],a:0,
+ h:"1族なので価電子の数は族番号の一の位。金属元素なので電子を放すか受け取るかも決まります。",
+ e:"アルカリ金属元素は価電子<b>1個</b>で、それを放して<b>1価の陽イオン</b>になりやすい。Na<sup>+</sup>、K<sup>+</sup> がその例。"},
+{kc:"K7",lv:2,q:"ハロゲン元素の原子について、価電子の数と生じやすいイオンの組合せとして正しいものはどれか。",
+ c:[{t:"価電子7個・1価の陰イオン"},{t:"価電子7個・7価の陽イオン",tag:"valence"},{t:"価電子1個・1価の陽イオン",tag:"family"},{t:"価電子0個・イオンにならない",tag:"family"}],a:0,
+ h:"17族なので価電子の数は族番号の一の位。あと何個受け取れば貴ガスと同じ配置になるかを考えます。",
+ e:"ハロゲン元素は価電子<b>7個</b>で、電子を1個受け取って<b>1価の陰イオン</b>になりやすい。Cl<sup>−</sup>、F<sup>−</sup> がその例。"},
+{kc:"K7",lv:3,q:"カルシウム Ca は、どの同族元素のグループに属するか。",
+ c:[{t:"アルカリ土類金属元素"},{t:"アルカリ金属元素",tag:"family"},{t:"ハロゲン元素",tag:"family"},{t:"遷移元素",tag:"typtrans"}],a:0,
+ h:"Ca は原子番号20 で、価電子は2個です。何族に当たるかを考えます。",
+ e:"Ca は価電子2個の2族元素なので<b>アルカリ土類金属元素</b>。Ca<sup>2+</sup> という2価の陽イオンになりやすい。"},
+{kc:"K7",lv:3,q:"貴ガス元素の反応性について、正しい説明はどれか。",
+ c:[{t:"価電子が0個で安定なため、反応性に乏しい"},{t:"価電子が8個あるため、反応性が非常に高い",tag:"valence"},{t:"1価の陰イオンになりやすく、反応性が高い",tag:"family"},{t:"金属元素なので電気をよく通す",tag:"metalnon"}],a:0,
+ h:"不活性ガスとよばれることがある理由を考えます。電球や風船に使われるのはなぜか。",
+ e:"貴ガス元素は価電子0個の安定な電子配置をもつため<b>反応性に乏しい</b>。そのため電球の封入ガスなどに利用される。"},
 
-function shuffle(arr){
-  let a=[...arr];
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
+/* ===== K8 原子半径・イオン半径（12問） ===== */
+{kc:"K8",lv:1,q:"同じ族の元素では、原子番号が大きいほど原子半径はどうなるか。",
+ c:[{t:"大きくなる"},{t:"小さくなる",tag:"radius"},{t:"変わらない"},{t:"大きくなったあと小さくなる"}],a:0,
+ h:"原子番号が大きくなると、電子はどの電子殻に入っていくかを考えます。",
+ e:"同じ族では原子番号が大きいほど外側の電子殻に電子が入り、原子核と最も外側の電子殻の距離が大きくなるので、原子半径は<b>大きくなる</b>。"},
+{kc:"K8",lv:1,q:"同じ周期の元素では、原子番号が大きいほど原子半径はどうなるか。",
+ c:[{t:"小さくなる"},{t:"大きくなる",tag:"radius"},{t:"変わらない"},{t:"小さくなったあと大きくなる"}],a:0,
+ h:"同じ周期では最も外側の電子殻は変わりません。変わるのは原子核の陽子の数です。",
+ e:"同じ周期では原子番号が大きいほど陽子が増え、最外殻電子を引きつける力が強くなるので、原子半径は<b>小さくなる</b>。"},
+{kc:"K8",lv:1,q:"原子が陽イオンになると、その半径はどうなるか。",
+ c:[{t:"小さくなる"},{t:"大きくなる",tag:"radius"},{t:"変わらない"},{t:"元素によって大きくも小さくもなる"}],a:0,
+ h:"最外殻電子がすべて取り去られると、最も外側の電子殻はどうなるかを考えます。",
+ e:"陽イオンになると最外殻電子がすべて取り除かれ、最も外側の電子殻が1つ内側になるため、半径は<b>小さくなる</b>。"},
+{kc:"K8",lv:1,q:"原子が陰イオンになると、その半径はどうなるか。",
+ c:[{t:"大きくなる"},{t:"小さくなる",tag:"radius"},{t:"変わらない"},{t:"電子殻が1つ減るので小さくなる",tag:"radius"}],a:0,
+ h:"最も外側の電子殻に電子が加わると、電子どうしの関係はどうなるかを考えます。",
+ e:"陰イオンになると最も外側の電子殻に電子が加わり、電子間の反発が増大するため、半径は<b>大きくなる</b>。"},
+{kc:"K8",lv:2,q:"同じ族で原子番号が大きいほど原子半径が大きくなる理由として正しいものはどれか。",
+ c:[{t:"より外側の電子殻に電子が入り、原子核と最も外側の電子殻の距離が大きくなるから"},{t:"陽子の数が増えて電子を引きつける力が強くなるから",tag:"radius"},{t:"電子間の反発が減るから",tag:"radius"},{t:"中性子の数が増えて原子核が大きくなるから"}],a:0,
+ h:"リチウムとナトリウムで、最も外側の電子殻がそれぞれ何殻かを比べます。",
+ e:"Li は L 殻、Na は M 殻が最も外側というように、同じ族では下にいくほど<b>外側の電子殻</b>を使うようになるため、原子半径は大きくなる。"},
+{kc:"K8",lv:2,q:"同じ周期で原子番号が大きいほど原子半径が小さくなる理由として正しいものはどれか。",
+ c:[{t:"原子核の陽子の数が増え、最外殻電子を引きつける力が強くなるから"},{t:"より外側の電子殻に電子が入るから",tag:"radius"},{t:"電子の数が減るから"},{t:"最も外側の電子殻が1つ内側になるから",tag:"radius"}],a:0,
+ h:"同じ周期では最も外側の電子殻は変わりません。変化しているのは原子核のほうです。",
+ e:"同じ周期では最も外側の電子殻は同じまま、<b>陽子の数だけが増える</b>ので、電子がより強く引きつけられて原子半径は小さくなる。"},
+{kc:"K8",lv:2,q:"ナトリウム原子 Na がナトリウムイオン Na<sup>+</sup> になると半径が小さくなる。その理由として正しいものはどれか。",
+ c:[{t:"最外殻電子がすべて取り除かれ、最も外側の電子殻が1つ内側になるから"},{t:"陽子の数が増えるから"},{t:"電子間の反発が増えるから",tag:"radius"},{t:"中性子の数が減るから"}],a:0,
+ h:"Na の電子配置は K(2)L(8)M(1) です。M 殻の電子が取れると、最も外側はどの殻になるか。",
+ e:"Na は M 殻の電子1個を放して Na<sup>+</sup> になる。その結果<b>最も外側が L 殻</b>になるため、半径が大きく小さくなる。"},
+{kc:"K8",lv:2,q:"塩素原子 Cl が塩化物イオン Cl<sup>−</sup> になると半径が大きくなる。その理由として正しいものはどれか。",
+ c:[{t:"最も外側の電子殻に電子が加わり、電子間の反発が増大するから"},{t:"電子殻が1つ増えるから",tag:"config"},{t:"陽子の数が減るから"},{t:"原子核が大きくなるから"}],a:0,
+ h:"Cl が電子を1個受け取っても、電子殻の数そのものは変わりません。増えるのは何か。",
+ e:"Cl<sup>−</sup> になっても最も外側は M 殻のままだが、電子が1個増えて<b>電子間の反発が増大</b>するため、半径は大きくなる。"},
+{kc:"K8",lv:3,q:"電子配置が同じイオンどうしでは、原子番号が大きいほどイオン半径はどうなるか。",
+ c:[{t:"小さくなる"},{t:"大きくなる",tag:"radius"},{t:"変わらない"},{t:"陽イオンだけ大きくなる",tag:"radius"}],a:0,
+ h:"電子の数が同じなら、違うのは原子核の陽子の数です。陽子が多いとどうなるか。",
+ e:"電子配置が同じなら電子の数は同じ。原子番号が大きいほど<b>陽子が多く</b>、電子を強く引きつけるので、イオン半径は小さくなる。O<sup>2−</sup> ＞ Na<sup>+</sup> ＞ Al<sup>3+</sup> の順。"},
+{kc:"K8",lv:3,q:"ナトリウム Na と塩素 Cl の原子半径を比べると、どちらが大きいか。",
+ c:[{t:"Na のほうが大きい"},{t:"Cl のほうが大きい",tag:"radius"},{t:"どちらも同じ"},{t:"Cl<sup>−</sup> と比べないと決まらない",tag:"radius"}],a:0,
+ h:"どちらも第3周期の元素です。同じ周期での規則を使います。",
+ e:"どちらも第3周期なので、原子番号の小さい<b>Na のほうが大きい</b>。同じ周期では右へいくほど陽子が増え、半径は小さくなる。"},
+{kc:"K8",lv:3,q:"フッ素 F と塩素 Cl の原子半径を比べると、どちらが大きいか。",
+ c:[{t:"Cl のほうが大きい"},{t:"F のほうが大きい",tag:"radius"},{t:"どちらも同じ"},{t:"陰イオンにしないと比べられない",tag:"radius"}],a:0,
+ h:"どちらも17族の元素です。同じ族での規則を使います。",
+ e:"どちらも17族なので、原子番号の大きい<b>Cl のほうが大きい</b>。F は L 殻、Cl は M 殻が最も外側になるため。"},
+{kc:"K8",lv:3,q:"O<sup>2−</sup>、Mg<sup>2+</sup>、S<sup>2−</sup> を、半径の大きいものから順に並べたものはどれか。",
+ c:[{t:"S<sup>2−</sup> ＞ O<sup>2−</sup> ＞ Mg<sup>2+</sup>"},{t:"O<sup>2−</sup> ＞ S<sup>2−</sup> ＞ Mg<sup>2+</sup>",tag:"config"},{t:"Mg<sup>2+</sup> ＞ S<sup>2−</sup> ＞ O<sup>2−</sup>",tag:"radius"},{t:"O<sup>2−</sup> ＞ Mg<sup>2+</sup> ＞ S<sup>2−</sup>",tag:"config"}],a:0,
+ h:"まず、どのイオンがどの貴ガスと同じ電子配置かを調べます。電子の数が違うものと同じものに分けて考えます。",
+ e:"S<sup>2−</sup> は Ar 型（電子18個）で電子殻が1つ多いので最大。O<sup>2−</sup> と Mg<sup>2+</sup> はどちらも Ne 型（電子10個）で、陽子の少ない O<sup>2−</sup> のほうが大きい。よって S<sup>2−</sup> ＞ O<sup>2−</sup> ＞ Mg<sup>2+</sup>。"},
+
+/* ===== K9 位置から元素を特定（10問） ===== */
+{kc:"K9",lv:1,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。アルカリ金属元素に当てはまる領域はどれか。",
+ c:[{t:"イ"},{t:"ア",tag:"family"},{t:"ウ",tag:"family"},{t:"キ",tag:"family"}],a:0,
+ h:"アルカリ金属元素は1族ですが、水素は含みません。左端の縦の列のうち、上端の1マスを除いた部分です。",
+ e:"アルカリ金属元素は<b>イ</b>。1族のうち水素（ア）を除いた部分にあたる。ウは2族、キは17族。"},
+{kc:"K9",lv:1,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。ハロゲン元素に当てはまる領域はどれか。",
+ c:[{t:"キ"},{t:"ク",tag:"family"},{t:"カ",tag:"family"},{t:"イ",tag:"family"}],a:0,
+ h:"ハロゲン元素は17族。右端のいちばん外側の列のひとつ内側です。",
+ e:"ハロゲン元素は17族なので<b>キ</b>。いちばん右のクは18族の貴ガス元素。"},
+{kc:"K9",lv:1,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。貴ガス元素に当てはまる領域はどれか。",
+ c:[{t:"ク"},{t:"キ",tag:"family"},{t:"カ",tag:"family"},{t:"エ",tag:"typtrans"}],a:0,
+ h:"貴ガス元素は18族。周期表のいちばん右端の列です。",
+ e:"貴ガス元素は18族なので、右端の<b>ク</b>。価電子0個で反応性に乏しい。"},
+{kc:"K9",lv:2,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。アルカリ土類金属元素に当てはまる領域はどれか。",
+ c:[{t:"ウ"},{t:"イ",tag:"family"},{t:"オ",tag:"metalnon"},{t:"エ",tag:"typtrans"}],a:0,
+ h:"アルカリ土類金属元素は2族。左端から2番目の縦の列です。",
+ e:"アルカリ土類金属元素は2族なので<b>ウ</b>。Be・Mg・Ca などが属し、2価の陽イオンになりやすい。"},
+{kc:"K9",lv:2,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。領域アに位置する元素はどれか。",
+ c:[{t:"水素 H"},{t:"リチウム Li",tag:"family"},{t:"ヘリウム He",tag:"family"},{t:"ナトリウム Na",tag:"family"}],a:0,
+ h:"アは第1周期の1族、つまり周期表の左上にある1マスです。",
+ e:"領域アは第1周期1族なので<b>水素 H</b>。1族の位置にあるがアルカリ金属元素には含めず、非金属元素に分類される。"},
+{kc:"K9",lv:2,q:"第3周期の2族に位置する元素はどれか。",
+ c:[{t:"マグネシウム Mg"},{t:"カルシウム Ca",tag:"grouprow"},{t:"ナトリウム Na",tag:"grouprow"},{t:"アルミニウム Al",tag:"grouprow"}],a:0,
+ h:"第3周期は Na から Ar までの行です。そのうち左から2番目の元素を探します。",
+ e:"第3周期2族は<b>マグネシウム Mg</b>。Ca は第4周期2族、Na は第3周期1族、Al は第3周期13族。"},
+{kc:"K9",lv:2,q:"第2周期の17族に位置する元素はどれか。",
+ c:[{t:"フッ素 F"},{t:"塩素 Cl",tag:"grouprow"},{t:"酸素 O",tag:"grouprow"},{t:"ネオン Ne",tag:"grouprow"}],a:0,
+ h:"第2周期は Li から Ne までの行です。17族は右から2番目の列です。",
+ e:"第2周期17族は<b>フッ素 F</b>。Cl は第3周期17族、O は第2周期16族、Ne は第2周期18族。"},
+{kc:"K9",lv:3,fig:"ptable",q:"図は周期表の第6周期までの概略を示したものである。典型元素に当てはまる領域をすべて選んだものはどれか。",
+ c:[{t:"ア・イ・ウ・オ・カ・キ・ク"},{t:"エ",tag:"typtrans"},{t:"イ・ウ・エ",tag:"typtrans"},{t:"オ・カ・キ・ク",tag:"typtrans"}],a:0,
+ h:"典型元素は1族・2族と13〜18族。遷移元素にあたる中央の区画だけを除きます。",
+ e:"典型元素は中央の区画エ（遷移元素）を除いた<b>ア・イ・ウ・オ・カ・キ・ク</b>のすべて。典型元素には金属も非金属も含まれる。"},
+{kc:"K9",lv:3,q:"原子番号20 の元素は、周期表のどの位置にあり、何に分類されるか。",
+ c:[{t:"第4周期2族で、アルカリ土類金属元素"},{t:"第3周期2族で、アルカリ土類金属元素",tag:"grouprow"},{t:"第4周期1族で、アルカリ金属元素",tag:"family"},{t:"第4周期2族で、遷移元素",tag:"typtrans"}],a:0,
+ h:"原子番号20 はカルシウム。電子配置は K(2)L(8)M(8)N(2) です。最も外側の電子殻と価電子の数から位置を決めます。",
+ e:"原子番号20 の Ca は電子配置 K(2)L(8)M(8)N(2)。最も外側が N 殻なので<b>第4周期</b>、価電子2個なので<b>2族</b>で、アルカリ土類金属元素。"},
+{kc:"K9",lv:3,q:"第3周期の元素のうち、最も陽性が強いものはどれか。",
+ c:[{t:"ナトリウム Na"},{t:"塩素 Cl",tag:"posneg"},{t:"アルゴン Ar",tag:"family"},{t:"ケイ素 Si",tag:"posneg"}],a:0,
+ h:"陽性は左にいくほど強くなります。第3周期でいちばん左にある元素はどれか。",
+ e:"第3周期でいちばん左にあるのは<b>Na</b>で、最も陽性が強い。価電子1個を放して1価の陽イオンになりやすい。"}
+);
+
+const STEPS=[
+/* ---- 穴埋め版（S1・S2 を提示） ---- */
+{kc:"K8",lv:2,fill:true,
+ stem:"O<sup>2−</sup>、Mg<sup>2+</sup>、S<sup>2−</sup> を、イオン半径の大きいものから順に並べよ。",
+ given:[{label:"S1 何の比較か",text:"3つとも<b>イオンどうし</b>の比較"},
+        {label:"S2 使う規則",text:"まず<b>電子配置（どの貴ガス型か）</b>で分け、同じ配置どうしは<b>陽子の数</b>で比べる"}],
+ steps:[
+  {label:"S3 電子配置",q:"3つのイオンの電子配置の組合せとして正しいものを選べ。",
+   c:[{t:"O<sup>2−</sup> と Mg<sup>2+</sup> が Ne 型、S<sup>2−</sup> が Ar 型"},{t:"3つとも Ne 型",tag:"config"},{t:"3つとも Ar 型",tag:"config"},{t:"O<sup>2−</sup> が Ar 型、Mg<sup>2+</sup> と S<sup>2−</sup> が Ne 型",tag:"config"}],a:0,
+   h:"それぞれのイオンがもつ電子の総数を数えます。O は8、Mg は12、S は16 が原子の電子数です。",
+   e:"O<sup>2−</sup> は 8＋2＝10 個、Mg<sup>2+</sup> は 12−2＝10 個で<b>Ne 型</b>。S<sup>2−</sup> は 16＋2＝18 個で<b>Ar 型</b>。"},
+  {label:"S4 並べ替え",q:"イオン半径の大きい順に並べたものを選べ。",
+   c:[{t:"S<sup>2−</sup> ＞ O<sup>2−</sup> ＞ Mg<sup>2+</sup>"},{t:"O<sup>2−</sup> ＞ S<sup>2−</sup> ＞ Mg<sup>2+</sup>",tag:"config"},{t:"Mg<sup>2+</sup> ＞ O<sup>2−</sup> ＞ S<sup>2−</sup>",tag:"radius"},{t:"S<sup>2−</sup> ＞ Mg<sup>2+</sup> ＞ O<sup>2−</sup>",tag:"radius"}],a:0,
+   h:"電子殻が1つ多いイオンが最大になります。残り2つは陽子の数で決めます。",
+   e:"Ar 型の S<sup>2−</sup> が電子殻1つぶん大きく最大。Ne 型の2つは陽子の少ない O<sup>2−</sup>（8個）が Mg<sup>2+</sup>（12個）より大きい。"}]},
+
+{kc:"K8",lv:2,fill:true,
+ stem:"フッ素 F と塩素 Cl の原子半径を比べ、大きいほうを答えよ。",
+ given:[{label:"S1 何の比較か",text:"<b>原子どうし</b>の比較で、どちらも17族（同じ族）"},
+        {label:"S2 使う規則",text:"同じ族では<b>原子番号が大きいほど原子半径は大きい</b>"}],
+ steps:[
+  {label:"S3 決め手",q:"この比較で決め手になるものを選べ。",
+   c:[{t:"最も外側の電子殻が何番目の殻か"},{t:"原子核の陽子の数",tag:"radius"},{t:"中性子の数"},{t:"電子間の反発の大きさ",tag:"radius"}],a:0,
+   h:"同じ族では、下にいくほど電子が入る場所が変わります。何が変わるのかを答えます。",
+   e:"同じ族では下にいくほど<b>外側の電子殻</b>に電子が入り、原子核から遠くなる。陽子の数が決め手になるのは同じ周期での比較。"},
+  {label:"S4 結論",q:"原子半径が大きいのはどちらか。",
+   c:[{t:"Cl（最も外側が M 殻）"},{t:"F（最も外側が L 殻）",tag:"radius"},{t:"どちらも同じ"},{t:"F<sup>−</sup> と Cl<sup>−</sup> にしないと比べられない",tag:"radius"}],a:0,
+   h:"F は第2周期、Cl は第3周期です。最も外側の電子殻がそれぞれ何殻になるかを考えます。",
+   e:"F は L 殻、Cl は M 殻が最も外側。原子核から遠い分だけ<b>Cl のほうが原子半径が大きい</b>。"}]},
+
+{kc:"K8",lv:3,fill:true,
+ stem:"S<sup>2−</sup>、Cl<sup>−</sup>、K<sup>+</sup>、Ca<sup>2+</sup> を、イオン半径の大きいものから順に並べよ。",
+ given:[{label:"S1 何の比較か",text:"4つとも<b>イオンどうし</b>の比較"},
+        {label:"S2 電子配置",text:"4つとも電子の総数は18個で、<b>すべて Ar と同じ電子配置</b>"}],
+ steps:[
+  {label:"S3 使う規則",q:"電子配置が同じイオンどうしを比べるとき、決め手になるものを選べ。",
+   c:[{t:"原子核の陽子の数（原子番号）が多いほど半径は小さい"},{t:"原子番号が大きいほど半径は大きい",tag:"radius"},{t:"電子殻の数が多いほど半径は大きい",tag:"config"},{t:"イオンの価数が大きいほど半径は大きい",tag:"radius"}],a:0,
+   h:"電子の数が同じなら、電子を引きつける力の違いはどこから来るかを考えます。",
+   e:"電子数が同じなら、<b>陽子が多いほど強く電子を引きつける</b>ので半径は小さくなる。"},
+  {label:"S4 並べ替え",q:"イオン半径の大きい順に並べたものを選べ。",
+   c:[{t:"S<sup>2−</sup> ＞ Cl<sup>−</sup> ＞ K<sup>+</sup> ＞ Ca<sup>2+</sup>"},{t:"Ca<sup>2+</sup> ＞ K<sup>+</sup> ＞ Cl<sup>−</sup> ＞ S<sup>2−</sup>",tag:"radius"},{t:"K<sup>+</sup> ＞ Ca<sup>2+</sup> ＞ S<sup>2−</sup> ＞ Cl<sup>−</sup>",tag:"config"},{t:"Cl<sup>−</sup> ＞ S<sup>2−</sup> ＞ Ca<sup>2+</sup> ＞ K<sup>+</sup>",tag:"radius"}],a:0,
+   h:"S・Cl・K・Ca の原子番号はそれぞれ16・17・19・20 です。小さい順に並べると半径はどうなるか。",
+   e:"原子番号は S(16)＜Cl(17)＜K(19)＜Ca(20)。陽子が少ないほど半径が大きいので <b>S<sup>2−</sup> ＞ Cl<sup>−</sup> ＞ K<sup>+</sup> ＞ Ca<sup>2+</sup></b>。"}]},
+
+{kc:"K9",lv:2,fill:true,
+ stem:"第3周期16族に位置する元素について、元素記号と分類を答えよ。",
+ given:[{label:"S1 周期",text:"第3周期 → 最も外側の電子殻は<b>M 殻</b>"},
+        {label:"S2 族",text:"16族 → 価電子は<b>6個</b>"}],
+ steps:[
+  {label:"S3 元素記号",q:"この元素の元素記号を選べ。",
+   c:[{t:"S"},{t:"O",tag:"grouprow"},{t:"Si",tag:"grouprow"},{t:"Cl",tag:"grouprow"}],a:0,
+   h:"第3周期は Na から Ar まで。左から数えて16族にあたるものを探します。",
+   e:"第3周期は Na・Mg・Al・Si・P・S・Cl・Ar。16族は<b>硫黄 S</b>（原子番号16）。O は第2周期16族。"},
+  {label:"S4 分類と性質",q:"この元素の分類として正しいものを選べ。",
+   c:[{t:"典型元素の非金属元素で、2価の陰イオンになりやすい"},{t:"典型元素の金属元素で、2価の陽イオンになりやすい",tag:"metalnon"},{t:"遷移元素で、金属元素である",tag:"typtrans"},{t:"貴ガス元素で、イオンになりにくい",tag:"family"}],a:0,
+   h:"16族は典型元素です。価電子6個の原子が貴ガスと同じ配置になるには、電子を何個やりとりすればよいか。",
+   e:"S は16族の<b>典型元素で非金属元素</b>。価電子6個なので電子を2個受け取って S<sup>2−</sup>（2価の陰イオン）になりやすい。"}]},
+
+{kc:"K9",lv:2,fill:true,
+ stem:"第4周期1族に位置する元素について、元素記号と分類を答えよ。",
+ given:[{label:"S1 周期",text:"第4周期 → 最も外側の電子殻は<b>N 殻</b>"},
+        {label:"S2 族",text:"1族 → 価電子は<b>1個</b>"}],
+ steps:[
+  {label:"S3 元素記号",q:"この元素の元素記号を選べ。",
+   c:[{t:"K"},{t:"Na",tag:"grouprow"},{t:"Ca",tag:"grouprow"},{t:"Li",tag:"grouprow"}],a:0,
+   h:"第4周期の先頭にくる元素です。原子番号19 にあたります。",
+   e:"第4周期1族は<b>カリウム K</b>（原子番号19）。電子配置は K(2)L(8)M(8)N(1) で、M 殻が満たされる前に N 殻へ電子が入る。"},
+  {label:"S4 分類と性質",q:"この元素の分類として正しいものを選べ。",
+   c:[{t:"アルカリ金属元素で、1価の陽イオンになりやすい"},{t:"アルカリ土類金属元素で、2価の陽イオンになりやすい",tag:"family"},{t:"ハロゲン元素で、1価の陰イオンになりやすい",tag:"family"},{t:"遷移元素で、複数の価数をとる",tag:"typtrans"}],a:0,
+   h:"水素を除く1族の元素は何とよばれるかを思い出します。価電子1個の金属元素です。",
+   e:"K は水素を除く1族なので<b>アルカリ金属元素</b>。価電子1個を放して K<sup>+</sup> になりやすい。"}]},
+
+/* ---- 自力版（S1 から） ---- */
+{kc:"K8",lv:2,fill:false,
+ stem:"ナトリウム Na と塩素 Cl の原子半径を比べ、大きいほうを答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 何の比較か",q:"この比較はどれに当たるか。",
+   c:[{t:"原子どうしの比較で、どちらも第3周期（同じ周期）"},{t:"原子どうしの比較で、どちらも同じ族",tag:"grouprow"},{t:"イオンどうしの比較",tag:"radius"},{t:"原子とそのイオンの比較",tag:"radius"}],a:0,
+   h:"Na は原子番号11、Cl は原子番号17 です。周期表で同じ行にあるか、同じ列にあるか。",
+   e:"Na も Cl も原子のまま比べており、どちらも<b>第3周期</b>にある。つまり同じ周期での原子どうしの比較。"},
+  {label:"S2 使う規則",q:"この比較で使う規則を選べ。",
+   c:[{t:"同じ周期では、原子番号が大きいほど原子半径は小さい"},{t:"同じ周期では、原子番号が大きいほど原子半径は大きい",tag:"radius"},{t:"同じ族では、原子番号が大きいほど原子半径は大きい",tag:"grouprow"},{t:"電子配置が同じなら、原子番号が大きいほど半径は小さい",tag:"radius"}],a:0,
+   h:"同じ周期では最も外側の電子殻が変わりません。変わるのは原子核の側です。",
+   e:"同じ周期では陽子が増えるほど最外殻電子を強く引きつけるので、<b>原子番号が大きいほど半径は小さい</b>。"},
+  {label:"S3 決め手",q:"この比較の決め手になるものを選べ。",
+   c:[{t:"原子核の陽子の数"},{t:"最も外側の電子殻が何番目か",tag:"radius"},{t:"中性子の数"},{t:"電子殻の数",tag:"config"}],a:0,
+   h:"最も外側の電子殻はどちらも同じ M 殻です。では何が違うのか。",
+   e:"どちらも最も外側は M 殻。違うのは<b>陽子の数</b>（Na は11、Cl は17）で、多いほど電子を強く引きつける。"},
+  {label:"S4 結論",q:"原子半径が大きいのはどちらか。",
+   c:[{t:"Na"},{t:"Cl",tag:"radius"},{t:"どちらも同じ"},{t:"イオンにしないと決まらない",tag:"radius"}],a:0,
+   h:"陽子が少ないほうが電子を引きつける力が弱く、広がります。",
+   e:"陽子が少ない<b>Na のほうが原子半径は大きい</b>。同じ周期では右へいくほど半径が小さくなる。"}]},
+
+{kc:"K8",lv:3,fill:false,
+ stem:"酸素 O、マグネシウム Mg、硫黄 S の原子半径を、大きいものから順に並べよ。",
+ given:[],
+ steps:[
+  {label:"S1 何の比較か",q:"この比較はどれに当たるか。",
+   c:[{t:"原子どうしの比較で、同じ周期の組と同じ族の組が混ざっている"},{t:"すべて同じ周期の原子どうしの比較",tag:"grouprow"},{t:"すべてイオンどうしの比較",tag:"radius"},{t:"原子とそのイオンの比較",tag:"radius"}],a:0,
+   h:"O は第2周期16族、Mg は第3周期2族、S は第3周期16族です。どの組が同じ行で、どの組が同じ列か。",
+   e:"Mg と S は同じ第3周期、O と S は同じ16族。<b>2つの規則を使い分ける</b>必要がある。"},
+  {label:"S2 同じ族の比較",q:"O と S ではどちらの原子半径が大きいか。",
+   c:[{t:"S（同じ族では原子番号が大きいほど大きい）"},{t:"O（同じ族では原子番号が大きいほど小さい）",tag:"radius"},{t:"どちらも同じ"},{t:"陰イオンにしないと比べられない",tag:"radius"}],a:0,
+   h:"どちらも16族です。S のほうが電子殻を1つ多く使っています。",
+   e:"同じ族では下にいくほど外側の電子殻を使うので、<b>S のほうが大きい</b>。"},
+  {label:"S3 同じ周期の比較",q:"Mg と S ではどちらの原子半径が大きいか。",
+   c:[{t:"Mg（同じ周期では原子番号が大きいほど小さい）"},{t:"S（同じ周期では原子番号が大きいほど大きい）",tag:"radius"},{t:"どちらも同じ"},{t:"価電子の数が同じなので比べられない",tag:"valence"}],a:0,
+   h:"どちらも第3周期です。陽子の数は Mg が12、S が16 です。",
+   e:"同じ周期では陽子が多いほど電子を強く引きつけるので、陽子の少ない<b>Mg のほうが大きい</b>。"},
+  {label:"S4 並べ替え",q:"原子半径の大きい順に並べたものを選べ。",
+   c:[{t:"Mg ＞ S ＞ O"},{t:"O ＞ S ＞ Mg",tag:"radius"},{t:"S ＞ Mg ＞ O",tag:"radius"},{t:"Mg ＞ O ＞ S",tag:"radius"}],a:0,
+   h:"S ＞ O と Mg ＞ S の2つの結果をつなげます。",
+   e:"Mg ＞ S、S ＞ O が分かったので、合わせて <b>Mg ＞ S ＞ O</b>。"}]},
+
+{kc:"K8",lv:2,fill:false,
+ stem:"リチウムイオン Li<sup>+</sup> とナトリウムイオン Na<sup>+</sup> のイオン半径を比べ、大きいほうを答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 何の比較か",q:"この比較はどれに当たるか。",
+   c:[{t:"イオンどうしの比較で、どちらも1族（同じ族）"},{t:"原子どうしの比較",tag:"radius"},{t:"原子とそのイオンの比較",tag:"radius"},{t:"電子配置が同じイオンどうしの比較",tag:"config"}],a:0,
+   h:"Li<sup>+</sup> は電子2個、Na<sup>+</sup> は電子10個です。電子配置が同じかどうかを確かめます。",
+   e:"どちらも1族の陽イオンどうしの比較。Li<sup>+</sup> は He 型、Na<sup>+</sup> は Ne 型で<b>電子配置は同じではない</b>。"},
+  {label:"S2 使う規則",q:"この比較で使う規則を選べ。",
+   c:[{t:"同じ族では、原子番号が大きいほど半径は大きい"},{t:"電子配置が同じなら、陽子が多いほど半径は小さい",tag:"config"},{t:"同じ周期では、原子番号が大きいほど半径は小さい",tag:"grouprow"},{t:"陽イオンは必ず元の原子より大きい",tag:"radius"}],a:0,
+   h:"同じ族の上下の比較なので、電子殻の数の違いで決まります。",
+   e:"同じ族の比較なので、<b>原子番号が大きいほど外側の電子殻を使い、半径は大きい</b>という規則を使う。"},
+  {label:"S3 電子配置",q:"2つのイオンの最も外側の電子殻の組合せとして正しいものを選べ。",
+   c:[{t:"Li<sup>+</sup> は K 殻、Na<sup>+</sup> は L 殻"},{t:"Li<sup>+</sup> は L 殻、Na<sup>+</sup> は M 殻",tag:"config"},{t:"どちらも L 殻",tag:"config"},{t:"Li<sup>+</sup> は M 殻、Na<sup>+</sup> は K 殻",tag:"config"}],a:0,
+   h:"Li は K(2)L(1)、Na は K(2)L(8)M(1) です。最外殻電子を放したあと、最も外側になるのはどの殻か。",
+   e:"Li は L 殻の電子を放して最も外側が<b>K 殻</b>に、Na は M 殻の電子を放して最も外側が<b>L 殻</b>になる。"},
+  {label:"S4 結論",q:"イオン半径が大きいのはどちらか。",
+   c:[{t:"Na<sup>+</sup>"},{t:"Li<sup>+</sup>",tag:"radius"},{t:"どちらも同じ"},{t:"価数が同じなので比べられない",tag:"radius"}],a:0,
+   h:"最も外側の電子殻が原子核から遠いほうが大きくなります。",
+   e:"Na<sup>+</sup> は最も外側が L 殻で、K 殻の Li<sup>+</sup> より原子核から遠い。よって<b>Na<sup>+</sup> のほうが大きい</b>。"}]},
+
+{kc:"K9",lv:3,fill:false,
+ stem:"原子番号12 の元素について、周期表での位置・元素記号・分類を答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 周期",q:"この原子の電子配置から、何周期の元素かを選べ。",
+   c:[{t:"第3周期（電子配置は K(2)L(8)M(2)）"},{t:"第2周期（電子配置は K(2)L(10)）",tag:"config"},{t:"第4周期（電子配置は K(2)L(8)M(8)N(2)）",tag:"config"},{t:"第1周期（電子配置は K(12)）",tag:"config"}],a:0,
+   h:"電子12個を K 殻から順に入れます。K 殻は2個、L 殻は8個まで入ります。",
+   e:"電子12個は K(2)L(8)M(2) と入る。最も外側が M 殻なので<b>第3周期</b>。"},
+  {label:"S2 族",q:"この原子は何族か。",
+   c:[{t:"2族（価電子2個）"},{t:"12族（価電子2個）",tag:"typtrans"},{t:"2周期（価電子2個）",tag:"grouprow"},{t:"16族（価電子6個）",tag:"valence"}],a:0,
+   h:"最も外側の M 殻に入っている電子の数が価電子の数です。典型元素では族番号の一の位と一致します。",
+   e:"最も外側の M 殻に電子2個＝価電子2個なので<b>2族</b>。12族は遷移元素で、この関係は使えない。"},
+  {label:"S3 元素記号",q:"この元素の元素記号を選べ。",
+   c:[{t:"Mg"},{t:"Ca",tag:"grouprow"},{t:"C",tag:"grouprow"},{t:"Si",tag:"grouprow"}],a:0,
+   h:"第3周期2族にあたる元素です。原子番号12 の元素名を思い出します。",
+   e:"第3周期2族、原子番号12 は<b>マグネシウム Mg</b>。"},
+  {label:"S4 分類",q:"この元素の分類として正しいものを選べ。",
+   c:[{t:"アルカリ土類金属元素で、2価の陽イオンになりやすい"},{t:"アルカリ金属元素で、1価の陽イオンになりやすい",tag:"family"},{t:"遷移元素で、金属元素である",tag:"typtrans"},{t:"典型元素の非金属元素である",tag:"metalnon"}],a:0,
+   h:"2族の元素にはどんな呼び名がついていたかを思い出します。価電子2個の金属元素です。",
+   e:"2族なので<b>アルカリ土類金属元素</b>。価電子2個を放して Mg<sup>2+</sup> になりやすい。"}]},
+
+{kc:"K9",lv:3,fill:false,
+ stem:"原子番号17 の元素について、周期表での位置・元素記号・分類を答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 周期",q:"この原子の電子配置から、何周期の元素かを選べ。",
+   c:[{t:"第3周期（電子配置は K(2)L(8)M(7)）"},{t:"第2周期（電子配置は K(2)L(15)）",tag:"config"},{t:"第4周期（電子配置は K(2)L(8)M(6)N(1)）",tag:"config"},{t:"第7周期（電子配置は K(2)L(8)M(7)）",tag:"grouprow"}],a:0,
+   h:"電子17個を K 殻から順に入れます。K 殻は2個、L 殻は8個まで入ります。",
+   e:"電子17個は K(2)L(8)M(7) と入る。最も外側が M 殻なので<b>第3周期</b>。M 殻の7という数字は族のほうに効いてくる。"},
+  {label:"S2 族",q:"この原子は何族か。",
+   c:[{t:"17族（価電子7個）"},{t:"7族（価電子7個）",tag:"typtrans"},{t:"3族（第3周期だから）",tag:"grouprow"},{t:"18族（価電子0個）",tag:"valence"}],a:0,
+   h:"最も外側の M 殻に入っている電子は7個。典型元素では価電子の数が族番号の一の位になります。",
+   e:"価電子7個なので一の位が7の族、つまり<b>17族</b>。7族は遷移元素なので当てはまらない。"},
+  {label:"S3 元素記号",q:"この元素の元素記号を選べ。",
+   c:[{t:"Cl"},{t:"F",tag:"grouprow"},{t:"S",tag:"grouprow"},{t:"Ar",tag:"grouprow"}],a:0,
+   h:"第3周期17族にあたる元素です。原子番号17 の元素名を思い出します。",
+   e:"第3周期17族、原子番号17 は<b>塩素 Cl</b>。F は第2周期17族、Ar は第3周期18族。"},
+  {label:"S4 分類",q:"この元素の分類として正しいものを選べ。",
+   c:[{t:"ハロゲン元素で、1価の陰イオンになりやすい"},{t:"貴ガス元素で、イオンになりにくい",tag:"family"},{t:"アルカリ金属元素で、1価の陽イオンになりやすい",tag:"family"},{t:"遷移元素で、金属元素である",tag:"typtrans"}],a:0,
+   h:"17族の元素にはどんな呼び名がついていたかを思い出します。あと1個電子を受け取れば貴ガスと同じ配置です。",
+   e:"17族なので<b>ハロゲン元素</b>。電子を1個受け取って Cl<sup>−</sup> になり、Ar と同じ電子配置になる。"}]}
+];
+
+const SUMMARY=`<table class="sum">
+<thead><tr><th>観点</th><th>規則・内容</th></tr></thead>
+<tbody>
+<tr><th>族と周期</th><td>縦の列＝族（1〜18族）／横の行＝周期（1〜7周期）。性質が似るのは同じ族どうし</td></tr>
+<tr><th>価電子</th><td>典型元素では族番号の一の位に等しい。<b>18族だけは0個</b></td></tr>
+<tr><th>典型元素／遷移元素</th><td>典型＝1族・2族と13〜18族／遷移＝3〜12族。<b>遷移元素はすべて金属元素</b></td></tr>
+<tr><th>金属／非金属</th><td>水素を除く左側が金属元素。<b>左下ほど陽性が強く、右上ほど陰性が強い</b>（貴ガスを除く）</td></tr>
+<tr><th>同族元素の名前</th><td>1族（Hを除く）＝アルカリ金属／2族＝アルカリ土類金属／17族＝ハロゲン／18族＝貴ガス</td></tr>
+<tr><th>イオン化エネルギー</th><td>電子を取り去るのに必要。小さいほど陽イオンになりやすい。右へ・上へいくほど大きい</td></tr>
+<tr><th>電子親和力</th><td>電子を受け取ると放出される。大きいほど陰イオンになりやすい。17族で特に大きい</td></tr>
+<tr><th>原子半径</th><td>同じ族→原子番号が大きいほど<b>大</b>（外側の殻を使う）／同じ周期→原子番号が大きいほど<b>小</b>（陽子が増える）</td></tr>
+<tr><th>イオン半径</th><td>陽イオンは元の原子より<b>小</b>／陰イオンは<b>大</b>。電子配置が同じなら陽子が多いほど<b>小</b></td></tr>
+</tbody></table>`;
+
+/* ===== 出題エンジン（211〜214 と共通） ===== */
+// 結果送信をする場合のみ Apps Script の URL を入れる（空なら送信しない）
+const GAS_URL="https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const PASS_RATE=0.8, N_L1=3, N_L2=4, N_L3=3;
+let session=[], idx=0, records=[], studentId="", attempt=1;
+
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function el(id){return document.getElementById(id);}
+
+function pickLevel(lv,n,used,usedKc){
+  const pool=shuffle(POOL.map((it,i)=>i).filter(i=>POOL[i].lv===lv&&used.indexOf(i)<0));
+  const out=[];
+  // まだ出ていないKCを優先
+  pool.forEach(i=>{ if(out.length<n && usedKc.indexOf(POOL[i].kc)<0){out.push(i);usedKc.push(POOL[i].kc);} });
+  pool.forEach(i=>{ if(out.length<n && out.indexOf(i)<0) out.push(i); });
+  out.forEach(i=>used.push(i));
+  return out.slice(0,n);
+}
+function mkMcq(i){
+  const it=POOL[i], order=shuffle(it.c.map((_,j)=>j));
+  return {type:"mcq",src:it,order:order,a:order.indexOf(it.a)};
+}
+function mkStep(def){
+  return {type:"step",src:def,sub:0,subResults:[],
+    steps:def.steps.map(st=>{const o=shuffle(st.c.map((_,j)=>j));return {src:st,order:o,a:o.indexOf(st.a)};})};
+}
+function buildSession(){
+  const used=[],usedKc=[];
+  const l1=pickLevel(1,N_L1,used,usedKc), l2=pickLevel(2,N_L2,used,usedKc), l3=pickLevel(3,N_L3,used,usedKc);
+  const fill=shuffle(STEPS.filter(s=>s.fill))[0], free=shuffle(STEPS.filter(s=>!s.fill))[0];
+  const s=[];
+  l1.forEach(i=>s.push(mkMcq(i)));
+  l2.forEach(i=>s.push(mkMcq(i)));
+  s.push(mkStep(fill));
+  l3.forEach(i=>s.push(mkMcq(i)));
+  s.push(mkStep(free));
+  return s;
 }
 
-function shuffleChoices(q){
-  const order=shuffle([0,1,2,3]);
-  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
-}
+window.addEventListener('DOMContentLoaded',()=>{
+  el('uTitle').textContent=UNIT.code+" "+UNIT.title;
+  el('uSub').innerHTML=UNIT.sub;
+  el('kcPreview').innerHTML=Object.keys(KC).map(k=>`<li>${KC[k].name}</li>`).join('');
+  el('totalBadge').textContent=`全${POOL.length+STEPS.length}問収録`;
+  // 学籍番号の引き継ぎ：一覧ページや前回の利用で登録した番号を初期表示する
+  try{ const saved=localStorage.getItem('quizStudentId'); if(saved) el('studentId').value=saved; }catch(e){}
+});
 
-function showOnly(id){
-  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
-}
-
-function toHalfWidthDigits(s){
-  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
-}
-
+function toHalfWidthDigits(s){return s.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);});}
 function startQuiz(){
-  const idInput=document.getElementById("studentId");
-  const normalized=toHalfWidthDigits(idInput.value.trim());
-  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(normalized)){
+  studentId=toHalfWidthDigits((el('studentId').value||'').trim());
+  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(studentId)){
     alert("学籍番号が正しくありません。\n1桁目は学年「1」、2桁目は組「1〜6」、3・4桁目は出席番号「01〜40」です（例：1年1組4番→1104）。");
-    idInput.focus();
-    return;
+    el('studentId').focus(); return;
   }
-  idInput.value=normalized;
-  studentId=normalized;
-  try{localStorage.setItem('quizStudentId',normalized);}catch(e){}
-  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
-  idx=0; score=0; results=[];
-  showOnly("quiz");
-  renderQ();
+  el('studentId').value=studentId;
+  try{localStorage.setItem('quizStudentId',studentId);}catch(e){}
+  session=buildSession(); idx=0; records=[];
+  el('start').classList.add('hidden'); el('result').classList.add('hidden');
+  el('quiz').classList.remove('hidden');
+  window.scrollTo(0,0); render();
+}
+function lvChip(lv){return `<span class="chip l${lv}">${lv===1?'基本':(lv===2?'標準':'発展')}</span>`;}
+function figHtml(key){
+  if(!key||!FIGS[key]) return '';
+  return `<img class="qfig" src="${FIGS[key].src}" alt="${FIGS[key].alt}">`;
 }
 
-function renderQ(){
-  const q=session[idx];
-  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
-  document.getElementById("qnum").textContent=(idx+1)+"/10";
-  document.getElementById("qtext").textContent=q.q;
-  document.getElementById("exp").style.display="none";
-  document.getElementById("nextBtn").style.display="none";
-
-  const ci=document.getElementById("choices");
-  ci.innerHTML="";
-  q.choices.forEach((c,i)=>{
-    const btn=document.createElement("button");
-    btn.className="choice-btn";
-    btn.textContent=c;
-    btn.onclick=()=>select(i);
-    ci.appendChild(btn);
+function render(){
+  const item=session[idx]; attempt=1;
+  el('pbar').style.width=(idx/session.length*100)+'%';
+  el('qnum').textContent=`${idx+1} / ${session.length}`;
+  el('hint').style.display='none'; el('exp').style.display='none';
+  el('nextBtn').style.display='none';
+  el('stepDone').innerHTML=''; el('stemBox').innerHTML=''; el('figBox').innerHTML='';
+  if(item.type==='mcq'){
+    const it=item.src;
+    el('metaRow').innerHTML=`<span class="chip kc">${KC[it.kc].short}</span>${lvChip(it.lv)}`;
+    el('figBox').innerHTML=figHtml(it.fig);
+    el('qtext').innerHTML=it.q;
+    el('choices').innerHTML=item.order.map((oi,k)=>
+      `<button class="choice-btn" data-k="${k}" onclick="answerMcq(${k})">${it.c[oi].t}</button>`).join('');
+  }else{ renderStep(); }
+}
+function renderStep(){
+  const item=session[idx], def=item.src, st=item.steps[item.sub];
+  el('metaRow').innerHTML=`<span class="chip kc">${KC[def.kc].short}</span>${lvChip(def.lv)}`+
+    (def.fill?`<span class="chip fill">穴埋め（S1・S2 は提示）</span>`:`<span class="chip fill">ステップ分解</span>`);
+  el('stemBox').innerHTML=`<div class="stem">${def.stem}</div>`;
+  el('figBox').innerHTML=figHtml(def.fig);
+  let done=(def.given||[]).map(g=>`<div class="step-row given"><span class="step-tag">${g.label}</span><span>${g.text}</span></div>`);
+  item.subResults.forEach((r,i)=>{
+    const s=item.steps[i];
+    done.push(`<div class="step-row ${r.score<1?'miss':''}"><span class="step-tag">${s.src.label}</span><span>${s.src.c[s.src.a].t}${r.score<1?'　<b>（誤答→修正）</b>':''}</span></div>`);
+  });
+  el('stepDone').innerHTML=done.join('');
+  el('qtext').innerHTML=`<span style="color:#6b46c1">［${st.src.label}］</span> ${st.src.q}`;
+  el('choices').innerHTML=st.order.map((oi,k)=>
+    `<button class="choice-btn" data-k="${k}" onclick="answerStep(${k})">${st.src.c[oi].t}</button>`).join('');
+}
+function judge(chosenK, srcQ, orderArr, correctK, onDone){
+  const btns=[...el('choices').querySelectorAll('.choice-btn')];
+  if(chosenK===correctK){
+    btns.forEach(b=>b.disabled=true); btns[chosenK].classList.add('correct');
+    onDone(attempt===1?1:0.5,null); showExp(srcQ); return;
+  }
+  const tag=srcQ.c[orderArr[chosenK]].tag||null;
+  btns[chosenK].classList.add('wrong'); btns[chosenK].disabled=true;
+  if(attempt===1){
+    attempt=2;
+    el('hint').innerHTML=`<span class="hl">ヒント</span>${srcQ.h}`;
+    el('hint').style.display='block';
+    onDone(null,tag);
+  }else{
+    btns.forEach(b=>b.disabled=true); btns[correctK].classList.add('correct');
+    onDone(0,tag); showExp(srcQ);
+  }
+}
+function showExp(srcQ){
+  el('exp').innerHTML=`<b>解説</b>　${srcQ.e}`;
+  el('exp').style.display='block';
+  el('nextBtn').style.display='block';
+  el('nextBtn').textContent=(idx===session.length-1&&!isMidStep())?'結果を見る →':'次へ →';
+}
+function isMidStep(){const it=session[idx];return it.type==='step'&&it.sub<it.steps.length-1;}
+function answerMcq(k){
+  const item=session[idx], it=item.src;
+  if(!item.tags) item.tags=[];
+  judge(k,it,item.order,item.a,(score,tag)=>{
+    if(tag) item.tags.push(tag);
+    if(score!==null) records.push({kc:it.kc,lv:it.lv,q:it.q,fig:it.fig,correct:it.c[it.a].t,score:score,tags:item.tags.slice(),exp:it.e,label:null});
   });
 }
-
-function select(chosen){
-  const q=session[idx];
-  const btns=document.querySelectorAll(".choice-btn");
-  btns.forEach(b=>b.disabled=true);
-  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
-  if(chosen!==q.a) btns[q.a].classList.add("correct");
-
-  if(chosen===q.a) score++;
-  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
-
-  const expBox=document.getElementById("exp");
-  expBox.textContent=q.exp;
-  expBox.style.display="block";
-  document.getElementById("nextBtn").style.display="block";
-  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+function answerStep(k){
+  const item=session[idx], st=item.steps[item.sub];
+  if(!st.tags) st.tags=[];
+  judge(k,st.src,st.order,st.a,(score,tag)=>{
+    if(tag) st.tags.push(tag);
+    if(score!==null) item.subResults.push({score:score,tags:st.tags.slice()});
+  });
 }
-
 function next(){
+  const item=session[idx];
+  if(item.type==='step'&&item.sub<item.steps.length-1){
+    item.sub++; attempt=1;
+    el('hint').style.display='none'; el('exp').style.display='none'; el('nextBtn').style.display='none';
+    renderStep(); return;
+  }
+  if(item.type==='step'){
+    const sc=item.subResults.map(r=>r.score);
+    const avg=sc.reduce((a,b)=>a+b,0)/sc.length;
+    const tags=item.subResults.reduce((a,r)=>a.concat(r.tags),[]);
+    const detail=item.steps.map((s,i)=>`${s.src.label}：${item.subResults[i].score===1?'○':(item.subResults[i].score===0.5?'△':'×')}`).join('　');
+    records.push({kc:item.src.kc,lv:item.src.lv,q:item.src.stem,fig:item.src.fig,correct:detail,score:avg,tags:tags,exp:item.steps[item.steps.length-1].src.e,label:'ステップ問題'});
+  }
   idx++;
-  if(idx>=10){showResult();return;}
-  renderQ();
+  if(idx>=session.length){ showResult(); return; }
+  render();
 }
-
+function stripTags(x){return String(x).replace(/<[^>]+>/g,"");}
+function send(pt,full){
+  const st=el('submitStatus');
+  if(!GAS_URL){ if(st) st.textContent="※送信先が未設定のため、この結果は記録されていません"; return; }
+  const payload={studentId:studentId,quizName:UNIT.code+" "+UNIT.title,score:pt,total:full,
+    passed:(full&&pt/full>=PASS_RATE)?"合格":"不合格",timestamp:new Date().toISOString(),
+    missed:records.filter(r=>r.score<1).map(r=>stripTags(r.q))};
+  try{
+    fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)});
+    if(st) st.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){ if(st) st.textContent="※通信エラーのため記録できませんでした"; }
+}
 function showResult(){
-  showOnly("result");
-  document.getElementById("scoreBig").textContent=score;
+  el('quiz').classList.add('hidden'); el('result').classList.remove('hidden');
+  window.scrollTo(0,0);
+  const total=records.length;
+  const raw=records.reduce((a,r)=>a+r.score,0);
+  const score=Math.round(raw*2)/2, rate=score/total;
+  el('scoreBig').textContent=score+'点';
+  el('scoreSub').textContent=`/ ${total}点（正答率 ${Math.round(rate*100)}%）`;
+  el('donutArc').setAttribute('stroke-dasharray',`${(rate*100).toFixed(1)} ${(100-rate*100).toFixed(1)}`);
+  const pass=rate>=PASS_RATE;
+  const pb=el('passBadge');
+  pb.textContent=pass?'合格':'もう一度'; pb.className='pass-badge '+(pass?'pass':'fail');
 
-  const pct=score/10*100;
-  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
-  const arc=document.getElementById("donut-arc");
-  arc.setAttribute("stroke",color);
-  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+  const agg={};
+  records.forEach(r=>{(agg[r.kc]=agg[r.kc]||{s:0,n:0});agg[r.kc].s+=r.score;agg[r.kc].n++;});
+  el('kcList').innerHTML=Object.keys(KC).filter(k=>agg[k]).map(k=>{
+    const p=agg[k].s/agg[k].n;
+    const cls=p>=0.8?'ok':(p>=0.5?'mid':'ng'), mark=p>=0.8?'○':(p>=0.5?'△':'×');
+    const col=p>=0.8?'#48bb78':(p>=0.5?'#ed8936':'#f56565');
+    return `<div class="kc-row"><div class="kc-mark ${cls}">${mark}</div>
+      <div class="kc-body"><div class="kc-name">${KC[k].name}</div>
+      <div class="kc-bar"><i style="width:${Math.round(p*100)}%;background:${col}"></i></div></div>
+      <div class="kc-score">${Math.round(agg[k].s*10)/10}/${agg[k].n}</div></div>`;
+  }).join('');
 
-  const passed=score>=PASS_THRESHOLD;
-  const passBadge=document.getElementById("passBadge");
-  passBadge.textContent=passed?"合格":"不合格";
-  passBadge.className="pass-badge "+(passed?"pass":"fail");
+  const tc={};
+  records.forEach(r=>r.tags.forEach(t=>{tc[t]=(tc[t]||0)+1;}));
+  const tags=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]).slice(0,3);
+  el('tagList').innerHTML=tags.length?tags.map(t=>
+    `<div class="tag-row"><div class="tag-head"><span class="tag-name">${TAG[t].name}</span><span class="tag-count">${tc[t]}回</span></div>
+     <div class="tag-advice">${TAG[t].advice}<br><span style="opacity:.7">戻る先：${KC[TAG[t].back].name}</span></div></div>`).join('')
+    :`<div class="empty">今回、決まった型のミスは見つかりませんでした。</div>`;
 
-  const list=document.getElementById("reviewList");
-  list.innerHTML="";
-  results.forEach((r,i)=>{
-    const div=document.createElement("div");
-    div.className="review-item"+(r.correct?"":" miss");
-    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
-      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
-      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
-    list.appendChild(div);
-  });
-
-  submitResult();
-}
-
-function submitResult(){
-  const statusEl=document.getElementById("submitStatus");
-  if(!SUBMIT_URL){
-    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
-    return;
+  const weak=Object.keys(KC).filter(k=>agg[k]&&agg[k].s/agg[k].n<0.8);
+  let todo='';
+  if(pass&&weak.length===0){
+    todo=`合格ラインを超え、測定したすべての力が8割に届いています。<b>3日後にもう一度</b>挑戦して、別の日に2回続けて合格できるか確かめましょう。それで「定着」と判定します。`;
+  }else if(pass){
+    todo=`合格ラインは超えています。ただし次の力はまだ8割に届いていません。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+`<br><br>次の回では、この力を優先して出題します。`;
+  }else{
+    todo=`合格ライン（正答率80%）に届きませんでした。まず次の力から復習しましょう。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+`<br><br><b>明日もう一度</b>、この回に挑戦してください。`;
   }
-  const payload={
-    studentId:studentId,
-    quizName:QUIZ_NAME,
-    score:score,
-    total:10,
-    passed:score>=PASS_THRESHOLD?"合格":"不合格",
-    timestamp:new Date().toISOString(),
-    missed:results.filter(r=>!r.correct).map(r=>r.q)
-  };
-  try{
-    fetch(SUBMIT_URL,{
-      method:"POST",
-      mode:"no-cors",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify(payload)
-    });
-    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
-  }catch(err){
-    statusEl.textContent="※通信エラーのため記録できませんでした";
-  }
-}
+  if(tags.length) todo+=`<br><br>特に <b>${TAG[tags[0]].name}</b> の直し方を、板書ノートで確認しておくこと。`;
+  el('todoBox').innerHTML=todo;
 
-/* 学籍番号の引き継ぎ：前回このブラウザで入力した番号を初期表示する */
-(function(){
-  try{
-    var saved=localStorage.getItem('quizStudentId');
-    if(saved) document.getElementById('studentId').value=saved;
-  }catch(e){}
-})();
+  el('sumSec').innerHTML = (typeof SUMMARY!=='undefined'&&SUMMARY)
+    ? `<div class="sec-title">要点まとめ</div><div class="sum-wrap">${SUMMARY}</div>` : '';
+
+  send(score,total);
+
+  el('reviewList').innerHTML=records.map((r,i)=>{
+    const cls=r.score===1?'':(r.score>0?'half':'miss');
+    const mark=r.score===1?'○':(r.score>0?'△':'×');
+    return `<div class="review-item ${cls}">
+      <div class="rq">${mark} Q${i+1}${r.label?`（${r.label}）`:''}　${r.q}</div>
+      <div class="ra"><b>正解：</b>${r.correct}<br>${r.exp}</div></div>`;
+  }).join('');
+}
 </script>
 </body>
 </html>

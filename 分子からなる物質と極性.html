@@ -3,63 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>化学基礎クイズ｜分子からなる物質（極性・分子間力・分子結晶）</title>
+<title>化学基礎クイズ｜133 分子からなる物質と極性</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
-.wrap{width:100%;max-width:640px}
-.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
-#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
-.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
-.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
-.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:680px}
+.card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+sub{font-size:.72em}sup{font-size:.72em}
+img.qfig{display:block;width:100%;max-width:460px;margin:0 auto 14px;border:1px solid #e2e8f0;border-radius:8px;background:#fff}
+#start h1{font-size:1.35rem;font-weight:700;color:#2b6cb0;margin-bottom:6px}
+#start .sub{color:#718096;font-size:.9rem;margin-bottom:16px;line-height:1.6}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.74rem;font-weight:600;background:#ebf8ff;color:#2b6cb0}
+.badge.key{background:#2b6cb0;color:#fff}
+.flow{display:flex;align-items:center;gap:4px;flex-wrap:wrap;background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:.74rem;color:#4a5568}
+.flow b{background:#fff;border:1px solid #cbd5e0;border-radius:5px;padding:3px 8px;font-weight:700}
+.flow i{color:#a0aec0;font-style:normal}
+.kc-preview{background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.kc-preview .t{font-size:.78rem;font-weight:700;color:#4a5568;margin-bottom:8px}
+.kc-preview ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.kc-preview li{font-size:.82rem;color:#4a5568;padding-left:16px;position:relative;line-height:1.5}
+.kc-preview li::before{content:"";position:absolute;left:0;top:.45em;width:7px;height:7px;border-radius:50%;background:#90cdf4}
+.id-label{display:block;font-size:.82rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:16px}
 .id-input:focus{outline:none;border-color:#4299e1}
-.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer}
 .start-btn:hover{opacity:.9}
-.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
-#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
 .progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
-.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
-.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
-.choices{display:flex;flex-direction:column;gap:10px}
-.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.q-num{font-size:.8rem;color:#718096;white-space:nowrap}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px}
+.chip.kc{background:#edf2f7;color:#4a5568}
+.chip.l1{background:#f0fff4;color:#276749}
+.chip.l2{background:#ebf8ff;color:#2b6cb0}
+.chip.l3{background:#faf5ff;color:#6b46c1}
+.chip.fill{background:#fffaf0;color:#975a16}
+.q-text{font-size:1.05rem;font-weight:600;line-height:1.65;margin-bottom:14px}
+.stem{background:#f7fafc;border-left:4px solid #90cdf4;border-radius:0 8px 8px 0;padding:10px 14px;font-size:.89rem;line-height:1.6;color:#4a5568;margin-bottom:12px}
+.step-done{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.step-row{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;padding:9px 12px;border-radius:8px;background:#f0fff4;border:1px solid #c6f6d5;line-height:1.5}
+.step-row.given{background:#fffaf0;border-color:#feebc8}
+.step-row.miss{background:#fff5f5;border-color:#fed7d7}
+.step-tag{font-weight:700;color:#4a5568;white-space:nowrap}
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s;line-height:1.5}
 .choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
 .choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
 .choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
 .choice-btn:disabled{cursor:default}
-.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
-.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.hint-box{margin-top:14px;padding:12px 16px;background:#ebf8ff;border-left:4px solid #4299e1;border-radius:0 8px 8px 0;font-size:.87rem;color:#2a4365;line-height:1.6;display:none}
+.hint-box .hl{font-weight:700;display:block;margin-bottom:3px;font-size:.76rem;color:#2b6cb0}
+.exp-box{margin-top:14px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.87rem;color:#7b341e;line-height:1.65;display:none}
+.next-btn{margin-top:16px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none}
 .next-btn:hover{opacity:.9}
-#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
-.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
-.donut-svg{width:120px;height:120px}
-.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
-.score-sub{font-size:.9rem;color:#718096}
-.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+#result .r-title{font-size:1.2rem;font-weight:700;text-align:center;margin-bottom:16px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:22px;margin-bottom:8px}
+.donut-svg{width:110px;height:110px}
+.score-big{font-size:2.2rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.84rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.8rem;font-weight:700}
 .pass-badge.pass{background:#f0fff4;color:#276749}
 .pass-badge.fail{background:#fff5f5;color:#c53030}
-.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
-.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
-.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
-.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
-.review-item .ra{font-size:.85rem;color:#718096}
+.pass-note{text-align:center;font-size:.76rem;color:#a0aec0;margin-bottom:12px}
+.sec-title{font-weight:700;margin:20px 0 9px;color:#2d3748;font-size:.96rem;padding-bottom:5px;border-bottom:2px solid #e2e8f0}
+.sec-note{font-size:.76rem;color:#a0aec0;margin:-5px 0 9px;line-height:1.5}
+.kc-list{display:flex;flex-direction:column;gap:7px}
+.kc-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #e2e8f0;border-radius:9px}
+.kc-mark{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;color:#fff}
+.kc-mark.ok{background:#48bb78}.kc-mark.mid{background:#ed8936}.kc-mark.ng{background:#f56565}
+.kc-body{flex:1;min-width:0}
+.kc-name{font-size:.85rem;font-weight:600;line-height:1.4}
+.kc-bar{height:5px;background:#edf2f7;border-radius:3px;margin-top:5px;overflow:hidden}
+.kc-bar i{display:block;height:100%;border-radius:3px}
+.kc-score{font-size:.77rem;color:#718096;white-space:nowrap}
+.tag-list{display:flex;flex-direction:column;gap:8px}
+.tag-row{padding:11px 13px;border-radius:9px;background:#fff5f5;border:1px solid #fed7d7}
+.tag-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tag-name{font-size:.89rem;font-weight:700;color:#c53030}
+.tag-count{font-size:.75rem;color:#e53e3e;white-space:nowrap}
+.tag-advice{font-size:.81rem;color:#742a2a;margin-top:5px;line-height:1.55}
+.empty{font-size:.84rem;color:#718096;padding:10px 0}
+.todo{background:#ebf8ff;border:1px solid #bee3f8;border-radius:10px;padding:14px 16px;font-size:.87rem;color:#2a4365;line-height:1.7}
+.todo b{color:#2b6cb0}
+.sum-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.sum{border-collapse:collapse;font-size:.78rem;min-width:520px;width:100%}
+table.sum th,table.sum td{border:1px solid #e2e8f0;padding:7px 9px;text-align:left;line-height:1.5;vertical-align:top}
+table.sum thead th{background:#2b6cb0;color:#fff;font-weight:700;white-space:nowrap}
+table.sum tbody th{background:#f7fafc;font-weight:700;white-space:nowrap;color:#2b6cb0}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto;padding-right:4px}
+.review-item{padding:11px 13px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.86rem;font-weight:600;margin-bottom:4px;line-height:1.5}
+.review-item .ra{font-size:.79rem;color:#718096;line-height:1.5}
+.review-item.miss{border-color:#fed7d7;background:#fffafa}
 .review-item.miss .rq{color:#c53030}
-.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.review-item.half{border-color:#feebc8;background:#fffdf7}
+.retry-btn{margin-top:18px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
 .retry-btn:hover{opacity:.9}
-.home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.85rem;text-decoration:none}
+.home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.84rem;text-decoration:none}
 .home-link:hover{text-decoration:underline}
+.submit-status{margin-top:12px;text-align:center;font-size:.78rem;color:#a0aec0}
 .hidden{display:none}
+@media (max-width:480px){.card{padding:20px 16px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <div id="start" class="card">
-  <h1>化学基礎クイズ</h1>
-  <p class="sub">分子からなる物質｜電気陰性度と極性・分子間力・水素結合・分子結晶｜毎回ランダム10問</p>
-  <div class="total-badge" id="totalBadge"></div>
+  <h1 id="uTitle"></h1>
+  <p class="sub" id="uSub"></p>
+  <div class="badges">
+    <span class="badge key" id="totalBadge"></span>
+    <span class="badge">毎回12問・正答率80%で合格</span>
+    <span class="badge">ヒント→再挑戦</span>
+    <span class="badge">ステップ分解採点</span>
+  </div>
+  <div class="flow">
+    <b>基本 ×3</b><i>→</i><b>標準 ×4</b><i>→</i><b>段階（穴埋め）</b><i>→</i><b>発展 ×3</b><i>→</i><b>段階（自力）</b>
+  </div>
+  <div class="kc-preview">
+    <div class="t">この回で測る力</div>
+    <ul id="kcPreview"></ul>
+  </div>
   <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
   <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
   <button class="start-btn" onclick="startQuiz()">スタート</button>
@@ -70,28 +137,49 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
     <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
     <div class="q-num" id="qnum"></div>
   </div>
+  <div class="meta-row" id="metaRow"></div>
+  <div id="stemBox"></div>
+  <div id="figBox"></div>
+  <div id="stepDone" class="step-done"></div>
   <div id="qtext" class="q-text"></div>
   <div id="choices" class="choices"></div>
+  <div id="hint" class="hint-box"></div>
   <div id="exp" class="exp-box"></div>
-  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+  <button id="nextBtn" class="next-btn" onclick="next()">次へ →</button>
 </div>
 
 <div id="result" class="card hidden">
-  <div class="r-title">結果発表</div>
+  <div class="r-title">結果</div>
   <div class="donut-wrap">
     <svg class="donut-svg" viewBox="0 0 36 36">
       <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
-      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+      <circle id="donutArc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
         stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
     </svg>
     <div>
       <div class="score-big" id="scoreBig"></div>
-      <div class="score-sub">/ 10問正解</div>
+      <div class="score-sub" id="scoreSub"></div>
       <div class="pass-badge" id="passBadge"></div>
     </div>
   </div>
-  <div class="review-title">解説</div>
+  <div class="pass-note">合格ライン：正答率80%（12点満点で9.5点以上）／ヒントを見て正解した問題は0.5点</div>
+
+  <div class="sec-title">力ごとの定着</div>
+  <div class="sec-note">◯＝ほぼ定着／△＝あと一歩／×＝要復習。本当の定着判定は「別の日に2回続けて正解」で行います。</div>
+  <div class="kc-list" id="kcList"></div>
+
+  <div class="sec-title">つまずきの型</div>
+  <div class="sec-note">誤答の選択肢からミスの型を判定しています。</div>
+  <div class="tag-list" id="tagList"></div>
+
+  <div class="sec-title">次にやること</div>
+  <div class="todo" id="todoBox"></div>
+
+  <div id="sumSec"></div>
+
+  <div class="sec-title">全問の解説</div>
   <div class="review-list" id="reviewList"></div>
+
   <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
   <div class="submit-status" id="submitStatus"></div>
   <a href="index.html" class="home-link">← クイズ一覧に戻る</a>
@@ -99,331 +187,815 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
 
 </div>
 <script>
-// Apps Scriptデプロイ後、発行されたWebアプリのURLをここに設定（SETUP.md参照）
-const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
-const QUIZ_NAME = "133 分子からなる物質（電気陰性度・極性・分子間力・分子結晶）";
-const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+/* ===== 単元データ ===== */
+const FIGS={"bp": {"alt": "14〜17族元素の水素化合物について、横軸に分子量、縦軸に沸点をとったグラフ", "src": "data:image/png;base64,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"}};
+const UNIT={code:"133",title:"分子からなる物質と極性",sub:"教科書 p.76〜80｜電気陰性度・極性・分子間力・水素結合・分子結晶｜毎回ランダム12問"};
 
-const ALL_Q = [
-  {q:"共有結合において、共有電子対を引きつける強さを表した数値を何というか？",
-   choices:["電気陰性度","原子価","不対電子数","静電気力"], a:0,
-   exp:"共有電子対を引きつける強さを表した数値を電気陰性度という。"},
+const KC={
+  K1:{short:"電気陰性度と結合の極性",name:"電気陰性度の傾向がわかり、その差から結合の極性の有無を判定できる"},
+  K2:{short:"分子の極性",name:"結合の極性と分子の形から、極性分子・無極性分子を判定できる"},
+  K3:{short:"極性と溶解性",name:"分子の極性と溶けやすさを結びつけられる"},
+  K4:{short:"分子間力",name:"分子間力の種類と強さの序列を説明できる"},
+  K5:{short:"分子量と沸点",name:"分子量と沸点の関係から、はたらいている分子間力を推定できる"},
+  K6:{short:"水素結合と氷",name:"水素結合ができる条件を判定し、氷の構造と性質を説明できる"},
+  K7:{short:"分子結晶",name:"分子結晶の性質を説明できる"}
+};
 
-  {q:"電気陰性度は周期表においてどのような傾向があるか（貴ガスを除く）？",
-   choices:["右上にあるほど大きく、左下にあるほど小さい","左上にあるほど大きく、右下にあるほど小さい","族には関係せず、周期のみで決まる","すべての元素でほぼ同じ"], a:0,
-   exp:"電気陰性度は貴ガスを除いて、周期表の右上にあるほど（陰性が強いほど）大きく、左下にあるほど（陽性が強いほど）小さい。"},
+const TAG={
+  bondmol:{name:"結合の極性と分子の極性の混同",back:"K2",advice:"<b>結合に極性があっても、分子の形によって打ち消しあえば無極性分子</b>になります。CO<sub>2</sub> や CCl<sub>4</sub> がその例。結合の極性を見たあと、必ず分子の形を確かめましょう。"},
+  shape:{name:"分子の形の取り違え",back:"K2",advice:"CO<sub>2</sub> は直線形、H<sub>2</sub>O は折れ線形、NH<sub>3</sub> は三角錐形、CH<sub>4</sub> は正四面体形です。形を取り違えると、打ち消しあうかどうかの判断も変わってしまいます。"},
+  enTrend:{name:"電気陰性度の傾向の取り違え",back:"K1",advice:"電気陰性度は貴ガスを除いて<b>周期表の右上にあるほど大きい</b>。最大はフッ素です。陰性が強いほど大きい、と結びつけて向きを確認しましょう。"},
+  imf:{name:"分子間力と共有結合の混同",back:"K4",advice:"分子結晶を融かしたり沸騰させたりするときに切れるのは<b>分子間力</b>だけで、分子内の共有結合は切れません。だから水を沸騰させても H<sub>2</sub>O のままです。"},
+  hbond:{name:"水素結合の相手の拡張",back:"K6",advice:"水素結合ができるのは、電気陰性度が大きく非共有電子対をもつ <b>F・O・N</b> の間に H をはさんだときだけです。Cl や S では水素結合はできません。"},
+  mwexc:{name:"沸点の規則を例外に当てる",back:"K5",advice:"「分子量が大きいほど沸点が高い」が当てはまるのは、同じ種類の分子間力しかはたらかない場合だけです。H<sub>2</sub>O・HF・NH<sub>3</sub> は水素結合のぶん、分子量から予想される値より異常に高くなります。"},
+  solub:{name:"極性と溶解性の対応が逆",back:"K3",advice:"極性分子は極性分子からなる液体に溶けやすく、無極性分子は溶けにくい、という対応です。ヨウ素が水に溶けにくいのはヨウ素が無極性分子だからです。"},
+  crystal:{name:"分子結晶の性質の取り違え",back:"K7",advice:"分子結晶は分子間力が弱いので<b>やわらかく、融点が低い</b>。電気も通しません。硬くて融点が高いのは共有結合の結晶やイオン結晶です。"}
+};
 
-  {q:"塩化水素HClでは、電気陰性度の大きいCl原子がわずかに負の電荷（δ-）を、H原子がわずかに正の電荷（δ+）を帯びる。このような共有結合における電荷のかたよりを何というか？",
-   choices:["結合の極性","電離","静電気力","配位結合"], a:0,
-   exp:"共有結合において電気陰性度の差により電荷がかたよることを結合の極性という。"},
+const POOL=[
+/* ===== K1 電気陰性度と結合の極性（13問） ===== */
+{kc:"K1",lv:1,q:"共有結合において、共有電子対を引きつける強さを表した数値を何というか。",
+ c:[{t:"電気陰性度"},{t:"イオン化エネルギー",tag:"enTrend"},{t:"電子親和力",tag:"enTrend"},{t:"原子価",tag:"enTrend"}],a:0,
+ h:"共有電子対がどちらの原子のほうにかたよるかを決める数値です。",
+ e:"共有電子対を引きつける強さを表した数値が<b>電気陰性度</b>。値が大きい原子ほど強く引きつける。"},
+{kc:"K1",lv:1,q:"電気陰性度は周期表においてどのような傾向を示すか（貴ガスを除く）。",
+ c:[{t:"右上にあるほど大きく、左下にあるほど小さい"},{t:"左下にあるほど大きく、右上にあるほど小さい",tag:"enTrend"},{t:"周期表の中央が最も大きい",tag:"enTrend"},{t:"どの位置でもほぼ同じ",tag:"enTrend"}],a:0,
+ h:"陰性が強い元素ほど電子を引きつけます。陰性が強いのは周期表のどのあたりかを思い出します。",
+ e:"電気陰性度は貴ガスを除いて<b>右上にあるほど大きく、左下にあるほど小さい</b>。陰性の強さと同じ向きの傾向になる。"},
+{kc:"K1",lv:1,q:"電気陰性度が最も大きい元素はどれか。",
+ c:[{t:"フッ素 F"},{t:"酸素 O",tag:"enTrend"},{t:"塩素 Cl",tag:"enTrend"},{t:"ナトリウム Na",tag:"enTrend"}],a:0,
+ h:"貴ガスを除いて、周期表で最も右上に位置する元素を探します。",
+ e:"電気陰性度が最大なのは<b>フッ素 F</b>（4.0）。次いで O（3.4）、Cl（3.2）、N（3.0）と続く。"},
+{kc:"K1",lv:1,q:"共有結合における電荷のかたよりを何というか。",
+ c:[{t:"結合の極性"},{t:"分子間力",tag:"imf"},{t:"水素結合",tag:"hbond"},{t:"イオン化",tag:"enTrend"}],a:0,
+ h:"共有電子対が一方の原子に引き寄せられた結果、両端がわずかに帯電する現象です。",
+ e:"共有結合における電荷のかたよりを<b>結合の極性</b>という。引きつけた側が δ−、引きつけられた側が δ＋ を帯びる。"},
+{kc:"K1",lv:2,q:"塩化水素 HCl では、H と Cl のどちらがわずかに負の電荷（δ−）を帯びるか。",
+ c:[{t:"Cl（電気陰性度が大きいほう）"},{t:"H（電気陰性度が小さいほう）",tag:"enTrend"},{t:"どちらも帯びない",tag:"bondmol"},{t:"どちらも負の電荷を帯びる",tag:"enTrend"}],a:0,
+ h:"共有電子対を強く引きつけたほうに、電子が寄ってきます。H と Cl の電気陰性度を比べます。",
+ e:"Cl（3.2）は H（2.2）より電気陰性度が大きいので共有電子対を引きつけ、<b>Cl が δ−、H が δ＋</b> を帯びる。"},
+{kc:"K1",lv:2,q:"2つの原子間の共有結合において、両原子の電気陰性度が等しいとき、結合の極性はどうなるか。",
+ c:[{t:"極性は生じない"},{t:"非常に大きな極性が生じる",tag:"bondmol"},{t:"わずかに極性が生じる",tag:"bondmol"},{t:"イオン結合になる",tag:"enTrend"}],a:0,
+ h:"同じ元素どうしの結合を考えます。共有電子対はどちらかにかたよるでしょうか。",
+ e:"電気陰性度が等しいと共有電子対は両方の原子から同じように引かれるので、<b>極性は生じない</b>。Cl<sub>2</sub> や H<sub>2</sub> がその例。"},
+{kc:"K1",lv:2,q:"H-O の結合と H-C の結合では、どちらの極性が大きいか。ただし電気陰性度は H が2.2、C が2.6、O が3.4 である。",
+ c:[{t:"H-O（電気陰性度の差が1.2）"},{t:"H-C（電気陰性度の差が0.4）",tag:"enTrend"},{t:"どちらも同じ",tag:"bondmol"},{t:"どちらにも極性はない",tag:"bondmol"}],a:0,
+ h:"結合の極性の大きさは、2つの原子の電気陰性度の差で決まります。それぞれの差を計算して比べます。",
+ e:"H-O の差は 3.4−2.2＝1.2、H-C の差は 2.6−2.2＝0.4。差が大きい<b>H-O のほうが極性が大きい</b>。"},
+{kc:"K1",lv:2,q:"次の結合のうち、極性がないものはどれか。",
+ c:[{t:"Cl-Cl"},{t:"H-Cl",tag:"bondmol"},{t:"H-O",tag:"bondmol"},{t:"C-O",tag:"bondmol"}],a:0,
+ h:"同じ元素どうしの結合を探します。電気陰性度の差が0になるのはどれか。",
+ e:"<b>Cl-Cl</b> は同じ元素どうしなので電気陰性度の差が0で、極性がない。他は異なる元素どうしなので極性がある。"},
+{kc:"K1",lv:2,q:"結合の極性が非常に大きくなった場合、その結合はどのような性質に近づくか。",
+ c:[{t:"イオン結合に近い性質を示す"},{t:"金属結合に近い性質を示す",tag:"enTrend"},{t:"分子間力に近い性質を示す",tag:"imf"},{t:"極性がない共有結合に近づく",tag:"bondmol"}],a:0,
+ h:"共有電子対が完全に一方へ移ってしまった状態を考えると、それはどんな結合になるかが見えてきます。",
+ e:"電気陰性度の差が非常に大きいと共有電子対が一方へ大きくかたより、<b>イオン結合に近い性質</b>を示す。共有結合とイオン結合は連続的につながっている。"},
+{kc:"K1",lv:3,q:"電気陰性度の値が H＝2.2、N＝3.0、O＝3.4、F＝4.0 であるとき、極性が最も大きい結合はどれか。",
+ c:[{t:"H-F"},{t:"H-O",tag:"enTrend"},{t:"H-N",tag:"enTrend"},{t:"N-O",tag:"enTrend"}],a:0,
+ h:"それぞれの結合について、2つの原子の電気陰性度の差を計算して比べます。",
+ e:"差は H-F が1.8、H-O が1.2、H-N が0.8、N-O が0.4。最も大きいのは<b>H-F</b>で、これが HF の強い極性の元になっている。"},
+{kc:"K1",lv:3,q:"Na と Cl の電気陰性度はそれぞれ0.9 と3.2 である。この2つの原子の間にできる結合について、正しい説明はどれか。",
+ c:[{t:"電気陰性度の差が非常に大きいので、電子が完全に一方へ移ったイオン結合とみなせる"},{t:"電気陰性度の差が小さいので、極性のない共有結合になる",tag:"enTrend"},{t:"電気陰性度が等しいので、金属結合になる",tag:"enTrend"},{t:"電気陰性度の差が大きいので、水素結合になる",tag:"hbond"}],a:0,
+ h:"差は 3.2−0.9 です。この値は H-F の差（1.8）よりさらに大きくなります。",
+ e:"差は2.3 と非常に大きく、共有電子対が完全に Cl 側へ移った状態とみなせる。これが<b>イオン結合</b>。NaCl は Na<sup>+</sup> と Cl<sup>−</sup> からなる。"},
+{kc:"K1",lv:3,q:"δ＋ と δ− の記号について、正しい説明はどれか。",
+ c:[{t:"わずかに正または負の電荷を帯びていることを表す"},{t:"完全に1価の陽イオン・陰イオンになっていることを表す",tag:"enTrend"},{t:"分子全体の極性の大きさを表す",tag:"bondmol"},{t:"水素結合の強さを表す",tag:"hbond"}],a:0,
+ h:"デルタという記号は「わずか」という意味で使われています。イオンになりきっているわけではありません。",
+ e:"δ は「わずか」という意味で、<b>わずかに正または負の電荷を帯びている</b>ことを表す。イオンのように完全に電荷が移ったわけではない。"},
+{kc:"K1",lv:3,q:"次の記述のうち、電気陰性度について誤りを含むものはどれか。",
+ c:[{t:"貴ガスも含めて、周期表の右にいくほど電気陰性度は大きくなる"},{t:"電気陰性度が最も大きい元素はフッ素である"},{t:"電気陰性度は共有電子対を引きつける強さを表す"},{t:"電気陰性度の差が大きいほど、結合の極性は大きくなる"}],a:0,
+ h:"貴ガスがこの傾向に含まれるかどうかが分かれ目です。貴ガスは共有結合をつくるでしょうか。",
+ e:"電気陰性度の傾向は<b>貴ガスを除いて</b>成り立つ。貴ガスは共有結合をほとんどつくらないため、値が定められていない。"},
 
-  {q:"2つの原子間の共有結合において、両原子の電気陰性度が等しいとき、結合の極性はどうなるか？",
-   choices:["極性がない","必ず極性がある","イオン結合になる","配位結合になる"], a:0,
-   exp:"共有結合をつくる2原子間の電気陰性度が等しいときは極性がない（例：Cl₂分子のCl-Cl結合）。"},
+/* ===== K2 分子の極性（16問） ===== */
+{kc:"K2",lv:1,q:"分子内のすべての共有結合について極性を考えたとき、分子全体として極性がない分子を何というか。",
+ c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"単原子分子",tag:"shape"},{t:"高分子",tag:"shape"}],a:0,
+ h:"結合に極性があっても、打ち消しあえばこちらになります。",
+ e:"分子全体として極性がない分子を<b>無極性分子</b>という。結合に極性があっても、形によって打ち消しあえば無極性分子になる。"},
+{kc:"K2",lv:1,q:"分子全体として極性がある分子を何というか。",
+ c:[{t:"極性分子"},{t:"無極性分子",tag:"bondmol"},{t:"二原子分子",tag:"shape"},{t:"分子結晶",tag:"crystal"}],a:0,
+ h:"δ＋ の側と δ− の側がはっきり分かれている分子のことです。",
+ e:"分子全体として極性がある分子を<b>極性分子</b>という。H<sub>2</sub>O や HCl、NH<sub>3</sub> がその例。"},
+{kc:"K2",lv:1,q:"塩素分子 Cl<sub>2</sub> は極性分子と無極性分子のどちらか。",
+ c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"温度によって変わる",tag:"bondmol"},{t:"どちらでもない",tag:"bondmol"}],a:0,
+ h:"同じ原子どうしの結合なので、電気陰性度の差はどうなるかを考えます。",
+ e:"Cl-Cl は同じ原子どうしで電気陰性度の差が0。結合に極性がないので、分子も<b>無極性分子</b>。"},
+{kc:"K2",lv:1,q:"塩化水素 HCl は極性分子と無極性分子のどちらか。",
+ c:[{t:"極性分子"},{t:"無極性分子",tag:"bondmol"},{t:"どちらでもない",tag:"bondmol"},{t:"打ち消しあうので無極性分子",tag:"bondmol"}],a:0,
+ h:"二原子分子なので、結合の極性がそのまま分子の極性になります。H と Cl の電気陰性度を比べます。",
+ e:"H と Cl では電気陰性度が違うので結合に極性があり、二原子分子なので打ち消す相手がいない。よって<b>極性分子</b>。"},
+{kc:"K2",lv:1,q:"二原子分子の極性について、正しい説明はどれか。",
+ c:[{t:"結合に極性がなければ無極性分子、極性があれば極性分子になる"},{t:"二原子分子はすべて無極性分子である",tag:"bondmol"},{t:"二原子分子はすべて極性分子である",tag:"bondmol"},{t:"分子の形によって決まる",tag:"shape"}],a:0,
+ h:"原子が2個しかないので、打ち消しあう相手がいません。結合の極性がそのまま分子の極性になります。",
+ e:"二原子分子では打ち消しあう相手がいないので、<b>結合の極性がそのまま分子の極性</b>になる。Cl<sub>2</sub> は無極性、HCl は極性。"},
+{kc:"K2",lv:2,q:"多原子分子の極性は、結合の極性に加えて何によって決まるか。",
+ c:[{t:"分子の形"},{t:"分子量の大きさ",tag:"mwexc"},{t:"分子の数",tag:"bondmol"},{t:"結合の本数だけ",tag:"bondmol"}],a:0,
+ h:"同じように結合に極性があっても、極性分子になるものと無極性分子になるものがあります。その違いはどこから来るか。",
+ e:"多原子分子では結合の極性が打ち消しあうかどうかが<b>分子の形</b>で決まる。CO<sub>2</sub> と H<sub>2</sub>O の違いがその代表例。"},
+{kc:"K2",lv:2,q:"二酸化炭素 CO<sub>2</sub> が無極性分子であるのはなぜか。",
+ c:[{t:"直線形なので、2つの C=O の結合の極性が互いに打ち消しあうから"},{t:"C と O の電気陰性度が等しく、結合に極性がないから",tag:"bondmol"},{t:"折れ線形なので、結合の極性が打ち消されないから",tag:"shape"},{t:"分子量が大きいから",tag:"mwexc"}],a:0,
+ h:"C=O の結合そのものには極性があります。ではなぜ分子全体では極性がなくなるのかを、形から考えます。",
+ e:"C=O の結合には極性があるが、CO<sub>2</sub> は<b>直線形</b>なので、左右の極性が正反対を向いて<b>打ち消しあう</b>。だから無極性分子。"},
+{kc:"K2",lv:2,q:"水 H<sub>2</sub>O が極性分子であるのはなぜか。",
+ c:[{t:"折れ線形なので、2つの O-H の結合の極性が打ち消されずに残るから"},{t:"直線形なので、結合の極性が打ち消しあうから",tag:"shape"},{t:"O と H の電気陰性度が等しいから",tag:"enTrend"},{t:"分子量が小さいから",tag:"mwexc"}],a:0,
+ h:"O-H の結合には極性があります。2本の結合が向いている方向を、分子の形から考えます。",
+ e:"O-H の結合に極性があり、H<sub>2</sub>O は<b>折れ線形</b>なので2本の極性が打ち消されずに残る。だから極性分子。"},
+{kc:"K2",lv:2,q:"メタン CH<sub>4</sub> が無極性分子であるのはなぜか。",
+ c:[{t:"正四面体形なので、4本の C-H の結合の極性が互いに打ち消しあうから"},{t:"C と H の電気陰性度が完全に等しいから",tag:"bondmol"},{t:"三角錐形なので、結合の極性が打ち消されないから",tag:"shape"},{t:"C-H の結合が二重結合だから",tag:"shape"}],a:0,
+ h:"C-H の結合にはわずかな極性があります。4本の結合が立体的にどう並んでいるかを考えます。",
+ e:"C-H の結合にはわずかな極性があるが、<b>正四面体形</b>なので4本の極性が対称に配置され、全体で打ち消しあう。よって無極性分子。"},
+{kc:"K2",lv:2,q:"アンモニア NH<sub>3</sub> が極性分子であるのはなぜか。",
+ c:[{t:"三角錐形なので、3本の N-H の結合の極性が打ち消されずに残るから"},{t:"正四面体形なので、結合の極性が打ち消しあうから",tag:"shape"},{t:"N と H の電気陰性度が等しいから",tag:"enTrend"},{t:"平面形なので極性が残るから",tag:"shape"}],a:0,
+ h:"N には非共有電子対が1組あり、そのぶん形がかたよっています。分子の形を思い出します。",
+ e:"NH<sub>3</sub> は<b>三角錐形</b>で対称ではないため、3本の N-H の極性が打ち消されずに残る。だから極性分子。"},
+{kc:"K2",lv:2,q:"窒素分子 N<sub>2</sub> は極性分子と無極性分子のどちらか。",
+ c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"三重結合なので極性分子",tag:"bondmol"},{t:"直線形なので極性分子",tag:"shape"}],a:0,
+ h:"同じ原子どうしの結合です。結合の種類にかかわらず、電気陰性度の差はどうなるかを考えます。",
+ e:"N-N は同じ原子どうしなので電気陰性度の差が0。三重結合であっても極性はなく、<b>無極性分子</b>。"},
+{kc:"K2",lv:3,q:"フッ化水素 HF は極性分子と無極性分子のどちらか。",
+ c:[{t:"極性分子"},{t:"無極性分子",tag:"bondmol"},{t:"直線形なので無極性分子",tag:"shape"},{t:"打ち消しあうので無極性分子",tag:"bondmol"}],a:0,
+ h:"H と F の電気陰性度の差は、この範囲で扱う結合の中でも特に大きくなります。二原子分子である点にも注目します。",
+ e:"H（2.2）と F（4.0）の差が1.8 と大きく、二原子分子なので打ち消す相手がいない。よって<b>極性分子</b>で、その極性は非常に大きい。"},
+{kc:"K2",lv:3,q:"硫化水素 H<sub>2</sub>S は極性分子と無極性分子のどちらか。ただし H<sub>2</sub>S は折れ線形の分子である。",
+ c:[{t:"極性分子"},{t:"無極性分子",tag:"bondmol"},{t:"直線形なので無極性分子",tag:"shape"},{t:"S と H の電気陰性度が等しいので無極性分子",tag:"enTrend"}],a:0,
+ h:"S（2.6）と H（2.2）では電気陰性度が違います。折れ線形の分子で結合の極性が打ち消されるかどうかを考えます。",
+ e:"S-H の結合に極性があり、<b>折れ線形</b>なので打ち消されずに残る。よって<b>極性分子</b>。H<sub>2</sub>O と同じ形なので同じ結論になる。"},
+{kc:"K2",lv:3,q:"二硫化炭素 CS<sub>2</sub> は極性分子と無極性分子のどちらか。ただし CS<sub>2</sub> は CO<sub>2</sub> と同じ直線形の分子である。",
+ c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"折れ線形なので極性分子",tag:"shape"},{t:"S が2個あるので極性分子",tag:"bondmol"}],a:0,
+ h:"C（2.6）と S（2.6）の電気陰性度はほぼ等しく、さらに分子は直線形です。2つの理由から判断できます。",
+ e:"C と S の電気陰性度がほぼ等しく結合の極性が小さいうえ、<b>直線形</b>なので打ち消しあう。よって<b>無極性分子</b>。"},
+{kc:"K2",lv:3,q:"四塩化炭素 CCl<sub>4</sub> は極性分子と無極性分子のどちらか。ただし CCl<sub>4</sub> は正四面体形の分子である。",
+ c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"Cl が4個もあるので極性分子",tag:"bondmol"},{t:"三角錐形なので極性分子",tag:"shape"}],a:0,
+ h:"C-Cl の結合には極性があります。しかし4本の結合が正四面体状に並ぶとどうなるかを考えます。",
+ e:"C-Cl の結合には極性があるが、<b>正四面体形</b>で対称に並ぶため全体で打ち消しあう。よって<b>無極性分子</b>。CH<sub>4</sub> と同じ理由。"},
+{kc:"K2",lv:3,q:"次の分子のうち、結合に極性があるのに分子全体としては無極性分子であるものはどれか。",
+ c:[{t:"二酸化炭素 CO<sub>2</sub>"},{t:"水 H<sub>2</sub>O",tag:"bondmol"},{t:"アンモニア NH<sub>3</sub>",tag:"bondmol"},{t:"窒素 N<sub>2</sub>",tag:"bondmol"}],a:0,
+ h:"まず結合に極性があるものにしぼり、そのうち形が対称で打ち消しあうものを選びます。",
+ e:"<b>CO<sub>2</sub></b> は C=O に極性があるが直線形で打ち消しあう。H<sub>2</sub>O・NH<sub>3</sub> は極性分子、N<sub>2</sub> はそもそも結合に極性がない。"},
 
-  {q:"分子内のすべての共有結合について極性を考えたとき、分子全体として極性がない分子を何というか？",
-   choices:["無極性分子","極性分子","電解質分子","イオン分子"], a:0,
-   exp:"分子全体として極性がない分子を無極性分子という。"},
-
-  {q:"分子全体として極性がある分子を何というか？",
-   choices:["極性分子","無極性分子","非電解質分子","中性分子"], a:0,
-   exp:"分子全体として極性がある分子を極性分子という。"},
-
-  {q:"二原子分子の極性について正しい説明はどれか？",
-   choices:["結合に極性がなければ無極性分子、極性があれば極性分子となる","二原子分子はすべて無極性分子である","二原子分子はすべて極性分子である","原子の質量によって決まる"], a:0,
-   exp:"二原子分子は、結合に極性がない場合は無極性分子、結合に極性がある場合は極性分子となる。"},
-
-  {q:"塩素分子Cl₂（同じ原子どうしの結合）は極性分子か、無極性分子か？",
-   choices:["無極性分子（結合に極性がないため）","極性分子（結合に極性があるため）","分子によって異なる","判断できない"], a:0,
-   exp:"Cl₂は同じ電気陰性度のCl原子どうしの結合なので極性がなく、無極性分子である。"},
-
-  {q:"塩化水素HClは極性分子か、無極性分子か？",
-   choices:["極性分子（H-Cl結合に極性があるため）","無極性分子（結合に極性がないため）","中性分子","イオンからなる物質"], a:0,
-   exp:"HClはH原子とCl原子の電気陰性度が異なるため結合に極性があり、極性分子である。"},
-
-  {q:"多原子分子の極性は、結合の極性に加えて何によって影響されるか？",
-   choices:["分子の形","分子量","分子の色","分子の融点"], a:0,
-   exp:"多原子分子の極性は、分子の形にも影響される。結合に極性があっても、分子の形によって極性が打ち消しあうことがある。"},
-
-  {q:"二酸化炭素CO₂は直線形の分子であるが、無極性分子であるのはなぜか？",
-   choices:["直線形のため、C=O結合の極性が互いに打ち消しあうから","C原子とO原子の電気陰性度が等しいから","結合に極性がまったくないから","二重結合には極性が生じないから"], a:0,
-   exp:"CO₂は直線形なので、2つのC=O結合の極性の向きが逆になって互いに打ち消しあい、分子全体としては無極性分子となる。"},
-
-  {q:"水H₂Oは折れ線形の分子であるが、極性分子であるのはなぜか？",
-   choices:["折れ線形のため、O-H結合の極性が打ち消されずに残るから","O原子とH原子の電気陰性度が等しいから","結合に極性がないから","水素結合があるから極性分子になる"], a:0,
-   exp:"H₂Oは折れ線形なので、2つのO-H結合の極性が打ち消されずに残り、分子全体として極性分子になる。"},
-
-  {q:"メタンCH₄は正四面体形の分子であるが、無極性分子であるのはなぜか？",
-   choices:["正四面体形のため、C-H結合の極性が対称的に打ち消しあうから","C原子とH原子の電気陰性度が等しいから","結合に極性がないから","メタンには結合の極性が存在しないから"], a:0,
-   exp:"CH₄は正四面体形なので、4つのC-H結合の極性が対称的に打ち消しあい、分子全体としては無極性分子になる。"},
-
-  {q:"アンモニアNH₃は三角錐形の分子であるが、極性分子であるのはなぜか？",
-   choices:["三角錐形のため、N-H結合の極性が打ち消されずに残るから","N原子とH原子の電気陰性度が等しいから","結合に極性がないから","NH₃には結合の極性が存在しないから"], a:0,
-   exp:"NH₃は三角錐形なので、N-H結合の極性が打ち消されずに残り、分子全体として極性分子になる。"},
-
-  {q:"窒素分子N₂は極性分子か、無極性分子か？",
-   choices:["無極性分子（同じ原子どうしの結合で極性がないため）","極性分子","イオン結晶","判断できない"], a:0,
-   exp:"N₂は同じN原子どうしの結合なので極性がなく、無極性分子である。"},
-
-  {q:"フッ化水素HFは極性分子か、無極性分子か？",
-   choices:["極性分子（H-F結合に極性があるため）","無極性分子","中性分子","イオンからなる物質"], a:0,
-   exp:"HFはH原子とF原子の電気陰性度が大きく異なるため結合に極性があり、極性分子である。"},
-
-  {q:"硫化水素H₂S（折れ線形の分子）は極性分子か、無極性分子か？",
-   choices:["極性分子（折れ線形でH-S結合の極性が打ち消されずに残るため）","無極性分子（正四面体形のため）","結合に極性がないため無極性分子","分子の形に関係なく無極性分子"], a:0,
-   exp:"H₂SはH₂Oと同様に折れ線形の分子で、H-S結合の極性が打ち消されずに残るため極性分子である。"},
-
-  {q:"二硫化炭素CS₂（CO₂と同じ直線形の分子）は極性分子か、無極性分子か？",
-   choices:["無極性分子（直線形でC=S結合の極性が打ち消しあうため）","極性分子（結合の極性が残るため）","イオン結合をもつため判断できない","中性分子"], a:0,
-   exp:"CS₂はCO₂と同じ直線形の分子であり、2つのC=S結合の極性が互いに打ち消しあうため無極性分子である。"},
-
-  {q:"四塩化炭素CCl₄（正四面体形の分子）は極性分子か、無極性分子か？",
-   choices:["無極性分子（正四面体形でC-Cl結合の極性が対称的に打ち消しあうため）","極性分子（結合の極性が残るため）","結合に極性がないため無極性分子","分子の形とは無関係に極性分子"], a:0,
-   exp:"CCl₄はCH₄と同じ正四面体形の分子であり、4つのC-Cl結合の極性が対称的に打ち消しあうため無極性分子である。"},
-
-  {q:"極性分子からなる物質は、どのような液体に溶けやすいか？",
-   choices:["同じく極性分子からなる液体（例：水）","無極性分子からなる液体のみ","液体には溶けない","気体にしか溶けない"], a:0,
-   exp:"極性分子からなる物質は、同じく極性分子からなる液体に溶けやすい。例えば塩化水素やアンモニアは水に溶けやすい。"},
-
-  {q:"無極性分子からなる水素H₂やメタンCH₄は、水にどの程度溶けるか？",
-   choices:["ほぼ溶けない","非常によく溶ける","水と同じ量だけ溶ける","加熱すればよく溶ける"], a:0,
-   exp:"無極性分子からなる水素やメタンは、極性分子である水にほぼ溶けない。"},
-
-  {q:"分子間にはたらく力を何というか？",
-   choices:["分子間力","静電気力","化学結合","原子価力"], a:0,
-   exp:"分子間にはたらく力を分子間力という。分子間力は化学結合（イオン結合・共有結合・金属結合）よりも非常に弱い。"},
-
-  {q:"分子からなる物質の沸点や融点は、分子間力の強さとどのような関係があるか？",
-   choices:["分子間力が強いほど沸点・融点は高くなる","分子間力が強いほど沸点・融点は低くなる","分子間力とは無関係である","分子間力が強いと沸点のみ下がる"], a:0,
-   exp:"分子からなる物質の沸点や融点は、分子間力が強いほど高くなる。よって沸点や融点を調べることで分子間力の強さが推測できる。"},
-
-  {q:"電荷の瞬間的なかたよりによって、極性によらずすべての分子間にはたらく弱い引力を何というか？",
-   choices:["ファンデルワールス力","水素結合","静電気力（イオン結合）","配位結合"], a:0,
-   exp:"分子の中で電子が動いていることで生じる電荷の瞬間的なかたよりにより、極性によらずすべての分子間にはたらく弱い引力をファンデルワールス力という。"},
-
-  {q:"ファンデルワールス力の強さは、分子の質量（分子量）とどのような関係があるか？",
-   choices:["分子量が大きいほど強い","分子量が大きいほど弱い","分子量とは無関係","分子量が小さいほど強い"], a:0,
-   exp:"ファンデルワールス力は、分子の質量が大きいほど（分子量が大きいほど）強くなる。"},
-
-  {q:"ハロゲン単体F₂、Cl₂、Br₂、I₂を沸点の低い順に並べたものはどれか？",
-   choices:["F₂ < Cl₂ < Br₂ < I₂","I₂ < Br₂ < Cl₂ < F₂","すべて同じ沸点","Cl₂ < F₂ < I₂ < Br₂"], a:0,
-   exp:"ハロゲン単体は分子量が大きいものほどファンデルワールス力が強く、沸点が高くなる。分子量の順はF₂<Cl₂<Br₂<I₂なので、沸点もこの順に高くなる。"},
-
-  {q:"極性分子の分子間には、ファンデルワールス力に加えてどのような引力がはたらくか？",
-   choices:["極性による引力","水素結合のみ","イオン結合","金属結合"], a:0,
-   exp:"極性分子の分子間には、ファンデルワールス力（極性によらない引力）に加えて、極性による引力もはたらく。"},
-
-  {q:"極性分子の塩化水素HCl（沸点-85℃）は、分子量が近い無極性分子のフッ素F₂（沸点-188℃）と比べて沸点が高い。これは何を示しているか？",
-   choices:["極性分子の分子間には、より強い分子間力がはたらいていること","HClのほうが分子量が大きいこと","F₂には分子間力がはたらかないこと","HClはイオン結合をもつこと"], a:0,
-   exp:"分子量が近いにもかかわらずHClの沸点がF₂より高いことから、極性分子の分子間にはより強い分子間力（極性による引力）がはたらいているとわかる。"},
-
-  {q:"非共有電子対をもつ電気陰性度の大きい原子（F、O、N）どうしの間に、H原子をはさんで形成される結合を何というか？",
-   choices:["水素結合","配位結合","イオン結合","金属結合"], a:0,
-   exp:"非共有電子対をもつ電気陰性度の大きい原子（F、O、N）どうしの間に、H原子をはさんで形成される結合を水素結合という。"},
-
-  {q:"水素結合の強さについて正しい説明はどれか？",
-   choices:["化学結合よりは非常に弱いが、ファンデルワールス力よりはかなり強い","化学結合よりも強い","ファンデルワールス力よりも弱い","イオン結合と同じ強さである"], a:0,
-   exp:"水素結合は、化学結合（イオン結合・共有結合・金属結合）よりも非常に弱いが、ファンデルワールス力よりはかなり強い。"},
-
-  {q:"フッ化水素HFの分子間で水素結合が強くはたらく理由は何か？",
-   choices:["H原子とF原子の電気陰性度の差が大きく、非常に大きな極性をもつため","H原子とF原子の電気陰性度が等しいため","フッ素原子に不対電子がないため","HFがイオン結合でできているため"], a:0,
-   exp:"HFはH原子とF原子の電気陰性度の差が大きく、非常に大きな極性をもつため、H原子と別の分子のF原子の非共有電子対との間に強い静電気力（水素結合）がはたらく。"},
-
-  {q:"氷の結晶中で、水分子1個は何個の水分子と水素結合で結びついているか？",
-   choices:["4個","2個","6個","1個"], a:0,
-   exp:"氷の結晶中では、水分子1個当たり4個の水分子と水素結合で引きあい、すき間の多い正四面体構造になっている。"},
-
-  {q:"氷が水に浮くのはなぜか？",
-   choices:["水分子どうしが水素結合で固定され、すき間の多い構造になり密度が液体の水より小さいから","氷は液体の水より重いから","氷には分子間力がはたらかないから","氷はイオン結合でできているから"], a:0,
-   exp:"氷の結晶中では水分子どうしが水素結合で互いに固定され、すき間の多い構造になっているため、氷の密度は液体の水よりも小さく、氷が水に浮く。"},
-
-  {q:"固体が液体に浮くという水の現象は、他の物質と比べてどのような特徴があるか？",
-   choices:["水に特異的で、他のほとんどの物質の固体は液体に沈む","すべての物質で共通して見られる現象である","分子からなる物質では必ず見られる現象である","エタノールでも同じように固体が液体に浮く"], a:0,
-   exp:"固体が液体に浮く現象は水に特異的である。例えばエタノールは固体が液体に沈む。他のほとんどの物質の固体は液体に沈む。"},
-
-  {q:"CH₄、SiH₄、GeH₄、SnH₄のような14族元素の水素化合物（無極性分子）の沸点は、分子量とどのような関係にあるか？",
-   choices:["分子量が大きいほど沸点が高くなる（ファンデルワールス力による）","分子量に関係なくほぼ一定である","分子量が大きいほど沸点が低くなる","水素結合により沸点が異常に高くなる"], a:0,
-   exp:"14族元素の水素化合物は無極性分子であり、分子量が大きいほどファンデルワールス力が強くなり沸点が高くなる。"},
-
-  {q:"NH₃、HF、H₂Oの沸点は、それぞれの分子量から予想される値と比べてどうなっているか？",
-   choices:["異常に高い（分子間に水素結合が形成されているため）","異常に低い","分子量どおりで予想と一致する","予想より少しだけ低い"], a:0,
-   exp:"NH₃、HF、H₂Oの沸点は、分子量から予想される値よりも異常に高い。これは分子間に水素結合が形成されているためと考えられる。"},
-
-  {q:"水素H₂、フッ化水素HF、塩化水素HCl、塩素Cl₂のうち、沸点が最も高いのはどれか？",
-   choices:["フッ化水素HF","水素H₂","塩化水素HCl","塩素Cl₂"], a:0,
-   exp:"HFは分子間に水素結合が形成されるため、分子量が近い他の物質と比べて沸点が異常に高くなり、この中で最も沸点が高い。"},
-
-  {q:"分子どうしが分子間力で引きあい、規則正しく配列してできる結晶を何というか？",
-   choices:["分子結晶","イオン結晶","金属結晶","共有結合の結晶"], a:0,
-   exp:"分子どうしが分子間力で引きあい、規則正しく配列してできる結晶を分子結晶という（例：氷、ドライアイス、ヨウ素）。"},
-
-  {q:"次のうち、分子結晶に分類されるものはどれか？",
-   choices:["ドライアイス（CO₂の固体）","塩化ナトリウムNaCl","鉄Fe","ダイヤモンド"], a:0,
-   exp:"ドライアイスは二酸化炭素分子からなる分子結晶である。塩化ナトリウムはイオン結晶、鉄は金属結晶である。"},
-
-  {q:"分子結晶の一般的な性質として正しいものはどれか？",
-   choices:["やわらかく、くだけやすい","非常に硬く、融点が高い","電気をよく通す","金属光沢がある"], a:0,
-   exp:"分子間力は弱い力なので、分子結晶は一般にやわらかく、くだけやすい。また沸点や融点が低く、常温・常圧で気体や液体であるものが多い。"},
-
-  {q:"二酸化炭素、ヨウ素、ナフタレンなどが昇華しやすいのはなぜか？",
-   choices:["分子間力が非常に弱いから","イオン結合が弱いから","分子量が非常に小さいから","水素結合が強いから"], a:0,
-   exp:"二酸化炭素・ヨウ素・ナフタレンなどは分子間力が非常に弱いので、固体から直接気体になる昇華が起こりやすい。"},
-
-  {q:"分子からなる物質は電気を通すか？",
-   choices:["通さない","よく通す","水に溶かさなくても通す","固体のときのみ通す"], a:0,
-   exp:"分子からなる物質は電気を通さない。"},
-
-  {q:"塩化水素や酢酸のような分子からなる物質の電解質は、どのようなときに電気を通すようになるか？",
-   choices:["水に溶けて電離したとき","固体のとき","液体（融解）のとき","加熱したとき（電離せずに）"], a:0,
-   exp:"塩化水素や酢酸のような分子からなる物質の電解質は、固体や液体では電気を通さないが、水に溶けると電離してイオンに分かれ、電気を通すようになる。"}
+/* ===== K3 極性と溶解性（10問） ===== */
+{kc:"K3",lv:1,q:"極性分子からなる物質は、どのような液体に溶けやすいか。",
+ c:[{t:"極性分子からなる液体"},{t:"無極性分子からなる液体",tag:"solub"},{t:"金属の液体",tag:"solub"},{t:"どの液体にも同じように溶ける",tag:"solub"}],a:0,
+ h:"似た者どうしが溶けあう、という考え方です。極性のある分子は何と相性がよいかを考えます。",
+ e:"極性分子からなる物質は、同じく<b>極性分子からなる液体</b>に溶けやすい。塩化水素やアンモニアが水によく溶けるのがその例。"},
+{kc:"K3",lv:1,q:"無極性分子からなる水素 H<sub>2</sub> やメタン CH<sub>4</sub> は、水にどの程度溶けるか。",
+ c:[{t:"ほとんど溶けない"},{t:"非常によく溶ける",tag:"solub"},{t:"温度を上げるとよく溶ける",tag:"solub"},{t:"電離して溶ける",tag:"solub"}],a:0,
+ h:"水は極性分子です。無極性分子との相性を考えます。",
+ e:"H<sub>2</sub> や CH<sub>4</sub> は無極性分子なので、極性分子である水には<b>ほとんど溶けない</b>。"},
+{kc:"K3",lv:1,q:"水に非常によく溶ける気体の組合せとして正しいものはどれか。",
+ c:[{t:"塩化水素とアンモニア"},{t:"水素とメタン",tag:"solub"},{t:"窒素と酸素",tag:"solub"},{t:"メタンと二酸化炭素",tag:"solub"}],a:0,
+ h:"極性分子である気体を探します。水も極性分子です。",
+ e:"<b>塩化水素 HCl とアンモニア NH<sub>3</sub></b> はどちらも極性分子なので、極性分子の水に非常によく溶ける。"},
+{kc:"K3",lv:2,q:"ヨウ素 I<sub>2</sub> は水に溶けにくい。その理由として正しいものはどれか。",
+ c:[{t:"ヨウ素が無極性分子で、極性分子である水と相性が悪いから"},{t:"ヨウ素が極性分子で、無極性分子である水と相性が悪いから",tag:"solub"},{t:"ヨウ素がイオン結晶だから",tag:"crystal"},{t:"ヨウ素の分子量が小さいから",tag:"mwexc"}],a:0,
+ h:"同じ原子どうしの結合なので、ヨウ素に極性はあるでしょうか。水の極性と比べます。",
+ e:"I-I は同じ原子どうしで極性がなく、I<sub>2</sub> は<b>無極性分子</b>。極性分子である水とは相性が悪いので溶けにくい。"},
+{kc:"K3",lv:2,q:"無極性分子からなる物質は、どのような液体に溶けやすいか。",
+ c:[{t:"無極性分子からなる液体"},{t:"極性分子からなる液体",tag:"solub"},{t:"イオンからなる液体",tag:"solub"},{t:"水",tag:"solub"}],a:0,
+ h:"極性分子どうしが溶けあうのと同じ考え方を、無極性の側にも当てはめます。",
+ e:"無極性分子からなる物質は<b>無極性分子からなる液体</b>に溶けやすい。ヨウ素がヘキサンによく溶けるのがその例。"},
+{kc:"K3",lv:2,q:"水が多くの物質をよく溶かす溶媒として使われる理由として、最も適当なものはどれか。",
+ c:[{t:"水分子が極性分子であるため、極性のある物質やイオンとよくなじむから"},{t:"水分子が無極性分子であるため、あらゆる物質となじむから",tag:"solub"},{t:"水の分子量が大きいから",tag:"mwexc"},{t:"水が水素結合をつくらないから",tag:"hbond"}],a:0,
+ h:"水は折れ線形で極性があります。溶かす相手としてどんな物質と相性がよいかを考えます。",
+ e:"水は<b>極性分子</b>なので、極性のある分子やイオンとよくなじみ、それらを溶かしやすい。無極性分子はあまり溶かさない。"},
+{kc:"K3",lv:2,q:"エタノールは水にもヘキサンにも溶ける。この性質の説明として最も適当なものはどれか。",
+ c:[{t:"分子の中に極性のある部分と極性のない部分の両方をもつから"},{t:"完全な無極性分子だから",tag:"solub"},{t:"イオンからできているから",tag:"crystal"},{t:"分子量が非常に大きいから",tag:"mwexc"}],a:0,
+ h:"1つの分子の中に、性質の違う部分が同居している場合を考えます。",
+ e:"エタノールは分子の中に<b>極性のある部分と極性のない部分</b>をもつため、極性の水にも無極性のヘキサンにも溶ける。"},
+{kc:"K3",lv:3,q:"硫酸銅(II)無水物とヨウ素を、純水とヘキサンにそれぞれ加えた。溶け方の組合せとして最も適当なものはどれか。",
+ c:[{t:"硫酸銅(II)は水に溶け、ヨウ素はヘキサンに溶ける"},{t:"硫酸銅(II)はヘキサンに溶け、ヨウ素は水に溶ける",tag:"solub"},{t:"どちらも水によく溶ける",tag:"solub"},{t:"どちらもヘキサンによく溶ける",tag:"solub"}],a:0,
+ h:"硫酸銅(II)はイオンからなる物質、ヨウ素は無極性分子です。水とヘキサンのどちらが極性の溶媒かを考えます。",
+ e:"イオンからなる硫酸銅(II)は極性の<b>水</b>に、無極性分子のヨウ素は無極性の<b>ヘキサン</b>に溶ける。似た者どうしが溶けあう。"},
+{kc:"K3",lv:3,q:"ガラスに油性ペンでかいた文字を消すには、次のうちどの方法が適しているか。",
+ c:[{t:"エタノールなどの有機溶媒でふき取る"},{t:"純水でふき取る",tag:"solub"},{t:"食塩水でふき取る",tag:"solub"},{t:"空気中に放置して昇華させる",tag:"crystal"}],a:0,
+ h:"油性ペンの成分は水になじみにくい物質です。それをよく溶かすのはどんな液体かを考えます。",
+ e:"油性ペンの成分は水になじみにくいので、水ではほとんど落ちない。<b>エタノールなどの有機溶媒</b>ならよく溶かせる。"},
+{kc:"K3",lv:3,q:"次の記述のうち、分子の極性と溶けやすさについて誤りを含むものはどれか。",
+ c:[{t:"無極性分子からなる物質は、極性分子からなる液体によく溶ける"},{t:"極性分子からなる物質は、極性分子からなる液体に溶けやすい"},{t:"ヨウ素は水に溶けにくい"},{t:"アンモニアは水によく溶ける"}],a:0,
+ h:"極性の有無が一致する組合せが溶けやすい、という対応になっているかどうかを確かめます。",
+ e:"無極性分子は<b>無極性の液体</b>に溶けやすく、極性の液体にはほとんど溶けない。よって最初の記述が誤り。"}
 ];
 
-let session=[], idx=0, score=0, results=[], studentId="";
+POOL.push(
+/* ===== K4 分子間力（12問） ===== */
+{kc:"K4",lv:1,q:"分子どうしの間にはたらく引力を何というか。",
+ c:[{t:"分子間力"},{t:"共有結合",tag:"imf"},{t:"イオン結合",tag:"imf"},{t:"金属結合",tag:"imf"}],a:0,
+ h:"窒素や酸素が温度を下げると液体や固体になる理由になっている力です。",
+ e:"分子どうしの間にはたらく引力を<b>分子間力</b>という。この力があるから、分子からなる物質も冷やせば液体や固体になる。"},
+{kc:"K4",lv:1,q:"分子間力の強さは、化学結合（イオン結合・共有結合・金属結合）と比べてどうか。",
+ c:[{t:"非常に弱い"},{t:"非常に強い",tag:"imf"},{t:"ほぼ同じ",tag:"imf"},{t:"共有結合よりは強い",tag:"imf"}],a:0,
+ h:"分子からなる物質の融点や沸点が低いことから、力の強さが推測できます。",
+ e:"分子間力は化学結合よりも<b>非常に弱い</b>。だから分子からなる物質は融点・沸点が低い。"},
+{kc:"K4",lv:1,q:"電荷の瞬間的なかたよりによって、極性によらずすべての分子間にはたらく弱い引力を何というか。",
+ c:[{t:"ファンデルワールス力"},{t:"水素結合",tag:"hbond"},{t:"静電気力",tag:"imf"},{t:"共有結合",tag:"imf"}],a:0,
+ h:"分子の中では電子が止まらずに動いているため、瞬間的に電荷がかたよります。それによって生じる引力です。",
+ e:"極性によらずすべての分子間にはたらく弱い引力を<b>ファンデルワールス力</b>という。極性分子どうしにはたらく引力も、これに含めて扱う。"},
+{kc:"K4",lv:1,q:"分子間力に含まれるものの組合せとして正しいものはどれか。",
+ c:[{t:"ファンデルワールス力と水素結合"},{t:"共有結合とイオン結合",tag:"imf"},{t:"金属結合と配位結合",tag:"imf"},{t:"静電気力と共有結合",tag:"imf"}],a:0,
+ h:"分子と分子の間にはたらく力を2種類挙げます。原子どうしを結ぶ結合は含まれません。",
+ e:"分子間力には<b>ファンデルワールス力</b>と<b>水素結合</b>がある。どちらも化学結合より弱いが、水素結合のほうがかなり強い。"},
+{kc:"K4",lv:2,q:"分子からなる物質の沸点や融点は、分子間力の強さとどのような関係にあるか。",
+ c:[{t:"分子間力が強いほど高くなる"},{t:"分子間力が強いほど低くなる",tag:"imf"},{t:"分子間力とは関係がない",tag:"imf"},{t:"分子間力が強いほど昇華しやすくなる",tag:"crystal"}],a:0,
+ h:"沸騰させるには分子どうしを引き離す必要があります。引力が強いと、それに必要な熱はどうなるか。",
+ e:"分子間力が強いほど分子を引き離しにくいので、沸点や融点は<b>高くなる</b>。逆に沸点を調べれば分子間力の強さが推測できる。"},
+{kc:"K4",lv:2,q:"ファンデルワールス力の強さは、分子量とどのような関係にあるか。",
+ c:[{t:"分子量が大きいほど強い"},{t:"分子量が大きいほど弱い",tag:"mwexc"},{t:"分子量とは関係がない",tag:"mwexc"},{t:"分子量が同じなら必ず等しい",tag:"mwexc"}],a:0,
+ h:"ハロゲンの単体 F<sub>2</sub>・Cl<sub>2</sub>・Br<sub>2</sub>・I<sub>2</sub> の沸点がどう変わるかを思い出します。",
+ e:"ファンデルワールス力は<b>分子量が大きいほど強い</b>。だからハロゲンの単体は F<sub>2</sub>・Cl<sub>2</sub>・Br<sub>2</sub>・I<sub>2</sub> の順に沸点が高くなる。"},
+{kc:"K4",lv:2,q:"極性分子の分子間には、ファンデルワールス力に加えてどのような引力がはたらくか。",
+ c:[{t:"極性による引力"},{t:"自由電子による引力",tag:"imf"},{t:"イオン結合による引力",tag:"imf"},{t:"共有結合による引力",tag:"imf"}],a:0,
+ h:"δ＋ の部分と δ− の部分が、となりの分子との間でどうなるかを考えます。",
+ e:"極性分子では δ＋ と δ− が引きあうので、<b>極性による引力</b>が加わる。これもファンデルワールス力にまとめて扱う。"},
+{kc:"K4",lv:2,q:"極性分子の塩化水素 HCl の沸点は−85℃で、分子量が近い無極性分子のフッ素 F<sub>2</sub> の沸点−188℃より高い。このことは何を示しているか。",
+ c:[{t:"極性分子の分子間には、より強い分子間力がはたらいている"},{t:"極性分子の分子間には、分子間力がはたらかない",tag:"imf"},{t:"分子量が大きいほど沸点が低い",tag:"mwexc"},{t:"HCl には水素結合がはたらいている",tag:"hbond"}],a:0,
+ h:"分子量がほぼ同じなのに沸点が100℃以上違います。違いは極性の有無だけです。",
+ e:"分子量がほぼ同じでも、極性のある HCl のほうが沸点が高い。これは<b>極性分子の分子間により強い引力</b>がはたらくことを示す。"},
+{kc:"K4",lv:2,q:"ファンデルワールス力が生じる原因として正しいものはどれか。",
+ c:[{t:"分子の中で電子が動いているため、電荷の瞬間的なかたよりが常に生じるから"},{t:"分子が電子を完全に失って陽イオンになるから",tag:"imf"},{t:"分子どうしが共有結合をつくるから",tag:"imf"},{t:"分子が水素結合をつくるから",tag:"hbond"}],a:0,
+ h:"無極性分子どうしでも引力がはたらく理由を考えます。電子は止まっているでしょうか。",
+ e:"分子の中で電子が止まることなく動いているため<b>電荷の瞬間的なかたより</b>が生じ、それによって弱い引力がはたらく。極性がなくても生じる。"},
+{kc:"K4",lv:3,q:"水を沸騰させたとき、切れているのはどれか。",
+ c:[{t:"分子間力（水素結合を含む）"},{t:"分子内の O-H の共有結合",tag:"imf"},{t:"イオン結合",tag:"imf"},{t:"何も切れていない",tag:"imf"}],a:0,
+ h:"沸騰したあとも H<sub>2</sub>O という分子は残っています。では何が切れたのかを考えます。",
+ e:"沸騰で切れるのは<b>分子間力</b>だけで、分子内の共有結合は切れない。だから水蒸気になっても H<sub>2</sub>O 分子のまま。"},
+{kc:"K4",lv:3,q:"水素結合とファンデルワールス力の強さを比べたとき、正しい説明はどれか。",
+ c:[{t:"水素結合のほうがかなり強いが、どちらも化学結合よりは弱い"},{t:"ファンデルワールス力のほうがかなり強い",tag:"imf"},{t:"水素結合は共有結合より強い",tag:"imf"},{t:"どちらもほぼ同じ強さである",tag:"imf"}],a:0,
+ h:"3つの力を強い順に並べてみます。化学結合、水素結合、ファンデルワールス力の関係です。",
+ e:"強さは<b>化学結合 ≫ 水素結合 ＞ ファンデルワールス力</b>。水素結合は分子間力の中では強いが、共有結合などには遠く及ばない。"},
+{kc:"K4",lv:3,q:"次の記述のうち、分子間力について誤りを含むものはどれか。",
+ c:[{t:"ファンデルワールス力は極性分子の間にしかはたらかない"},{t:"分子間力は化学結合よりも非常に弱い"},{t:"ファンデルワールス力は分子量が大きいほど強い"},{t:"水素結合はファンデルワールス力よりかなり強い"}],a:0,
+ h:"無極性分子である窒素や酸素も、冷やせば液体になります。この事実から判断できます。",
+ e:"ファンデルワールス力は<b>極性によらずすべての分子間</b>にはたらく。無極性分子の N<sub>2</sub> や O<sub>2</sub> が冷やすと液体になるのがその証拠。"},
 
-document.getElementById("totalBadge").textContent="全"+ALL_Q.length+"問収録";
+/* ===== K5 分子量と沸点（12問） ===== */
+{kc:"K5",lv:1,q:"ハロゲンの単体 F<sub>2</sub>、Cl<sub>2</sub>、Br<sub>2</sub>、I<sub>2</sub> を沸点の低い順に並べたものはどれか。",
+ c:[{t:"F<sub>2</sub> ＜ Cl<sub>2</sub> ＜ Br<sub>2</sub> ＜ I<sub>2</sub>"},{t:"I<sub>2</sub> ＜ Br<sub>2</sub> ＜ Cl<sub>2</sub> ＜ F<sub>2</sub>",tag:"mwexc"},{t:"Cl<sub>2</sub> ＜ F<sub>2</sub> ＜ I<sub>2</sub> ＜ Br<sub>2</sub>",tag:"mwexc"},{t:"4つとも同じ沸点である",tag:"mwexc"}],a:0,
+ h:"どれも無極性分子で、はたらく分子間力は同じ種類です。分子量の大小で決まります。",
+ e:"どれも無極性分子なのでファンデルワールス力だけがはたらく。分子量が大きいほど強いので、<b>F<sub>2</sub> ＜ Cl<sub>2</sub> ＜ Br<sub>2</sub> ＜ I<sub>2</sub></b> の順に沸点が高くなる。"},
+{kc:"K5",lv:1,q:"分子からなる物質の沸点を調べると、何が推測できるか。",
+ c:[{t:"分子間力の強さ"},{t:"分子の中の共有結合の本数",tag:"imf"},{t:"分子がもつ電子の総数",tag:"mwexc"},{t:"分子の色",tag:"mwexc"}],a:0,
+ h:"沸騰させるときに切れるのは何かを考えると、沸点が何を反映しているかが分かります。",
+ e:"沸点が高いほど分子を引き離しにくい、つまり<b>分子間力が強い</b>と推測できる。だから沸点は分子間力を調べる手がかりになる。"},
+{kc:"K5",lv:1,q:"無極性分子だけを比べたとき、分子量と沸点の関係として正しいものはどれか。",
+ c:[{t:"分子量が大きいほど沸点が高い"},{t:"分子量が大きいほど沸点が低い",tag:"mwexc"},{t:"分子量と沸点は無関係である",tag:"mwexc"},{t:"分子量が大きいほど昇華しやすい",tag:"crystal"}],a:0,
+ h:"無極性分子どうしなら、はたらく分子間力は1種類だけです。その力の強さを決めるのは何か。",
+ e:"無極性分子どうしではファンデルワールス力だけがはたらき、その強さは分子量が大きいほど強い。よって<b>分子量が大きいほど沸点が高い</b>。"},
+{kc:"K5",lv:2,fig:"bp",q:"図は14〜17族元素の水素化合物について、横軸に分子量、縦軸に沸点をとったグラフである。左下から右上へ伸びている一群（CH<sub>4</sub>・SiH<sub>4</sub>・GeH<sub>4</sub>・SnH<sub>4</sub>）から読み取れることはどれか。",
+ c:[{t:"無極性分子では、分子量が大きいほど沸点が高い"},{t:"無極性分子では、分子量が大きいほど沸点が低い",tag:"mwexc"},{t:"無極性分子の沸点は分子量と無関係である",tag:"mwexc"},{t:"無極性分子には分子間力がはたらかない",tag:"imf"}],a:0,
+ h:"この一群は14族の水素化合物で、いずれも無極性分子です。グラフの傾きがどちら向きかを見ます。",
+ e:"14族の水素化合物は無極性分子で、分子量が大きくなるにつれて沸点が上がっている。<b>ファンデルワールス力が分子量とともに強くなる</b>ことを示す。"},
+{kc:"K5",lv:2,fig:"bp",q:"図は14〜17族元素の水素化合物の分子量と沸点の関係を表している。15〜17族の水素化合物が、同じ周期の14族の水素化合物より沸点が高い理由はどれか。",
+ c:[{t:"極性分子なので、より強いファンデルワールス力がはたらくから"},{t:"分子量が14族よりはるかに大きいから",tag:"mwexc"},{t:"すべて水素結合をつくるから",tag:"hbond"},{t:"14族より分子が小さいから",tag:"mwexc"}],a:0,
+ h:"14族の水素化合物は無極性分子ですが、15〜17族の水素化合物はどうかを考えます。分子量はそれほど変わりません。",
+ e:"15〜17族の水素化合物は<b>極性分子</b>なので、極性による引力が加わってより強い分子間力がはたらく。だから14族より沸点が高くなる。"},
+{kc:"K5",lv:2,fig:"bp",q:"図は14〜17族元素の水素化合物の分子量と沸点の関係を表している。左上にある3点（H<sub>2</sub>O・HF・NH<sub>3</sub>）の沸点が特に高い理由はどれか。",
+ c:[{t:"分子間に水素結合が形成されているから"},{t:"分子量が特に大きいから",tag:"mwexc"},{t:"無極性分子だから",tag:"bondmol"},{t:"分子内の共有結合が特に強いから",tag:"imf"}],a:0,
+ h:"この3つの分子には、H が結合している相手に共通点があります。F・O・N という顔ぶれに注目します。",
+ e:"H<sub>2</sub>O・HF・NH<sub>3</sub> は分子間に<b>水素結合</b>ができるため、分子量から予想される値よりはるかに高い沸点を示す。"},
+{kc:"K5",lv:2,fig:"bp",q:"図は14〜17族元素の水素化合物の分子量と沸点の関係を表している。このグラフから読み取れる内容として誤っているものはどれか。",
+ c:[{t:"すべての水素化合物で、分子量が大きいほど沸点が高くなっている"},{t:"14族の水素化合物は、分子量が大きいほど沸点が高い"},{t:"H<sub>2</sub>O の沸点は、分子量から予想される値よりかなり高い"},{t:"同じ周期で比べると、14族より15〜17族のほうが沸点が高い"}],a:0,
+ h:"グラフの左上にある3点が、この規則から外れていないかどうかを確かめます。",
+ e:"H<sub>2</sub>O・HF・NH<sub>3</sub> は分子量が小さいのに沸点が非常に高く、<b>規則から大きく外れている</b>。水素結合がはたらくため。"},
+{kc:"K5",lv:2,q:"分子量が近い2つの分子で沸点が大きく違うとき、その違いの原因として最も考えやすいものはどれか。",
+ c:[{t:"分子の極性の違いや、水素結合の有無"},{t:"分子内の原子の数の違いだけ",tag:"mwexc"},{t:"分子の色の違い",tag:"mwexc"},{t:"分子量の測り方の違い",tag:"mwexc"}],a:0,
+ h:"分子量が同じならファンデルワールス力のうち分子量による部分は同じです。残る違いは何かを考えます。",
+ e:"分子量が近いのに沸点が違うのは、<b>極性の有無</b>や<b>水素結合の有無</b>によって分子間力の強さが変わるため。"},
+{kc:"K5",lv:3,q:"水素 H<sub>2</sub>、フッ化水素 HF、塩化水素 HCl、塩素 Cl<sub>2</sub> のうち、沸点が最も高いのはどれか。",
+ c:[{t:"フッ化水素 HF"},{t:"塩素 Cl<sub>2</sub>",tag:"mwexc"},{t:"塩化水素 HCl",tag:"mwexc"},{t:"水素 H<sub>2</sub>",tag:"mwexc"}],a:0,
+ h:"まず水素結合をつくるものがあるかどうかを確かめます。分子量で比べるのはそのあとです。",
+ e:"HF だけが<b>水素結合</b>をつくるので、分子量が小さいにもかかわらず沸点が最も高い。分子量だけで判断すると Cl<sub>2</sub> を選んでしまう。"},
+{kc:"K5",lv:3,q:"H<sub>2</sub>O と H<sub>2</sub>S では、分子量の大きい H<sub>2</sub>S のほうが沸点が低い。その理由として正しいものはどれか。",
+ c:[{t:"H<sub>2</sub>O は水素結合をつくるが、H<sub>2</sub>S はつくらないから"},{t:"H<sub>2</sub>S が無極性分子だから",tag:"bondmol"},{t:"H<sub>2</sub>S のほうがファンデルワールス力が弱いから",tag:"mwexc"},{t:"H<sub>2</sub>O のほうが分子量が大きいから",tag:"mwexc"}],a:0,
+ h:"S は水素結合をつくる相手になれる原子でしょうか。F・O・N という条件を思い出します。",
+ e:"O は電気陰性度が大きく水素結合をつくるが、<b>S はつくらない</b>。そのため分子量が大きくても H<sub>2</sub>S の沸点は低い。"},
+{kc:"K5",lv:3,q:"CH<sub>4</sub>、NH<sub>3</sub>、H<sub>2</sub>O を沸点の高い順に並べたものはどれか。",
+ c:[{t:"H<sub>2</sub>O ＞ NH<sub>3</sub> ＞ CH<sub>4</sub>"},{t:"CH<sub>4</sub> ＞ NH<sub>3</sub> ＞ H<sub>2</sub>O",tag:"mwexc"},{t:"NH<sub>3</sub> ＞ H<sub>2</sub>O ＞ CH<sub>4</sub>",tag:"hbond"},{t:"3つとも同じ沸点である",tag:"mwexc"}],a:0,
+ h:"3つとも分子量は近い値です。水素結合をつくるものがどれか、そのうち極性が大きいのはどれかを考えます。",
+ e:"CH<sub>4</sub> は無極性で水素結合なし。NH<sub>3</sub> と H<sub>2</sub>O は水素結合をつくり、O のほうが電気陰性度が大きいので <b>H<sub>2</sub>O ＞ NH<sub>3</sub> ＞ CH<sub>4</sub></b>。"},
+{kc:"K5",lv:3,q:"沸点の比較を考えるとき、確かめる順序として最も適切なものはどれか。",
+ c:[{t:"水素結合の有無 → 極性の有無 → 分子量の大小"},{t:"分子量の大小だけを見れば十分である",tag:"mwexc"},{t:"分子の色 → 分子量 → 極性",tag:"mwexc"},{t:"分子内の共有結合の強さ → 分子量",tag:"imf"}],a:0,
+ h:"最も強い分子間力から順に確かめると、例外に引っかからずにすみます。",
+ e:"まず<b>水素結合</b>（最も強い）の有無、次に<b>極性</b>の有無、最後に<b>分子量</b>で比べる。この順で見れば H<sub>2</sub>O の例外にも対応できる。"},
 
-function shuffle(arr){
-  let a=[...arr];
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
+/* ===== K6 水素結合と氷（12問） ===== */
+{kc:"K6",lv:1,q:"電気陰性度が大きく非共有電子対をもつ原子どうしの間に、H 原子をはさんで形成される結合を何というか。",
+ c:[{t:"水素結合"},{t:"配位結合",tag:"hbond"},{t:"共有結合",tag:"imf"},{t:"金属結合",tag:"imf"}],a:0,
+ h:"フッ化水素や水の分子間にはたらく、特別に強い分子間力です。",
+ e:"F・O・N のような電気陰性度の大きい原子の間に H をはさんで形成される結合を<b>水素結合</b>という。"},
+{kc:"K6",lv:1,q:"水素結合をつくることができる原子の組合せとして正しいものはどれか。",
+ c:[{t:"F・O・N"},{t:"Cl・S・P",tag:"hbond"},{t:"C・H・Si",tag:"hbond"},{t:"Na・K・Ca",tag:"hbond"}],a:0,
+ h:"電気陰性度が大きく、非共有電子対をもつ原子です。3つの元素記号で覚えます。",
+ e:"水素結合ができるのは<b>F・O・N</b> の間だけ。Cl や S は電気陰性度がそれほど大きくないので水素結合をつくらない。"},
+{kc:"K6",lv:1,q:"水素結合の強さについて、正しい説明はどれか。",
+ c:[{t:"化学結合よりは非常に弱いが、ファンデルワールス力よりはかなり強い"},{t:"共有結合よりも強い",tag:"imf"},{t:"ファンデルワールス力よりも弱い",tag:"imf"},{t:"イオン結合と同じくらい強い",tag:"imf"}],a:0,
+ h:"3つの力を強い順に並べたときの、水素結合の位置を考えます。",
+ e:"水素結合は化学結合（イオン結合・共有結合・金属結合）よりは非常に弱いが、<b>ファンデルワールス力よりかなり強い</b>。"},
+{kc:"K6",lv:1,q:"氷が水に浮くのはなぜか。",
+ c:[{t:"氷のほうが水よりも密度が小さいから"},{t:"氷のほうが水よりも密度が大きいから",tag:"hbond"},{t:"氷が空気を多く含んでいるから",tag:"crystal"},{t:"氷のほうが温度が高いから",tag:"crystal"}],a:0,
+ h:"浮くか沈むかは密度で決まります。氷と水のどちらが密度が小さいかを考えます。",
+ e:"氷は水よりも<b>密度が小さい</b>ので浮く。固体が液体に浮くのは水に特異的な現象で、ほとんどの物質では固体が沈む。"},
+{kc:"K6",lv:2,q:"フッ化水素 HF の分子間で水素結合が強くはたらく理由はどれか。",
+ c:[{t:"H と F の電気陰性度の差が大きく、非常に大きな極性をもつから"},{t:"H と F の電気陰性度が等しいから",tag:"enTrend"},{t:"HF が無極性分子だから",tag:"bondmol"},{t:"HF の分子量が非常に大きいから",tag:"mwexc"}],a:0,
+ h:"F は電気陰性度が最大の元素です。H との差がどのくらいになるかを考えます。",
+ e:"F（4.0）と H（2.2）の差は1.8 と大きく、HF は<b>非常に大きな極性</b>をもつ。そのため H と別の分子の F の間に強い引力がはたらく。"},
+{kc:"K6",lv:2,q:"氷の結晶中で、水分子1個は何個の水分子と水素結合で引きあっているか。",
+ c:[{t:"4個"},{t:"2個",tag:"hbond"},{t:"6個",tag:"hbond"},{t:"8個",tag:"hbond"}],a:0,
+ h:"氷の結晶はすき間の多い正四面体構造をとっています。1個のまわりに何個が配置されるかを考えます。",
+ e:"氷では水分子1個あたり<b>4個</b>の水分子と水素結合で引きあい、すき間の多い正四面体構造をつくる。"},
+{kc:"K6",lv:2,q:"氷の結晶の構造について、正しい説明はどれか。",
+ c:[{t:"水分子どうしが水素結合で固定され、すき間の多い構造になっている"},{t:"水分子がすき間なくぎっしり詰まった構造になっている",tag:"hbond"},{t:"水分子が共有結合でつながった構造になっている",tag:"imf"},{t:"水分子がイオンに分かれて並んでいる",tag:"crystal"}],a:0,
+ h:"氷が水に浮くという事実から、どんな構造になっているかが推測できます。",
+ e:"氷では水分子が水素結合で互いに固定され、<b>すき間の多い構造</b>になる。そのため液体の水より密度が小さくなる。"},
+{kc:"K6",lv:2,q:"水素結合は、次のどれに分類されるか。",
+ c:[{t:"分子間力の一種"},{t:"共有結合の一種",tag:"imf"},{t:"イオン結合の一種",tag:"imf"},{t:"金属結合の一種",tag:"imf"}],a:0,
+ h:"分子と分子の間にはたらく力かどうかで分類します。",
+ e:"水素結合は<b>分子間力の一種</b>。ファンデルワールス力と並ぶもう1つの分子間力で、こちらのほうがかなり強い。"},
+{kc:"K6",lv:2,q:"固体が液体に浮くという水の現象は、他の物質と比べてどのような特徴があるか。",
+ c:[{t:"水に特異的な現象で、他のほとんどの物質では固体が液体に沈む"},{t:"ほとんどの物質で同じように起こる現象である",tag:"crystal"},{t:"すべての分子結晶で起こる現象である",tag:"crystal"},{t:"金属だけで起こる現象である",tag:"crystal"}],a:0,
+ h:"エタノールの固体を液体のエタノールに入れたらどうなるかを考えます。",
+ e:"固体が液体に浮くのは<b>水に特異的</b>な現象。エタノールなどほとんどの物質では、固体のほうが密度が大きく沈む。"},
+{kc:"K6",lv:3,q:"硫化水素 H<sub>2</sub>S の分子間に水素結合はできるか。",
+ c:[{t:"できない。S は水素結合をつくる原子に含まれないから"},{t:"できる。H をもっているから",tag:"hbond"},{t:"できる。S に非共有電子対があるから",tag:"hbond"},{t:"できる。H<sub>2</sub>O と同じ折れ線形だから",tag:"hbond"}],a:0,
+ h:"水素結合ができるのは F・O・N の間だけです。S がこの中に入っているかを確かめます。",
+ e:"水素結合ができるのは<b>F・O・N</b> の間だけ。S は含まれないので H<sub>2</sub>S の分子間に水素結合はできず、沸点も H<sub>2</sub>O よりずっと低い。"},
+{kc:"K6",lv:3,q:"氷の密度が液体の水より小さくなる理由として正しいものはどれか。",
+ c:[{t:"水素結合によって水分子が固定され、すき間の多い構造になるから"},{t:"氷のほうが水分子1個の質量が小さいから",tag:"crystal"},{t:"氷では水分子が共有結合で強く結ばれるから",tag:"imf"},{t:"氷では水分子が電離しているから",tag:"crystal"}],a:0,
+ h:"同じ体積の中に水分子が何個入っているかを比べます。氷では分子の配置がどうなっているか。",
+ e:"氷では水素結合によって水分子が決まった向きに固定され、<b>すき間の多い構造</b>になる。同じ体積あたりの分子数が減るので密度が小さくなる。"},
+{kc:"K6",lv:3,q:"次の分子のうち、分子間に水素結合ができるものはどれか。",
+ c:[{t:"アンモニア NH<sub>3</sub>"},{t:"塩化水素 HCl",tag:"hbond"},{t:"硫化水素 H<sub>2</sub>S",tag:"hbond"},{t:"メタン CH<sub>4</sub>",tag:"hbond"}],a:0,
+ h:"H が F・O・N のいずれかと結合しているものを探します。",
+ e:"<b>NH<sub>3</sub></b> は H が N と結合しているので水素結合ができる。HCl の Cl、H<sub>2</sub>S の S、CH<sub>4</sub> の C はいずれも水素結合をつくらない。"},
+
+/* ===== K7 分子結晶（10問） ===== */
+{kc:"K7",lv:1,q:"分子どうしが分子間力で引きあい、規則正しく配列してできる結晶を何というか。",
+ c:[{t:"分子結晶"},{t:"イオン結晶",tag:"crystal"},{t:"金属結晶",tag:"crystal"},{t:"共有結合の結晶",tag:"crystal"}],a:0,
+ h:"結晶をつくっている粒子が分子である場合の呼び方です。",
+ e:"分子が分子間力で引きあって規則正しく配列した結晶を<b>分子結晶</b>という。"},
+{kc:"K7",lv:1,q:"次のうち、分子結晶に分類されるものはどれか。",
+ c:[{t:"ヨウ素 I<sub>2</sub>"},{t:"塩化ナトリウム NaCl",tag:"crystal"},{t:"銅 Cu",tag:"crystal"},{t:"ダイヤモンド C",tag:"crystal"}],a:0,
+ h:"分子という単位が実在する物質を探します。",
+ e:"<b>ヨウ素 I<sub>2</sub></b> は I<sub>2</sub> 分子が集まった分子結晶。NaCl はイオン結晶、Cu は金属結晶、ダイヤモンドは共有結合の結晶。"},
+{kc:"K7",lv:1,q:"分子結晶の一般的な性質として正しいものはどれか。",
+ c:[{t:"やわらかく、融点や沸点が低い"},{t:"非常に硬く、融点が高い",tag:"crystal"},{t:"展性・延性に富む",tag:"crystal"},{t:"固体のままでも電気をよく通す",tag:"crystal"}],a:0,
+ h:"分子どうしを結びつけている力の強さから考えます。分子間力は強いでしょうか。",
+ e:"分子間力は弱い力なので、分子結晶は<b>やわらかく、融点や沸点が低い</b>。常温・常圧で気体や液体のものも多い。"},
+{kc:"K7",lv:2,q:"二酸化炭素、ヨウ素、ナフタレンなどが昇華しやすいのはなぜか。",
+ c:[{t:"分子間力が非常に弱いから"},{t:"分子内の共有結合が非常に弱いから",tag:"imf"},{t:"イオン結合でできているから",tag:"crystal"},{t:"分子量が非常に大きいから",tag:"mwexc"}],a:0,
+ h:"固体から直接気体になるには、粒子をつなぎとめている力がどうでなければならないかを考えます。",
+ e:"これらは<b>分子間力が非常に弱い</b>ので、液体を経ずに固体から直接気体になりやすい。"},
+{kc:"K7",lv:2,q:"分子からなる物質は電気を通すか。",
+ c:[{t:"通さない"},{t:"固体でも液体でもよく通す",tag:"crystal"},{t:"固体のときだけ通す",tag:"crystal"},{t:"融かすと必ず通す",tag:"crystal"}],a:0,
+ h:"電気を運ぶ荷電粒子があるかどうかを考えます。分子は電荷をもっているでしょうか。",
+ e:"分子は電荷をもたないので、分子からなる物質は<b>電気を通さない</b>。ただし水に溶けて電離する電解質は例外的に水溶液が電気を通す。"},
+{kc:"K7",lv:2,q:"分子結晶がやわらかい理由として正しいものはどれか。",
+ c:[{t:"分子どうしを結びつけている分子間力が弱いから"},{t:"分子内の共有結合が弱いから",tag:"imf"},{t:"自由電子が動き回っているから",tag:"crystal"},{t:"イオンが規則正しく並んでいるから",tag:"crystal"}],a:0,
+ h:"結晶をくずすときに切れるのは、分子の内側の結合か、分子と分子の間の力かを考えます。",
+ e:"分子結晶をくずすときに切れるのは弱い<b>分子間力</b>だけなので、やわらかくくだけやすい。分子内の共有結合は強いままである。"},
+{kc:"K7",lv:2,q:"分子結晶の融点が低い理由として正しいものはどれか。",
+ c:[{t:"融解のときに切れるのは、弱い分子間力だけだから"},{t:"分子内の共有結合が弱いから",tag:"imf"},{t:"分子が電離するから",tag:"crystal"},{t:"分子量が小さいから",tag:"mwexc"}],a:0,
+ h:"融かしても分子そのものは残っています。では何を断ち切れば融けるのかを考えます。",
+ e:"融解で切れるのは<b>分子間力だけ</b>で、分子内の共有結合は切れない。分子間力が弱いので、少しの熱で融ける。"},
+{kc:"K7",lv:3,q:"塩化水素や酢酸のような分子からなる物質の電解質は、どのようなときに電気を通すようになるか。",
+ c:[{t:"水に溶けて電離し、イオンに分かれたとき"},{t:"固体のままのとき",tag:"crystal"},{t:"融かして液体にしたとき",tag:"crystal"},{t:"どのようなときも電気を通さない",tag:"crystal"}],a:0,
+ h:"分子のままでは電荷を運べません。水に溶けたときに何が起こるかを考えます。",
+ e:"塩化水素や酢酸は分子からなる物質だが、<b>水に溶けると電離してイオンに分かれる</b>ので水溶液は電気を通す。固体や液体のままでは通さない。"},
+{kc:"K7",lv:3,q:"分子結晶とイオン結晶を比べたとき、正しい説明はどれか。",
+ c:[{t:"分子結晶のほうが融点が低く、やわらかい"},{t:"分子結晶のほうが融点が高く、硬い",tag:"crystal"},{t:"どちらも水に溶かすと電気を通す",tag:"crystal"},{t:"どちらも固体のままで電気をよく通す",tag:"crystal"}],a:0,
+ h:"粒子を結びつけている力の強さを比べます。分子間力と静電気力ではどちらが強いか。",
+ e:"分子間力は静電気力よりはるかに弱いので、分子結晶のほうが<b>融点が低くやわらかい</b>。イオン結晶は融点が高く硬いがもろい。"},
+{kc:"K7",lv:3,q:"次の記述のうち、分子結晶について誤りを含むものはどれか。",
+ c:[{t:"分子結晶はどれも水によく溶け、水溶液は電気を通す"},{t:"分子結晶はやわらかく、くだけやすい"},{t:"分子結晶の中には昇華しやすいものがある"},{t:"分子結晶をつくる分子の内部は共有結合で結ばれている"}],a:0,
+ h:"ヨウ素やナフタレンが水によく溶けるかどうかを考えます。",
+ e:"ヨウ素やナフタレンは無極性分子なので<b>水にほとんど溶けない</b>。また溶けても電離しなければ電気は通さない。"}
+);
+
+const STEPS=[
+/* ---- 穴埋め版（S1・S2 を提示） ---- */
+{kc:"K2",lv:2,fill:true,
+ stem:"二酸化炭素 CO<sub>2</sub> が極性分子か無極性分子かを判定せよ。",
+ given:[{label:"S1 結合の極性",text:"C（2.6）と O（3.4）で電気陰性度が違うので、C=O の結合には<b>極性がある</b>"},
+        {label:"S2 分子の形",text:"C のまわりの電子対のかたまりは2つなので<b>直線形</b>"}],
+ steps:[
+  {label:"S3 打ち消しあうか",q:"2つの C=O の結合の極性は、分子全体でどうなるか。",
+   c:[{t:"正反対を向いているので打ち消しあう"},{t:"同じ向きを向いているので強めあう",tag:"shape"},{t:"直角に向いているので一部だけ残る",tag:"shape"},{t:"結合に極性がないので考える必要がない",tag:"bondmol"}],a:0,
+   h:"直線形なので、C をはさんで2つの O が正反対に位置します。極性の向きを矢印で考えます。",
+   e:"直線形では2つの C=O の極性が<b>正反対</b>を向くので、大きさが同じで向きが逆となり打ち消しあう。"},
+  {label:"S4 結論",q:"CO<sub>2</sub> は極性分子と無極性分子のどちらか。",
+   c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"結合に極性があるので極性分子",tag:"bondmol"},{t:"O が2個あるので極性分子",tag:"bondmol"}],a:0,
+   h:"打ち消しあった結果、分子全体として電荷のかたよりが残っているかどうかを考えます。",
+   e:"結合の極性が完全に打ち消しあうので、分子全体としては極性がない。よって<b>無極性分子</b>。結合の極性と分子の極性は別物。"}]},
+
+{kc:"K2",lv:2,fill:true,
+ stem:"水 H<sub>2</sub>O が極性分子か無極性分子かを判定せよ。",
+ given:[{label:"S1 結合の極性",text:"H（2.2）と O（3.4）で電気陰性度が違うので、O-H の結合には<b>極性がある</b>"},
+        {label:"S2 分子の形",text:"O のまわりには電子対が4組あり、非共有電子対2組を除くと<b>折れ線形</b>"}],
+ steps:[
+  {label:"S3 打ち消しあうか",q:"2つの O-H の結合の極性は、分子全体でどうなるか。",
+   c:[{t:"折れ線形なので打ち消されずに残る"},{t:"正反対を向いているので打ち消しあう",tag:"shape"},{t:"結合に極性がないので考える必要がない",tag:"bondmol"},{t:"H が2個なので必ず打ち消しあう",tag:"shape"}],a:0,
+   h:"折れ線形では2本の結合が同じ側に曲がっています。極性の向きは正反対になるでしょうか。",
+   e:"折れ線形では2本の O-H が同じ側を向いているので、極性は打ち消されず<b>残る</b>。O 側が δ−、H 側が δ＋ になる。"},
+  {label:"S4 結論",q:"H<sub>2</sub>O は極性分子と無極性分子のどちらか。",
+   c:[{t:"極性分子"},{t:"無極性分子",tag:"bondmol"},{t:"直線形なので無極性分子",tag:"shape"},{t:"打ち消しあうので無極性分子",tag:"bondmol"}],a:0,
+   h:"極性が打ち消されずに残るなら、分子全体としてどうなるかを考えます。",
+   e:"極性が残るので<b>極性分子</b>。この極性のおかげで、水は多くの物質を溶かす溶媒になる。"}]},
+
+{kc:"K2",lv:3,fill:true,
+ stem:"四塩化炭素 CCl<sub>4</sub> が極性分子か無極性分子かを判定せよ。",
+ given:[{label:"S1 結合の極性",text:"C（2.6）と Cl（3.2）で電気陰性度が違うので、C-Cl の結合には<b>極性がある</b>"},
+        {label:"S2 分子の形",text:"C のまわりに共有電子対4組があり、非共有電子対はないので<b>正四面体形</b>"}],
+ steps:[
+  {label:"S3 打ち消しあうか",q:"4本の C-Cl の結合の極性は、分子全体でどうなるか。",
+   c:[{t:"正四面体形で対称に配置されているので打ち消しあう"},{t:"Cl が4個もあるので強めあう",tag:"bondmol"},{t:"三角錐形なので打ち消されずに残る",tag:"shape"},{t:"結合に極性がないので考える必要がない",tag:"bondmol"}],a:0,
+   h:"4本の結合が正四面体の頂点方向に等しく広がっています。全体として一方向にかたよるでしょうか。",
+   e:"正四面体形では4本の極性が<b>対称</b>に配置されるので、足し合わせると互いに打ち消しあう。"},
+  {label:"S4 結論",q:"CCl<sub>4</sub> は極性分子と無極性分子のどちらか。",
+   c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"Cl の数が多いので極性分子",tag:"bondmol"},{t:"C-Cl に極性があるので極性分子",tag:"bondmol"}],a:0,
+   h:"打ち消しあった結果、分子全体に電荷のかたよりが残るかどうかを考えます。",
+   e:"極性が打ち消しあうので<b>無極性分子</b>。CH<sub>4</sub> と同じ理由で、正四面体形の対称性が効いている。"}]},
+
+{kc:"K5",lv:2,fill:true,
+ stem:"HF、HCl、HBr、HI を沸点の高い順に並べよ。",
+ given:[{label:"S1 水素結合",text:"<b>HF だけ</b>が水素結合をつくる（F・O・N のうち F をもつ）"},
+        {label:"S2 極性",text:"4つとも極性分子だが、電気陰性度の差は F が最大"}],
+ steps:[
+  {label:"S3 分子量",q:"HCl、HBr、HI の3つについて、分子量の大小関係を選べ。",
+   c:[{t:"HCl ＜ HBr ＜ HI"},{t:"HI ＜ HBr ＜ HCl",tag:"mwexc"},{t:"3つとも同じ",tag:"mwexc"},{t:"HBr ＜ HCl ＜ HI",tag:"mwexc"}],a:0,
+   h:"ハロゲンの原子量は周期表を下にいくほど大きくなります。Cl・Br・I の順に考えます。",
+   e:"原子量は Cl ＜ Br ＜ I なので、分子量も <b>HCl ＜ HBr ＜ HI</b>。この3つは水素結合をつくらないので、分子量で沸点が決まる。"},
+  {label:"S4 並べ替え",q:"沸点の高い順に並べたものを選べ。",
+   c:[{t:"HF ＞ HI ＞ HBr ＞ HCl"},{t:"HI ＞ HBr ＞ HCl ＞ HF",tag:"mwexc"},{t:"HF ＞ HCl ＞ HBr ＞ HI",tag:"mwexc"},{t:"HCl ＞ HBr ＞ HI ＞ HF",tag:"mwexc"}],a:0,
+   h:"水素結合をつくる分子を最上位に置き、残りは分子量の大きい順に並べます。",
+   e:"HF は水素結合のぶん飛び抜けて高い。残りは分子量順なので <b>HF ＞ HI ＞ HBr ＞ HCl</b> となる。"}]},
+
+{kc:"K5",lv:2,fill:true,
+ stem:"F<sub>2</sub>、Cl<sub>2</sub>、Br<sub>2</sub>、I<sub>2</sub> を沸点の高い順に並べよ。",
+ given:[{label:"S1 水素結合",text:"H を含まないので、<b>どれも水素結合をつくらない</b>"},
+        {label:"S2 極性",text:"同じ原子どうしの結合なので、<b>4つとも無極性分子</b>"}],
+ steps:[
+  {label:"S3 分子量",q:"4つの分子量の大小関係を選べ。",
+   c:[{t:"F<sub>2</sub> ＜ Cl<sub>2</sub> ＜ Br<sub>2</sub> ＜ I<sub>2</sub>"},{t:"I<sub>2</sub> ＜ Br<sub>2</sub> ＜ Cl<sub>2</sub> ＜ F<sub>2</sub>",tag:"mwexc"},{t:"4つとも同じ",tag:"mwexc"},{t:"Cl<sub>2</sub> ＜ F<sub>2</sub> ＜ I<sub>2</sub> ＜ Br<sub>2</sub>",tag:"mwexc"}],a:0,
+   h:"17族の原子量は、周期表を下にいくほど大きくなります。",
+   e:"原子量は F ＜ Cl ＜ Br ＜ I なので、分子量も <b>F<sub>2</sub> ＜ Cl<sub>2</sub> ＜ Br<sub>2</sub> ＜ I<sub>2</sub></b> の順になる。"},
+  {label:"S4 並べ替え",q:"沸点の高い順に並べたものを選べ。",
+   c:[{t:"I<sub>2</sub> ＞ Br<sub>2</sub> ＞ Cl<sub>2</sub> ＞ F<sub>2</sub>"},{t:"F<sub>2</sub> ＞ Cl<sub>2</sub> ＞ Br<sub>2</sub> ＞ I<sub>2</sub>",tag:"mwexc"},{t:"4つとも同じ沸点",tag:"mwexc"},{t:"Cl<sub>2</sub> ＞ F<sub>2</sub> ＞ I<sub>2</sub> ＞ Br<sub>2</sub>",tag:"mwexc"}],a:0,
+   h:"水素結合も極性の差もないので、分子量だけで決まります。",
+   e:"はたらくのはファンデルワールス力だけで、分子量が大きいほど強い。よって <b>I<sub>2</sub> ＞ Br<sub>2</sub> ＞ Cl<sub>2</sub> ＞ F<sub>2</sub></b>。"}]},
+
+/* ---- 自力版（S1 から） ---- */
+{kc:"K2",lv:2,fill:false,
+ stem:"アンモニア NH<sub>3</sub> が極性分子か無極性分子かを判定せよ。",
+ given:[],
+ steps:[
+  {label:"S1 結合の極性",q:"N-H の結合に極性はあるか。",
+   c:[{t:"ある（N と H で電気陰性度が違うから）"},{t:"ない（N と H で電気陰性度が等しいから）",tag:"enTrend"},{t:"ない（同じ非金属元素どうしだから）",tag:"enTrend"},{t:"ある（N と H が同じ元素だから）",tag:"enTrend"}],a:0,
+   h:"N（3.0）と H（2.2）の電気陰性度を比べます。差が0かどうかが分かれ目です。",
+   e:"N（3.0）と H（2.2）では電気陰性度が違うので、N-H の結合には<b>極性がある</b>。N 側が δ−、H 側が δ＋。"},
+  {label:"S2 分子の形",q:"NH<sub>3</sub> の分子の形はどれか。",
+   c:[{t:"三角錐形"},{t:"正四面体形",tag:"shape"},{t:"折れ線形",tag:"shape"},{t:"直線形",tag:"shape"}],a:0,
+   h:"N のまわりの電子対は共有電子対3組と非共有電子対1組です。非共有電子対を除いた形を答えます。",
+   e:"電子対4組が正四面体状に位置し、非共有電子対1組を除くので<b>三角錐形</b>になる。"},
+  {label:"S3 打ち消しあうか",q:"3本の N-H の結合の極性は、分子全体でどうなるか。",
+   c:[{t:"三角錐形で対称ではないので、打ち消されずに残る"},{t:"正四面体形なので完全に打ち消しあう",tag:"shape"},{t:"直線形なので打ち消しあう",tag:"shape"},{t:"結合に極性がないので考える必要がない",tag:"bondmol"}],a:0,
+   h:"3本の結合がすべて同じ側に向いています。全体として一方向にかたよるかどうかを考えます。",
+   e:"三角錐形では3本の N-H がすべて同じ側を向いているため、極性は打ち消されず<b>残る</b>。"},
+  {label:"S4 結論",q:"NH<sub>3</sub> は極性分子と無極性分子のどちらか。",
+   c:[{t:"極性分子"},{t:"無極性分子",tag:"bondmol"},{t:"正四面体形なので無極性分子",tag:"shape"},{t:"打ち消しあうので無極性分子",tag:"bondmol"}],a:0,
+   h:"極性が残るなら、分子全体としてどちらになるかを答えます。",
+   e:"極性が残るので<b>極性分子</b>。極性が大きいため水によく溶ける。"}]},
+
+{kc:"K2",lv:3,fill:false,
+ stem:"二硫化炭素 CS<sub>2</sub> が極性分子か無極性分子かを判定せよ。ただし CS<sub>2</sub> は CO<sub>2</sub> と同じ形の分子である。",
+ given:[],
+ steps:[
+  {label:"S1 結合の極性",q:"C=S の結合の極性について正しいものを選べ。ただし電気陰性度は C が2.6、S が2.6 である。",
+   c:[{t:"電気陰性度がほぼ等しいので、極性はほとんどない"},{t:"電気陰性度の差が非常に大きいので、極性は非常に大きい",tag:"enTrend"},{t:"S のほうが金属なので極性がある",tag:"enTrend"},{t:"二重結合なので必ず極性がある",tag:"bondmol"}],a:0,
+   h:"2つの原子の電気陰性度の差を計算します。差が0に近いとどうなるかを考えます。",
+   e:"C も S も2.6 で差がほぼ0 なので、C=S の結合には<b>極性がほとんどない</b>。"},
+  {label:"S2 分子の形",q:"CS<sub>2</sub> の分子の形はどれか。",
+   c:[{t:"直線形"},{t:"折れ線形",tag:"shape"},{t:"三角錐形",tag:"shape"},{t:"正四面体形",tag:"shape"}],a:0,
+   h:"CO<sub>2</sub> と同じ形と示されています。C のまわりの電子対のかたまりは2つです。",
+   e:"二重結合の共有電子対を1つのかたまりとみると C のまわりのかたまりは2つで、正反対に位置するので<b>直線形</b>。"},
+  {label:"S3 打ち消しあうか",q:"この分子の極性について正しいものを選べ。",
+   c:[{t:"もともと結合の極性がほとんどなく、さらに直線形で打ち消しあう"},{t:"結合の極性が大きく、折れ線形なので残る",tag:"shape"},{t:"結合の極性が大きいが、S が2個なので強めあう",tag:"bondmol"},{t:"結合の極性はないが、形が非対称なので極性が生じる",tag:"shape"}],a:0,
+   h:"結合の極性の大きさと、分子の形の2つの理由が、どちらも同じ結論を指しています。",
+   e:"結合の極性がほとんどないうえ、<b>直線形</b>なのでわずかな極性も打ち消しあう。2つの理由がそろっている。"},
+  {label:"S4 結論",q:"CS<sub>2</sub> は極性分子と無極性分子のどちらか。",
+   c:[{t:"無極性分子"},{t:"極性分子",tag:"bondmol"},{t:"S が2個あるので極性分子",tag:"bondmol"},{t:"二重結合があるので極性分子",tag:"bondmol"}],a:0,
+   h:"結合の極性も分子の形も、どちらも極性を残さない方向にはたらいています。",
+   e:"<b>無極性分子</b>。だから水には溶けにくく、無極性の溶媒にはよく溶ける。"}]},
+
+{kc:"K2",lv:2,fill:false,
+ stem:"塩化水素 HCl が極性分子か無極性分子かを判定せよ。",
+ given:[],
+ steps:[
+  {label:"S1 結合の極性",q:"H-Cl の結合に極性はあるか。ただし電気陰性度は H が2.2、Cl が3.2 である。",
+   c:[{t:"ある（差が1.0 あるから）"},{t:"ない（差が0 だから）",tag:"enTrend"},{t:"ない（どちらも非金属元素だから）",tag:"enTrend"},{t:"ある（H のほうが電気陰性度が大きいから）",tag:"enTrend"}],a:0,
+   h:"2つの原子の電気陰性度の差を計算します。0 でなければ極性があります。",
+   e:"差は 3.2−2.2＝1.0 で0 ではないので、H-Cl の結合には<b>極性がある</b>。Cl 側が δ−、H 側が δ＋。"},
+  {label:"S2 分子の形",q:"HCl の分子の形はどれか。",
+   c:[{t:"直線形"},{t:"折れ線形",tag:"shape"},{t:"三角錐形",tag:"shape"},{t:"正四面体形",tag:"shape"}],a:0,
+   h:"原子が2個だけの分子です。2点を結ぶと必ずどんな形になるかを考えます。",
+   e:"原子2個の二原子分子なので必ず<b>直線形</b>になる。"},
+  {label:"S3 打ち消しあうか",q:"この分子で、結合の極性を打ち消す相手はあるか。",
+   c:[{t:"結合が1本しかないので、打ち消す相手がない"},{t:"直線形なので必ず打ち消しあう",tag:"shape"},{t:"2個の原子が正反対を向いているので打ち消しあう",tag:"bondmol"},{t:"結合に極性がないので考える必要がない",tag:"bondmol"}],a:0,
+   h:"打ち消しあうには、向きが正反対の同じ大きさの極性が必要です。結合は何本あるでしょうか。",
+   e:"二原子分子は結合が1本だけなので、<b>打ち消す相手がいない</b>。CO<sub>2</sub> のように直線形でも、結合が2本あるかどうかで結論が変わる。"},
+  {label:"S4 結論",q:"HCl は極性分子と無極性分子のどちらか。",
+   c:[{t:"極性分子"},{t:"無極性分子",tag:"bondmol"},{t:"直線形なので無極性分子",tag:"shape"},{t:"打ち消しあうので無極性分子",tag:"bondmol"}],a:0,
+   h:"結合の極性がそのまま分子の極性になります。",
+   e:"結合の極性がそのまま残るので<b>極性分子</b>。だから水に非常によく溶ける。"}]},
+
+{kc:"K5",lv:3,fill:false,
+ stem:"H<sub>2</sub>O、H<sub>2</sub>S、H<sub>2</sub>Se を沸点の高い順に並べよ。",
+ given:[],
+ steps:[
+  {label:"S1 水素結合",q:"この3つのうち、分子間に水素結合ができるものはどれか。",
+   c:[{t:"H<sub>2</sub>O だけ"},{t:"3つとも水素結合をつくる",tag:"hbond"},{t:"H<sub>2</sub>S と H<sub>2</sub>Se だけ",tag:"hbond"},{t:"3つとも水素結合をつくらない",tag:"hbond"}],a:0,
+   h:"水素結合ができるのは F・O・N の間だけです。S や Se はこの中に入っているでしょうか。",
+   e:"水素結合ができるのは F・O・N の間だけなので、<b>H<sub>2</sub>O だけ</b>。S・Se では水素結合はできない。"},
+  {label:"S2 極性",q:"H<sub>2</sub>S と H<sub>2</sub>Se の極性について正しいものを選べ。",
+   c:[{t:"どちらも折れ線形の極性分子である"},{t:"どちらも直線形の無極性分子である",tag:"shape"},{t:"H<sub>2</sub>S だけが極性分子である",tag:"bondmol"},{t:"どちらも正四面体形の無極性分子である",tag:"shape"}],a:0,
+   h:"H<sub>2</sub>O と同じ形をしています。中心原子には非共有電子対が2組あります。",
+   e:"どちらも H<sub>2</sub>O と同じ<b>折れ線形の極性分子</b>。ただし水素結合はつくらない。"},
+  {label:"S3 分子量",q:"H<sub>2</sub>S と H<sub>2</sub>Se の分子量の大小関係を選べ。",
+   c:[{t:"H<sub>2</sub>S ＜ H<sub>2</sub>Se"},{t:"H<sub>2</sub>Se ＜ H<sub>2</sub>S",tag:"mwexc"},{t:"どちらも同じ",tag:"mwexc"},{t:"比べることはできない",tag:"mwexc"}],a:0,
+   h:"S と Se は同じ16族で、Se のほうが下にあります。原子量の大小を考えます。",
+   e:"Se は S より原子量が大きいので、分子量も <b>H<sub>2</sub>S ＜ H<sub>2</sub>Se</b>。水素結合がないこの2つは分子量で沸点が決まる。"},
+  {label:"S4 並べ替え",q:"沸点の高い順に並べたものを選べ。",
+   c:[{t:"H<sub>2</sub>O ＞ H<sub>2</sub>Se ＞ H<sub>2</sub>S"},{t:"H<sub>2</sub>Se ＞ H<sub>2</sub>S ＞ H<sub>2</sub>O",tag:"mwexc"},{t:"H<sub>2</sub>O ＞ H<sub>2</sub>S ＞ H<sub>2</sub>Se",tag:"mwexc"},{t:"H<sub>2</sub>S ＞ H<sub>2</sub>Se ＞ H<sub>2</sub>O",tag:"mwexc"}],a:0,
+   h:"水素結合をつくるものを最上位に置き、残りは分子量の大きい順に並べます。",
+   e:"H<sub>2</sub>O は水素結合のぶん飛び抜けて高い。残る2つは分子量順なので <b>H<sub>2</sub>O ＞ H<sub>2</sub>Se ＞ H<sub>2</sub>S</b>。"}]},
+
+{kc:"K5",lv:3,fill:false,
+ stem:"CH<sub>4</sub>、NH<sub>3</sub>、H<sub>2</sub>O を沸点の高い順に並べよ。3つとも分子量は近い値である。",
+ given:[],
+ steps:[
+  {label:"S1 水素結合",q:"この3つのうち、分子間に水素結合ができるものはどれか。",
+   c:[{t:"NH<sub>3</sub> と H<sub>2</sub>O"},{t:"CH<sub>4</sub> と NH<sub>3</sub>",tag:"hbond"},{t:"3つとも水素結合をつくる",tag:"hbond"},{t:"H<sub>2</sub>O だけ",tag:"hbond"}],a:0,
+   h:"H が F・O・N のいずれかと結合しているものを探します。C はこの中に入るでしょうか。",
+   e:"H が N と結合した <b>NH<sub>3</sub></b>、O と結合した <b>H<sub>2</sub>O</b> が水素結合をつくる。CH<sub>4</sub> の C は対象外。"},
+  {label:"S2 極性",q:"CH<sub>4</sub> の極性について正しいものを選べ。",
+   c:[{t:"正四面体形で極性が打ち消しあうため、無極性分子である"},{t:"三角錐形なので極性分子である",tag:"shape"},{t:"折れ線形なので極性分子である",tag:"shape"},{t:"C-H に極性があるので極性分子である",tag:"bondmol"}],a:0,
+   h:"C のまわりに非共有電子対はありません。4本の結合がどう配置されるかを考えます。",
+   e:"CH<sub>4</sub> は<b>正四面体形</b>で4本の C-H の極性が対称に打ち消しあうため、無極性分子。水素結合も極性もないので沸点は最も低い。"},
+  {label:"S3 電気陰性度",q:"NH<sub>3</sub> と H<sub>2</sub>O のうち、水素結合がより強くはたらくのはどちらか。",
+   c:[{t:"H<sub>2</sub>O（O のほうが N より電気陰性度が大きいから）"},{t:"NH<sub>3</sub>（N のほうが O より電気陰性度が大きいから）",tag:"enTrend"},{t:"どちらも同じ",tag:"hbond"},{t:"NH<sub>3</sub>（H が3個あるから）",tag:"hbond"}],a:0,
+   h:"O は3.4、N は3.0 です。電気陰性度が大きいほど極性が大きくなります。",
+   e:"O（3.4）は N（3.0）より電気陰性度が大きく、O-H の極性のほうが大きい。よって<b>H<sub>2</sub>O</b> の水素結合のほうが強い。"},
+  {label:"S4 並べ替え",q:"沸点の高い順に並べたものを選べ。",
+   c:[{t:"H<sub>2</sub>O ＞ NH<sub>3</sub> ＞ CH<sub>4</sub>"},{t:"CH<sub>4</sub> ＞ NH<sub>3</sub> ＞ H<sub>2</sub>O",tag:"mwexc"},{t:"NH<sub>3</sub> ＞ H<sub>2</sub>O ＞ CH<sub>4</sub>",tag:"hbond"},{t:"H<sub>2</sub>O ＞ CH<sub>4</sub> ＞ NH<sub>3</sub>",tag:"hbond"}],a:0,
+   h:"水素結合の強いものから順に並べ、水素結合をもたないものを最後に置きます。",
+   e:"水素結合が最も強い H<sub>2</sub>O が最高、次に NH<sub>3</sub>、水素結合も極性もない CH<sub>4</sub> が最低。よって <b>H<sub>2</sub>O ＞ NH<sub>3</sub> ＞ CH<sub>4</sub></b>。"}]}
+];
+
+const SUMMARY=`<table class="sum">
+<thead><tr><th></th><th>H<sub>2</sub></th><th>HCl</th><th>CO<sub>2</sub></th><th>H<sub>2</sub>O</th><th>NH<sub>3</sub></th><th>CH<sub>4</sub></th></tr></thead>
+<tbody>
+<tr><th>分子の形</th><td>直線形</td><td>直線形</td><td>直線形</td><td>折れ線形</td><td>三角錐形</td><td>正四面体形</td></tr>
+<tr><th>結合の極性</th><td>なし</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td><td>あり</td></tr>
+<tr><th>打ち消しあうか</th><td>—</td><td>相手なし</td><td>打ち消す</td><td>残る</td><td>残る</td><td>打ち消す</td></tr>
+<tr><th>分子の極性</th><td>無極性</td><td><b>極性</b></td><td>無極性</td><td><b>極性</b></td><td><b>極性</b></td><td>無極性</td></tr>
+</tbody>
+</table>
+<p style="font-size:.8rem;color:#718096;line-height:1.6;margin-top:8px">
+<b>極性の判定手順</b>　①結合に極性があるか（電気陰性度の差）→ ②分子の形 → ③打ち消しあうか → ④極性分子か無極性分子か<br>
+<b>沸点の比較手順</b>　①水素結合の有無（F・O・N）→ ②極性の有無 → ③分子量の大小<br>
+<b>分子間力の強さ</b>　化学結合 ≫ 水素結合 ＞ ファンデルワールス力
+</p>`;
+
+/* ===== 出題エンジン（211〜214 と共通） ===== */
+// 結果送信をする場合のみ Apps Script の URL を入れる（空なら送信しない）
+const GAS_URL="https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const PASS_RATE=0.8, N_L1=3, N_L2=4, N_L3=3;
+let session=[], idx=0, records=[], studentId="", attempt=1;
+
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function el(id){return document.getElementById(id);}
+
+function pickLevel(lv,n,used,usedKc){
+  const pool=shuffle(POOL.map((it,i)=>i).filter(i=>POOL[i].lv===lv&&used.indexOf(i)<0));
+  const out=[];
+  // まだ出ていないKCを優先
+  pool.forEach(i=>{ if(out.length<n && usedKc.indexOf(POOL[i].kc)<0){out.push(i);usedKc.push(POOL[i].kc);} });
+  pool.forEach(i=>{ if(out.length<n && out.indexOf(i)<0) out.push(i); });
+  out.forEach(i=>used.push(i));
+  return out.slice(0,n);
+}
+function mkMcq(i){
+  const it=POOL[i], order=shuffle(it.c.map((_,j)=>j));
+  return {type:"mcq",src:it,order:order,a:order.indexOf(it.a)};
+}
+function mkStep(def){
+  return {type:"step",src:def,sub:0,subResults:[],
+    steps:def.steps.map(st=>{const o=shuffle(st.c.map((_,j)=>j));return {src:st,order:o,a:o.indexOf(st.a)};})};
+}
+function buildSession(){
+  const used=[],usedKc=[];
+  const l1=pickLevel(1,N_L1,used,usedKc), l2=pickLevel(2,N_L2,used,usedKc), l3=pickLevel(3,N_L3,used,usedKc);
+  const fill=shuffle(STEPS.filter(s=>s.fill))[0], free=shuffle(STEPS.filter(s=>!s.fill))[0];
+  const s=[];
+  l1.forEach(i=>s.push(mkMcq(i)));
+  l2.forEach(i=>s.push(mkMcq(i)));
+  s.push(mkStep(fill));
+  l3.forEach(i=>s.push(mkMcq(i)));
+  s.push(mkStep(free));
+  return s;
 }
 
-function shuffleChoices(q){
-  const order=shuffle([0,1,2,3]);
-  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
-}
+window.addEventListener('DOMContentLoaded',()=>{
+  el('uTitle').textContent=UNIT.code+" "+UNIT.title;
+  el('uSub').innerHTML=UNIT.sub;
+  el('kcPreview').innerHTML=Object.keys(KC).map(k=>`<li>${KC[k].name}</li>`).join('');
+  el('totalBadge').textContent=`全${POOL.length+STEPS.length}問収録`;
+  // 学籍番号の引き継ぎ：一覧ページや前回の利用で登録した番号を初期表示する
+  try{ const saved=localStorage.getItem('quizStudentId'); if(saved) el('studentId').value=saved; }catch(e){}
+});
 
-function showOnly(id){
-  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
-}
-
-function toHalfWidthDigits(s){
-  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
-}
-
+function toHalfWidthDigits(s){return s.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);});}
 function startQuiz(){
-  const idInput=document.getElementById("studentId");
-  const normalized=toHalfWidthDigits(idInput.value.trim());
-  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(normalized)){
+  studentId=toHalfWidthDigits((el('studentId').value||'').trim());
+  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(studentId)){
     alert("学籍番号が正しくありません。\n1桁目は学年「1」、2桁目は組「1〜6」、3・4桁目は出席番号「01〜40」です（例：1年1組4番→1104）。");
-    idInput.focus();
-    return;
+    el('studentId').focus(); return;
   }
-  idInput.value=normalized;
-  studentId=normalized;
-  try{localStorage.setItem('quizStudentId',normalized);}catch(e){}
-  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
-  idx=0; score=0; results=[];
-  showOnly("quiz");
-  renderQ();
+  el('studentId').value=studentId;
+  try{localStorage.setItem('quizStudentId',studentId);}catch(e){}
+  session=buildSession(); idx=0; records=[];
+  el('start').classList.add('hidden'); el('result').classList.add('hidden');
+  el('quiz').classList.remove('hidden');
+  window.scrollTo(0,0); render();
+}
+function lvChip(lv){return `<span class="chip l${lv}">${lv===1?'基本':(lv===2?'標準':'発展')}</span>`;}
+function figHtml(key){
+  if(!key||!FIGS[key]) return '';
+  return `<img class="qfig" src="${FIGS[key].src}" alt="${FIGS[key].alt}">`;
 }
 
-function renderQ(){
-  const q=session[idx];
-  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
-  document.getElementById("qnum").textContent=(idx+1)+"/10";
-  document.getElementById("qtext").textContent=q.q;
-  document.getElementById("exp").style.display="none";
-  document.getElementById("nextBtn").style.display="none";
-
-  const ci=document.getElementById("choices");
-  ci.innerHTML="";
-  q.choices.forEach((c,i)=>{
-    const btn=document.createElement("button");
-    btn.className="choice-btn";
-    btn.textContent=c;
-    btn.onclick=()=>select(i);
-    ci.appendChild(btn);
+function render(){
+  const item=session[idx]; attempt=1;
+  el('pbar').style.width=(idx/session.length*100)+'%';
+  el('qnum').textContent=`${idx+1} / ${session.length}`;
+  el('hint').style.display='none'; el('exp').style.display='none';
+  el('nextBtn').style.display='none';
+  el('stepDone').innerHTML=''; el('stemBox').innerHTML=''; el('figBox').innerHTML='';
+  if(item.type==='mcq'){
+    const it=item.src;
+    el('metaRow').innerHTML=`<span class="chip kc">${KC[it.kc].short}</span>${lvChip(it.lv)}`;
+    el('figBox').innerHTML=figHtml(it.fig);
+    el('qtext').innerHTML=it.q;
+    el('choices').innerHTML=item.order.map((oi,k)=>
+      `<button class="choice-btn" data-k="${k}" onclick="answerMcq(${k})">${it.c[oi].t}</button>`).join('');
+  }else{ renderStep(); }
+}
+function renderStep(){
+  const item=session[idx], def=item.src, st=item.steps[item.sub];
+  el('metaRow').innerHTML=`<span class="chip kc">${KC[def.kc].short}</span>${lvChip(def.lv)}`+
+    (def.fill?`<span class="chip fill">穴埋め（S1・S2 は提示）</span>`:`<span class="chip fill">ステップ分解</span>`);
+  el('stemBox').innerHTML=`<div class="stem">${def.stem}</div>`;
+  el('figBox').innerHTML=figHtml(def.fig);
+  let done=(def.given||[]).map(g=>`<div class="step-row given"><span class="step-tag">${g.label}</span><span>${g.text}</span></div>`);
+  item.subResults.forEach((r,i)=>{
+    const s=item.steps[i];
+    done.push(`<div class="step-row ${r.score<1?'miss':''}"><span class="step-tag">${s.src.label}</span><span>${s.src.c[s.src.a].t}${r.score<1?'　<b>（誤答→修正）</b>':''}</span></div>`);
+  });
+  el('stepDone').innerHTML=done.join('');
+  el('qtext').innerHTML=`<span style="color:#6b46c1">［${st.src.label}］</span> ${st.src.q}`;
+  el('choices').innerHTML=st.order.map((oi,k)=>
+    `<button class="choice-btn" data-k="${k}" onclick="answerStep(${k})">${st.src.c[oi].t}</button>`).join('');
+}
+function judge(chosenK, srcQ, orderArr, correctK, onDone){
+  const btns=[...el('choices').querySelectorAll('.choice-btn')];
+  if(chosenK===correctK){
+    btns.forEach(b=>b.disabled=true); btns[chosenK].classList.add('correct');
+    onDone(attempt===1?1:0.5,null); showExp(srcQ); return;
+  }
+  const tag=srcQ.c[orderArr[chosenK]].tag||null;
+  btns[chosenK].classList.add('wrong'); btns[chosenK].disabled=true;
+  if(attempt===1){
+    attempt=2;
+    el('hint').innerHTML=`<span class="hl">ヒント</span>${srcQ.h}`;
+    el('hint').style.display='block';
+    onDone(null,tag);
+  }else{
+    btns.forEach(b=>b.disabled=true); btns[correctK].classList.add('correct');
+    onDone(0,tag); showExp(srcQ);
+  }
+}
+function showExp(srcQ){
+  el('exp').innerHTML=`<b>解説</b>　${srcQ.e}`;
+  el('exp').style.display='block';
+  el('nextBtn').style.display='block';
+  el('nextBtn').textContent=(idx===session.length-1&&!isMidStep())?'結果を見る →':'次へ →';
+}
+function isMidStep(){const it=session[idx];return it.type==='step'&&it.sub<it.steps.length-1;}
+function answerMcq(k){
+  const item=session[idx], it=item.src;
+  if(!item.tags) item.tags=[];
+  judge(k,it,item.order,item.a,(score,tag)=>{
+    if(tag) item.tags.push(tag);
+    if(score!==null) records.push({kc:it.kc,lv:it.lv,q:it.q,fig:it.fig,correct:it.c[it.a].t,score:score,tags:item.tags.slice(),exp:it.e,label:null});
   });
 }
-
-function select(chosen){
-  const q=session[idx];
-  const btns=document.querySelectorAll(".choice-btn");
-  btns.forEach(b=>b.disabled=true);
-  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
-  if(chosen!==q.a) btns[q.a].classList.add("correct");
-
-  if(chosen===q.a) score++;
-  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
-
-  const expBox=document.getElementById("exp");
-  expBox.textContent=q.exp;
-  expBox.style.display="block";
-  document.getElementById("nextBtn").style.display="block";
-  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+function answerStep(k){
+  const item=session[idx], st=item.steps[item.sub];
+  if(!st.tags) st.tags=[];
+  judge(k,st.src,st.order,st.a,(score,tag)=>{
+    if(tag) st.tags.push(tag);
+    if(score!==null) item.subResults.push({score:score,tags:st.tags.slice()});
+  });
 }
-
 function next(){
+  const item=session[idx];
+  if(item.type==='step'&&item.sub<item.steps.length-1){
+    item.sub++; attempt=1;
+    el('hint').style.display='none'; el('exp').style.display='none'; el('nextBtn').style.display='none';
+    renderStep(); return;
+  }
+  if(item.type==='step'){
+    const sc=item.subResults.map(r=>r.score);
+    const avg=sc.reduce((a,b)=>a+b,0)/sc.length;
+    const tags=item.subResults.reduce((a,r)=>a.concat(r.tags),[]);
+    const detail=item.steps.map((s,i)=>`${s.src.label}：${item.subResults[i].score===1?'○':(item.subResults[i].score===0.5?'△':'×')}`).join('　');
+    records.push({kc:item.src.kc,lv:item.src.lv,q:item.src.stem,fig:item.src.fig,correct:detail,score:avg,tags:tags,exp:item.steps[item.steps.length-1].src.e,label:'ステップ問題'});
+  }
   idx++;
-  if(idx>=10){showResult();return;}
-  renderQ();
+  if(idx>=session.length){ showResult(); return; }
+  render();
 }
-
+function stripTags(x){return String(x).replace(/<[^>]+>/g,"");}
+function send(pt,full){
+  const st=el('submitStatus');
+  if(!GAS_URL){ if(st) st.textContent="※送信先が未設定のため、この結果は記録されていません"; return; }
+  const payload={studentId:studentId,quizName:UNIT.code+" "+UNIT.title,score:pt,total:full,
+    passed:(full&&pt/full>=PASS_RATE)?"合格":"不合格",timestamp:new Date().toISOString(),
+    missed:records.filter(r=>r.score<1).map(r=>stripTags(r.q))};
+  try{
+    fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)});
+    if(st) st.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){ if(st) st.textContent="※通信エラーのため記録できませんでした"; }
+}
 function showResult(){
-  showOnly("result");
-  document.getElementById("scoreBig").textContent=score;
+  el('quiz').classList.add('hidden'); el('result').classList.remove('hidden');
+  window.scrollTo(0,0);
+  const total=records.length;
+  const raw=records.reduce((a,r)=>a+r.score,0);
+  const score=Math.round(raw*2)/2, rate=score/total;
+  el('scoreBig').textContent=score+'点';
+  el('scoreSub').textContent=`/ ${total}点（正答率 ${Math.round(rate*100)}%）`;
+  el('donutArc').setAttribute('stroke-dasharray',`${(rate*100).toFixed(1)} ${(100-rate*100).toFixed(1)}`);
+  const pass=rate>=PASS_RATE;
+  const pb=el('passBadge');
+  pb.textContent=pass?'合格':'もう一度'; pb.className='pass-badge '+(pass?'pass':'fail');
 
-  const pct=score/10*100;
-  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
-  const arc=document.getElementById("donut-arc");
-  arc.setAttribute("stroke",color);
-  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+  const agg={};
+  records.forEach(r=>{(agg[r.kc]=agg[r.kc]||{s:0,n:0});agg[r.kc].s+=r.score;agg[r.kc].n++;});
+  el('kcList').innerHTML=Object.keys(KC).filter(k=>agg[k]).map(k=>{
+    const p=agg[k].s/agg[k].n;
+    const cls=p>=0.8?'ok':(p>=0.5?'mid':'ng'), mark=p>=0.8?'○':(p>=0.5?'△':'×');
+    const col=p>=0.8?'#48bb78':(p>=0.5?'#ed8936':'#f56565');
+    return `<div class="kc-row"><div class="kc-mark ${cls}">${mark}</div>
+      <div class="kc-body"><div class="kc-name">${KC[k].name}</div>
+      <div class="kc-bar"><i style="width:${Math.round(p*100)}%;background:${col}"></i></div></div>
+      <div class="kc-score">${Math.round(agg[k].s*10)/10}/${agg[k].n}</div></div>`;
+  }).join('');
 
-  const passed=score>=PASS_THRESHOLD;
-  const passBadge=document.getElementById("passBadge");
-  passBadge.textContent=passed?"合格":"不合格";
-  passBadge.className="pass-badge "+(passed?"pass":"fail");
+  const tc={};
+  records.forEach(r=>r.tags.forEach(t=>{tc[t]=(tc[t]||0)+1;}));
+  const tags=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]).slice(0,3);
+  el('tagList').innerHTML=tags.length?tags.map(t=>
+    `<div class="tag-row"><div class="tag-head"><span class="tag-name">${TAG[t].name}</span><span class="tag-count">${tc[t]}回</span></div>
+     <div class="tag-advice">${TAG[t].advice}<br><span style="opacity:.7">戻る先：${KC[TAG[t].back].name}</span></div></div>`).join('')
+    :`<div class="empty">今回、決まった型のミスは見つかりませんでした。</div>`;
 
-  const list=document.getElementById("reviewList");
-  list.innerHTML="";
-  results.forEach((r,i)=>{
-    const div=document.createElement("div");
-    div.className="review-item"+(r.correct?"":" miss");
-    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
-      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
-      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
-    list.appendChild(div);
-  });
-
-  submitResult();
-}
-
-function submitResult(){
-  const statusEl=document.getElementById("submitStatus");
-  if(!SUBMIT_URL){
-    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
-    return;
+  const weak=Object.keys(KC).filter(k=>agg[k]&&agg[k].s/agg[k].n<0.8);
+  let todo='';
+  if(pass&&weak.length===0){
+    todo=`合格ラインを超え、測定したすべての力が8割に届いています。<b>3日後にもう一度</b>挑戦して、別の日に2回続けて合格できるか確かめましょう。それで「定着」と判定します。`;
+  }else if(pass){
+    todo=`合格ラインは超えています。ただし次の力はまだ8割に届いていません。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+`<br><br>次の回では、この力を優先して出題します。`;
+  }else{
+    todo=`合格ライン（正答率80%）に届きませんでした。まず次の力から復習しましょう。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+`<br><br><b>明日もう一度</b>、この回に挑戦してください。`;
   }
-  const payload={
-    studentId:studentId,
-    quizName:QUIZ_NAME,
-    score:score,
-    total:10,
-    passed:score>=PASS_THRESHOLD?"合格":"不合格",
-    timestamp:new Date().toISOString(),
-    missed:results.filter(r=>!r.correct).map(r=>r.q)
-  };
-  try{
-    fetch(SUBMIT_URL,{
-      method:"POST",
-      mode:"no-cors",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify(payload)
-    });
-    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
-  }catch(err){
-    statusEl.textContent="※通信エラーのため記録できませんでした";
-  }
-}
+  if(tags.length) todo+=`<br><br>特に <b>${TAG[tags[0]].name}</b> の直し方を、板書ノートで確認しておくこと。`;
+  el('todoBox').innerHTML=todo;
 
-/* 学籍番号の引き継ぎ：前回このブラウザで入力した番号を初期表示する */
-(function(){
-  try{
-    var saved=localStorage.getItem('quizStudentId');
-    if(saved) document.getElementById('studentId').value=saved;
-  }catch(e){}
-})();
+  el('sumSec').innerHTML = (typeof SUMMARY!=='undefined'&&SUMMARY)
+    ? `<div class="sec-title">要点まとめ</div><div class="sum-wrap">${SUMMARY}</div>` : '';
+
+  send(score,total);
+
+  el('reviewList').innerHTML=records.map((r,i)=>{
+    const cls=r.score===1?'':(r.score>0?'half':'miss');
+    const mark=r.score===1?'○':(r.score>0?'△':'×');
+    return `<div class="review-item ${cls}">
+      <div class="rq">${mark} Q${i+1}${r.label?`（${r.label}）`:''}　${r.q}</div>
+      <div class="ra"><b>正解：</b>${r.correct}<br>${r.exp}</div></div>`;
+  }).join('');
+}
 </script>
 </body>
 </html>
