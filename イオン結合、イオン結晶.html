@@ -3,63 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>化学基礎クイズ｜イオン結合・イオン結晶・組成式と名称</title>
+<title>化学基礎クイズ｜131 イオン結合とイオン結晶</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
-.wrap{width:100%;max-width:640px}
-.card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-#start h1{font-size:1.5rem;font-weight:700;color:#2b6cb0;margin-bottom:8px}
-#start .sub{color:#718096;font-size:.95rem;margin-bottom:24px}
-.total-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;background:#ebf8ff;color:#2b6cb0;margin-bottom:24px}
-.id-label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:6px}
-.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:20px}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f4f8;color:#2d3748;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:680px}
+.card{background:#fff;border-radius:16px;padding:26px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+sub{font-size:.72em}sup{font-size:.72em}
+img.qfig{display:block;width:100%;max-width:460px;margin:0 auto 14px;border:1px solid #e2e8f0;border-radius:8px;background:#fff}
+#start h1{font-size:1.35rem;font-weight:700;color:#2b6cb0;margin-bottom:6px}
+#start .sub{color:#718096;font-size:.9rem;margin-bottom:16px;line-height:1.6}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.74rem;font-weight:600;background:#ebf8ff;color:#2b6cb0}
+.badge.key{background:#2b6cb0;color:#fff}
+.flow{display:flex;align-items:center;gap:4px;flex-wrap:wrap;background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:.74rem;color:#4a5568}
+.flow b{background:#fff;border:1px solid #cbd5e0;border-radius:5px;padding:3px 8px;font-weight:700}
+.flow i{color:#a0aec0;font-style:normal}
+.kc-preview{background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.kc-preview .t{font-size:.78rem;font-weight:700;color:#4a5568;margin-bottom:8px}
+.kc-preview ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.kc-preview li{font-size:.82rem;color:#4a5568;padding-left:16px;position:relative;line-height:1.5}
+.kc-preview li::before{content:"";position:absolute;left:0;top:.45em;width:7px;height:7px;border-radius:50%;background:#90cdf4}
+.id-label{display:block;font-size:.82rem;font-weight:600;color:#4a5568;margin-bottom:6px}
+.id-input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:.95rem;margin-bottom:16px}
 .id-input:focus{outline:none;border-color:#4299e1}
-.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer}
 .start-btn:hover{opacity:.9}
-.submit-status{margin-top:14px;text-align:center;font-size:.8rem;color:#a0aec0}
-#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+#quiz .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .progress-wrap{flex:1;height:8px;background:#e2e8f0;border-radius:4px;margin:0 12px;overflow:hidden}
 .progress-bar{height:100%;background:linear-gradient(90deg,#4299e1,#63b3ed);border-radius:4px;transition:width .3s}
-.q-num{font-size:.85rem;color:#718096;white-space:nowrap}
-.q-text{font-size:1.1rem;font-weight:600;line-height:1.6;margin-bottom:20px}
-.choices{display:flex;flex-direction:column;gap:10px}
-.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s}
+.q-num{font-size:.8rem;color:#718096;white-space:nowrap}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px}
+.chip.kc{background:#edf2f7;color:#4a5568}
+.chip.l1{background:#f0fff4;color:#276749}
+.chip.l2{background:#ebf8ff;color:#2b6cb0}
+.chip.l3{background:#faf5ff;color:#6b46c1}
+.chip.fill{background:#fffaf0;color:#975a16}
+.q-text{font-size:1.05rem;font-weight:600;line-height:1.65;margin-bottom:14px}
+.stem{background:#f7fafc;border-left:4px solid #90cdf4;border-radius:0 8px 8px 0;padding:10px 14px;font-size:.89rem;line-height:1.6;color:#4a5568;margin-bottom:12px}
+.step-done{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.step-row{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;padding:9px 12px;border-radius:8px;background:#f0fff4;border:1px solid #c6f6d5;line-height:1.5}
+.step-row.given{background:#fffaf0;border-color:#feebc8}
+.step-row.miss{background:#fff5f5;border-color:#fed7d7}
+.step-tag{font-weight:700;color:#4a5568;white-space:nowrap}
+.choices{display:flex;flex-direction:column;gap:9px}
+.choice-btn{padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;font-size:.95rem;cursor:pointer;text-align:left;transition:all .15s;line-height:1.5}
 .choice-btn:hover:not(:disabled){border-color:#4299e1;background:#ebf8ff}
 .choice-btn.correct{border-color:#48bb78;background:#f0fff4;color:#276749;font-weight:700}
 .choice-btn.wrong{border-color:#fc8181;background:#fff5f5;color:#c53030}
 .choice-btn:disabled{cursor:default}
-.exp-box{margin-top:16px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.9rem;color:#7b341e;line-height:1.6;display:none}
-.next-btn{margin-top:18px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none;transition:opacity .2s}
+.hint-box{margin-top:14px;padding:12px 16px;background:#ebf8ff;border-left:4px solid #4299e1;border-radius:0 8px 8px 0;font-size:.87rem;color:#2a4365;line-height:1.6;display:none}
+.hint-box .hl{font-weight:700;display:block;margin-bottom:3px;font-size:.76rem;color:#2b6cb0}
+.exp-box{margin-top:14px;padding:12px 16px;background:#fffbeb;border-left:4px solid #f6ad55;border-radius:0 8px 8px 0;font-size:.87rem;color:#7b341e;line-height:1.65;display:none}
+.next-btn{margin-top:16px;width:100%;padding:13px;background:#4299e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;display:none}
 .next-btn:hover{opacity:.9}
-#result .r-title{font-size:1.3rem;font-weight:700;text-align:center;margin-bottom:20px}
-.donut-wrap{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:24px}
-.donut-svg{width:120px;height:120px}
-.score-big{font-size:2.5rem;font-weight:800;color:#2b6cb0;line-height:1}
-.score-sub{font-size:.9rem;color:#718096}
-.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.85rem;font-weight:700}
+#result .r-title{font-size:1.2rem;font-weight:700;text-align:center;margin-bottom:16px}
+.donut-wrap{display:flex;justify-content:center;align-items:center;gap:22px;margin-bottom:8px}
+.donut-svg{width:110px;height:110px}
+.score-big{font-size:2.2rem;font-weight:800;color:#2b6cb0;line-height:1}
+.score-sub{font-size:.84rem;color:#718096}
+.pass-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:20px;font-size:.8rem;font-weight:700}
 .pass-badge.pass{background:#f0fff4;color:#276749}
 .pass-badge.fail{background:#fff5f5;color:#c53030}
-.review-title{font-weight:700;margin-bottom:12px;color:#4a5568}
-.review-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto}
-.review-item{padding:12px;border:1px solid #e2e8f0;border-radius:8px}
-.review-item .rq{font-size:.9rem;font-weight:600;margin-bottom:4px}
-.review-item .ra{font-size:.85rem;color:#718096}
+.pass-note{text-align:center;font-size:.76rem;color:#a0aec0;margin-bottom:12px}
+.sec-title{font-weight:700;margin:20px 0 9px;color:#2d3748;font-size:.96rem;padding-bottom:5px;border-bottom:2px solid #e2e8f0}
+.sec-note{font-size:.76rem;color:#a0aec0;margin:-5px 0 9px;line-height:1.5}
+.kc-list{display:flex;flex-direction:column;gap:7px}
+.kc-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #e2e8f0;border-radius:9px}
+.kc-mark{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;color:#fff}
+.kc-mark.ok{background:#48bb78}.kc-mark.mid{background:#ed8936}.kc-mark.ng{background:#f56565}
+.kc-body{flex:1;min-width:0}
+.kc-name{font-size:.85rem;font-weight:600;line-height:1.4}
+.kc-bar{height:5px;background:#edf2f7;border-radius:3px;margin-top:5px;overflow:hidden}
+.kc-bar i{display:block;height:100%;border-radius:3px}
+.kc-score{font-size:.77rem;color:#718096;white-space:nowrap}
+.tag-list{display:flex;flex-direction:column;gap:8px}
+.tag-row{padding:11px 13px;border-radius:9px;background:#fff5f5;border:1px solid #fed7d7}
+.tag-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tag-name{font-size:.89rem;font-weight:700;color:#c53030}
+.tag-count{font-size:.75rem;color:#e53e3e;white-space:nowrap}
+.tag-advice{font-size:.81rem;color:#742a2a;margin-top:5px;line-height:1.55}
+.empty{font-size:.84rem;color:#718096;padding:10px 0}
+.todo{background:#ebf8ff;border:1px solid #bee3f8;border-radius:10px;padding:14px 16px;font-size:.87rem;color:#2a4365;line-height:1.7}
+.todo b{color:#2b6cb0}
+.sum-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.sum{border-collapse:collapse;font-size:.78rem;min-width:520px;width:100%}
+table.sum th,table.sum td{border:1px solid #e2e8f0;padding:7px 9px;text-align:left;line-height:1.5;vertical-align:top}
+table.sum thead th{background:#2b6cb0;color:#fff;font-weight:700;white-space:nowrap}
+table.sum tbody th{background:#f7fafc;font-weight:700;white-space:nowrap;color:#2b6cb0}
+.review-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto;padding-right:4px}
+.review-item{padding:11px 13px;border:1px solid #e2e8f0;border-radius:8px}
+.review-item .rq{font-size:.86rem;font-weight:600;margin-bottom:4px;line-height:1.5}
+.review-item .ra{font-size:.79rem;color:#718096;line-height:1.5}
+.review-item.miss{border-color:#fed7d7;background:#fffafa}
 .review-item.miss .rq{color:#c53030}
-.retry-btn{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.review-item.half{border-color:#feebc8;background:#fffdf7}
+.retry-btn{margin-top:18px;width:100%;padding:13px;background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
 .retry-btn:hover{opacity:.9}
-.home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.85rem;text-decoration:none}
+.home-link{display:block;text-align:center;margin-top:14px;color:#4299e1;font-size:.84rem;text-decoration:none}
 .home-link:hover{text-decoration:underline}
+.submit-status{margin-top:12px;text-align:center;font-size:.78rem;color:#a0aec0}
 .hidden{display:none}
+@media (max-width:480px){.card{padding:20px 16px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <div id="start" class="card">
-  <h1>化学基礎クイズ</h1>
-  <p class="sub">イオン結合・イオン結晶の性質・組成式・名称の書き方｜毎回ランダム10問</p>
-  <div class="total-badge" id="totalBadge"></div>
+  <h1 id="uTitle"></h1>
+  <p class="sub" id="uSub"></p>
+  <div class="badges">
+    <span class="badge key" id="totalBadge"></span>
+    <span class="badge">毎回12問・正答率80%で合格</span>
+    <span class="badge">ヒント→再挑戦</span>
+    <span class="badge">ステップ分解採点</span>
+  </div>
+  <div class="flow">
+    <b>基本 ×3</b><i>→</i><b>標準 ×4</b><i>→</i><b>段階（穴埋め）</b><i>→</i><b>発展 ×3</b><i>→</i><b>段階（自力）</b>
+  </div>
+  <div class="kc-preview">
+    <div class="t">この回で測る力</div>
+    <ul id="kcPreview"></ul>
+  </div>
   <label class="id-label" for="studentId">学籍番号（学年・組・出席番号を半角4桁で／例：1年1組4番→1104）</label>
   <input class="id-input" id="studentId" placeholder="1104" inputmode="numeric" maxlength="4">
   <button class="start-btn" onclick="startQuiz()">スタート</button>
@@ -70,28 +137,49 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
     <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
     <div class="q-num" id="qnum"></div>
   </div>
+  <div class="meta-row" id="metaRow"></div>
+  <div id="stemBox"></div>
+  <div id="figBox"></div>
+  <div id="stepDone" class="step-done"></div>
   <div id="qtext" class="q-text"></div>
   <div id="choices" class="choices"></div>
+  <div id="hint" class="hint-box"></div>
   <div id="exp" class="exp-box"></div>
-  <button id="nextBtn" class="next-btn" onclick="next()">次の問題へ →</button>
+  <button id="nextBtn" class="next-btn" onclick="next()">次へ →</button>
 </div>
 
 <div id="result" class="card hidden">
-  <div class="r-title">結果発表</div>
+  <div class="r-title">結果</div>
   <div class="donut-wrap">
     <svg class="donut-svg" viewBox="0 0 36 36">
       <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
-      <circle id="donut-arc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
+      <circle id="donutArc" cx="18" cy="18" r="15.9" fill="none" stroke="#4299e1" stroke-width="3.8"
         stroke-dasharray="0 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
     </svg>
     <div>
       <div class="score-big" id="scoreBig"></div>
-      <div class="score-sub">/ 10問正解</div>
+      <div class="score-sub" id="scoreSub"></div>
       <div class="pass-badge" id="passBadge"></div>
     </div>
   </div>
-  <div class="review-title">解説</div>
+  <div class="pass-note">合格ライン：正答率80%（12点満点で9.5点以上）／ヒントを見て正解した問題は0.5点</div>
+
+  <div class="sec-title">力ごとの定着</div>
+  <div class="sec-note">◯＝ほぼ定着／△＝あと一歩／×＝要復習。本当の定着判定は「別の日に2回続けて正解」で行います。</div>
+  <div class="kc-list" id="kcList"></div>
+
+  <div class="sec-title">つまずきの型</div>
+  <div class="sec-note">誤答の選択肢からミスの型を判定しています。</div>
+  <div class="tag-list" id="tagList"></div>
+
+  <div class="sec-title">次にやること</div>
+  <div class="todo" id="todoBox"></div>
+
+  <div id="sumSec"></div>
+
+  <div class="sec-title">全問の解説</div>
   <div class="review-list" id="reviewList"></div>
+
   <button class="retry-btn" onclick="startQuiz()">もう一度チャレンジ</button>
   <div class="submit-status" id="submitStatus"></div>
   <a href="index.html" class="home-link">← クイズ一覧に戻る</a>
@@ -99,367 +187,819 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;b
 
 </div>
 <script>
-// Apps Scriptデプロイ後、発行されたWebアプリのURLをここに設定（SETUP.md参照）
-const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
-const QUIZ_NAME = "131 イオンからなる物質（イオン結合・イオン結晶・組成式と名称）";
-const PASS_THRESHOLD = 8; // 10問中この点数以上で合格
+/* ===== 単元データ ===== */
+const FIGS={};
+const UNIT={code:"131",title:"イオン結合とイオン結晶",sub:"教科書 p.64〜68｜イオン結合・組成式と名称・イオン結晶・電離｜毎回ランダム12問"};
 
-const ALL_Q = [
-  {q:"イオンからなる物質における陽イオンと陰イオンの関係式として正しいものはどれか？",
-   choices:["陽イオンの価数×個数＝陰イオンの価数×個数","陽イオンの個数＝陰イオンの個数","陽イオンの価数＝陰イオンの価数","陽イオンの質量＝陰イオンの質量"], a:0,
-   exp:"イオンからなる物質は電気的に中性なので、陽イオンの（価数）×（個数）＝陰イオンの（価数）×（個数）という関係が成り立つ。組成式を作るときはまずこの関係から個数比を求める。"},
+const KC={
+  K1:{short:"結合の判定",name:"金属元素と非金属元素の組合せからイオン結合だと判定できる"},
+  K2:{short:"イオンの価数",name:"単原子イオンの化学式と価数を答えられる"},
+  K3:{short:"多原子イオン",name:"多原子イオンの化学式と名称を答えられる"},
+  K4:{short:"組成式づくり",name:"イオンの組合せから組成式を作れる"},
+  K5:{short:"名称",name:"組成式から名称を、名称から組成式を書ける"},
+  K6:{short:"イオン結晶の性質",name:"イオン結晶の性質を、その構造から説明できる"},
+  K7:{short:"静電気力と融点",name:"静電気力の強さと融点の関係を説明できる"},
+  K8:{short:"電離と電解質",name:"電離・電解質・非電解質を区別し、電気伝導性と結びつけられる"},
+  K9:{short:"所在と用途",name:"代表的なイオンからなる物質を、所在・用途から特定できる"}
+};
 
-  {q:"組成式を書くときの順番として正しいものはどれか？",
-   choices:["陽イオン、陰イオンの順に書く","陰イオン、陽イオンの順に書く","価数の大きいイオンから書く","アルファベット順に書く"], a:0,
-   exp:"組成式は陽イオン、陰イオンの順に元素記号を書き、電荷の符号をとって個数の比をイオンの右下に書く。"},
+const TAG={
+  cross:{name:"たすき掛けの向き",back:"K4",advice:"価数の数字は<b>相手の右下</b>に書きます。Al<sup>3+</sup> と O<sup>2−</sup> なら Al が2個、O が3個。まず価数を書き出してから向きを決めましょう。"},
+  valence:{name:"価数落ち",back:"K2",advice:"2価・3価のイオンを1価として扱っています。組成式を作る前に、両方のイオンの価数を必ず口に出して確認する習慣を。"},
+  paren:{name:"括弧忘れ",back:"K4",advice:"多原子イオンが2個以上あるときは (OH)<sub>2</sub> のように括弧でくくります。括弧がないと原子の数の意味が変わってしまいます。"},
+  ratio:{name:"最小比にしていない",back:"K4",advice:"組成式の数字は<b>最も簡単な整数比</b>にします。たすき掛けで 2：2 と出たら、必ず 1：1 に約分しましょう。"},
+  order:{name:"名称の順序",back:"K5",advice:"名称は<b>陰イオン→陽イオン</b>の順に読み、組成式とは逆向きになります。CaCl<sub>2</sub> は「塩化カルシウム」。"},
+  molecule:{name:"分子と混同",back:"K6",advice:"イオンからなる物質に分子は存在しません。組成式は個数の比を表すだけなので、「二」「三」などの数詞も付けません。"},
+  bondtype:{name:"結合の種類の取り違え",back:"K1",advice:"金属＋非金属＝イオン結合、非金属どうし＝共有結合、金属どうし＝金属結合。まず元素の種類を見分けましょう。"},
+  conduct:{name:"電気伝導の条件混同",back:"K6",advice:"イオン結晶は固体では電気を通さず、水に溶かすか融かすと通します。イオンが動けるかどうかが分かれ目です。"},
+  polyion:{name:"多原子イオンの取り違え",back:"K3",advice:"硫酸イオン SO<sub>4</sub><sup>2−</sup> と硫化物イオン S<sup>2−</sup>、炭酸イオンと炭酸水素イオンなど、よく似た名前を区別して覚えましょう。"},
+  electrolyte:{name:"電解質と非電解質の取り違え",back:"K8",advice:"水に溶けて電離する物質が電解質、電離しない物質が非電解質です。スクロースやエタノールは溶けても電離しないので電気を通しません。"},
+  solubility:{name:"溶けにくい塩の例外",back:"K8",advice:"イオンからなる物質には水に溶けやすいものが多いのですが、CaCO<sub>3</sub>・BaSO<sub>4</sub>・AgCl は溶けにくい例外です。この3つは覚えてしまいましょう。"},
+  usage:{name:"用途と物質の取り違え",back:"K9",advice:"重曹は炭酸水素ナトリウム、生石灰は酸化カルシウム、消石灰は水酸化カルシウムです。別名と化学式をセットで覚えましょう。"}
+};
 
-  {q:"イオンからなる物質の名称を書くときの順番として正しいものはどれか？",
-   choices:["陰イオン、陽イオンの順に「～化」「～イオン」などをとってつなげる","陽イオン、陰イオンの順に書く","価数の小さいイオンから書く","組成式と同じ順で書く"], a:0,
-   exp:"名称は陰イオン、陽イオンの順に、「～物イオン」「～イオン」の部分をとってつなげて書く（組成式とは逆の順番になる点に注意）。"},
+const POOL=[
+/* ===== K1 結合の判定（9問） ===== */
+{kc:"K1",lv:1,q:"次のうち、イオン結合でできている物質はどれか。",
+ c:[{t:"塩化ナトリウム NaCl"},{t:"二酸化炭素 CO<sub>2</sub>",tag:"bondtype"},{t:"銅 Cu",tag:"bondtype"},{t:"ダイヤモンド C",tag:"bondtype"}],a:0,
+ h:"それぞれの物質がどの種類の元素からできているかを見ます。金属元素と非金属元素の組合せはどれか。",
+ e:"イオン結合は<b>金属元素と非金属元素</b>の間にできる。NaCl はナトリウム（金属）と塩素（非金属）の組合せ。CO<sub>2</sub> は共有結合、Cu は金属結合。"},
+{kc:"K1",lv:1,q:"酸化マグネシウム MgO をつくっている結合はどれか。",
+ c:[{t:"イオン結合"},{t:"共有結合",tag:"bondtype"},{t:"金属結合",tag:"bondtype"},{t:"分子間力"}],a:0,
+ h:"Mg は金属元素、O は非金属元素です。この組合せでできる結合を考えます。",
+ e:"Mg（金属）と O（非金属）の組合せなので<b>イオン結合</b>。Mg<sup>2+</sup> と O<sup>2−</sup> が静電気力で引き合っている。"},
+{kc:"K1",lv:1,q:"次のうち、共有結合だけでできている物質はどれか。",
+ c:[{t:"水 H<sub>2</sub>O"},{t:"塩化カリウム KCl",tag:"bondtype"},{t:"酸化カルシウム CaO",tag:"bondtype"},{t:"鉄 Fe",tag:"bondtype"}],a:0,
+ h:"非金属元素どうしの組合せを探します。",
+ e:"H も O も非金属元素なので、H<sub>2</sub>O は<b>共有結合</b>でできた分子。KCl・CaO は金属＋非金属でイオン結合、Fe は金属結合。"},
+{kc:"K1",lv:2,q:"イオン結合ができるのは、どのような元素の組合せのときか。",
+ c:[{t:"陽性の強い金属元素と、陰性の強い非金属元素"},{t:"非金属元素どうし",tag:"bondtype"},{t:"金属元素どうし",tag:"bondtype"},{t:"貴ガス元素どうし"}],a:0,
+ h:"電子を放しやすい元素と、電子を受け取りやすい元素の組合せを考えます。",
+ e:"陽イオンになりやすい<b>金属元素</b>と、陰イオンになりやすい<b>非金属元素</b>が出会うと、電子の受け渡しが起きてイオン結合ができる。"},
+{kc:"K1",lv:2,q:"塩化カリウム KCl において、K と Cl の間で起きていることはどれか。",
+ c:[{t:"K が電子を1個放して K<sup>+</sup> に、Cl がそれを受け取って Cl<sup>−</sup> になり、両者が引き合う"},{t:"K と Cl が電子を1個ずつ出しあって共有する",tag:"bondtype"},{t:"自由電子が K と Cl を結びつけている",tag:"bondtype"},{t:"KCl 分子どうしが分子間力で引き合っている",tag:"molecule"}],a:0,
+ h:"金属元素と非金属元素の間では、電子は共有されるのか、受け渡されるのかを考えます。",
+ e:"イオン結合は<b>電子の受け渡し</b>で生じる。K は価電子1個を放して K<sup>+</sup>、Cl はそれを受け取って Cl<sup>−</sup> となり、静電気力で引き合う。"},
+{kc:"K1",lv:2,q:"次のうち、金属結合でできているものはどれか。",
+ c:[{t:"アルミニウム Al"},{t:"酸化アルミニウム Al<sub>2</sub>O<sub>3</sub>",tag:"bondtype"},{t:"水酸化ナトリウム NaOH",tag:"bondtype"},{t:"塩化マグネシウム MgCl<sub>2</sub>",tag:"bondtype"}],a:0,
+ h:"金属元素だけでできているものを探します。",
+ e:"Al は金属元素だけでできており、自由電子による<b>金属結合</b>。Al<sub>2</sub>O<sub>3</sub>・NaOH・MgCl<sub>2</sub> はいずれもイオン結合。"},
+{kc:"K1",lv:3,q:"フッ化カルシウム CaF<sub>2</sub>（蛍石の主成分）をつくっている結合はどれか。",
+ c:[{t:"イオン結合"},{t:"共有結合",tag:"bondtype"},{t:"金属結合",tag:"bondtype"},{t:"水素結合"}],a:0,
+ h:"習っていない物質でも判定の手順は同じです。Ca と F はそれぞれ金属・非金属のどちらか。",
+ e:"Ca は2族の金属元素、F は17族の非金属元素なので<b>イオン結合</b>。Ca<sup>2+</sup>：F<sup>−</sup>＝1：2 で CaF<sub>2</sub> となる。"},
+{kc:"K1",lv:3,q:"次のうち、イオン結合を<b>含まない</b>ものはどれか。",
+ c:[{t:"二酸化硫黄 SO<sub>2</sub>"},{t:"塩化アンモニウム NH<sub>4</sub>Cl",tag:"bondtype"},{t:"硝酸カリウム KNO<sub>3</sub>",tag:"bondtype"},{t:"炭酸カルシウム CaCO<sub>3</sub>",tag:"bondtype"}],a:0,
+ h:"金属＋非金属だけが手がかりではありません。陽イオンと陰イオンが存在するかどうかで考えます。非金属だけでできた陽イオンもあります。",
+ e:"SO<sub>2</sub> は非金属どうしで分子をつくる。NH<sub>4</sub>Cl は非金属だけでできているが、NH<sub>4</sub><sup>+</sup> と Cl<sup>−</sup> からなる<b>イオン結合</b>の物質。"},
+{kc:"K1",lv:3,q:"硫酸バリウム BaSO<sub>4</sub> についての記述として正しいものはどれか。",
+ c:[{t:"Ba<sup>2+</sup> と SO<sub>4</sub><sup>2−</sup> がイオン結合し、SO<sub>4</sub><sup>2−</sup> の内部は共有結合である"},{t:"BaSO<sub>4</sub> という分子が集まってできている",tag:"molecule"},{t:"すべて共有結合でできている",tag:"bondtype"},{t:"自由電子によって結びついている",tag:"bondtype"}],a:0,
+ h:"多原子イオンの内側と外側で、結合の種類が違います。",
+ e:"SO<sub>4</sub><sup>2−</sup> の中の S と O は<b>共有結合</b>、そのかたまりが Ba<sup>2+</sup> と<b>イオン結合</b>している。多原子イオンを含む物質では2種類の結合が同居する。"},
 
-  {q:"組成式で、同じ多原子イオンが2つ以上あるときはどのように表すか？",
-   choices:["（　）でくくって個数を右下に書く（例：Ca(OH)₂）","そのまま2つ並べて書く","係数を先頭につける","省略して1つだけ書く"], a:0,
-   exp:"同じ多原子イオンが2つ以上あるときは（　）でくくり、その右下に個数を書く（例：Ca(OH)₂）。単原子イオンにはこの括弧は不要。"},
+/* ===== K2 単原子イオンの価数（9問） ===== */
+{kc:"K2",lv:1,q:"カルシウムイオンの化学式として正しいものはどれか。",
+ c:[{t:"Ca<sup>2+</sup>"},{t:"Ca<sup>+</sup>",tag:"valence"},{t:"Ca<sup>2−</sup>"},{t:"Ca<sup>3+</sup>",tag:"valence"}],a:0,
+ h:"Ca は周期表の2族です。価電子を何個放すと貴ガスと同じ電子配置になるかを考えます。",
+ e:"Ca は2族で価電子2個。2個放して Ar と同じ電子配置になり、<b>Ca<sup>2+</sup></b>（2価の陽イオン）となる。"},
+{kc:"K2",lv:1,q:"ナトリウムイオンの化学式として正しいものはどれか。",
+ c:[{t:"Na<sup>+</sup>"},{t:"Na<sup>2+</sup>",tag:"valence"},{t:"Na<sup>−</sup>"},{t:"Na<sup>2−</sup>",tag:"valence"}],a:0,
+ h:"Na は1族です。価電子の数を考えます。",
+ e:"Na は1族で価電子1個。1個放して Ne と同じ電子配置となり <b>Na<sup>+</sup></b>（1価の陽イオン）になる。"},
+{kc:"K2",lv:1,q:"アルミニウムイオンの化学式として正しいものはどれか。",
+ c:[{t:"Al<sup>3+</sup>"},{t:"Al<sup>+</sup>",tag:"valence"},{t:"Al<sup>2+</sup>",tag:"valence"},{t:"Al<sup>3−</sup>"}],a:0,
+ h:"Al は13族です。価電子は3個あります。",
+ e:"Al は13族で価電子3個。3個放して Ne と同じ電子配置になり <b>Al<sup>3+</sup></b>（3価の陽イオン）になる。"},
+{kc:"K2",lv:2,q:"次のうち、2価の陰イオンはどれか。",
+ c:[{t:"酸化物イオン O<sup>2−</sup>"},{t:"塩化物イオン Cl<sup>−</sup>",tag:"valence"},{t:"硝酸イオン NO<sub>3</sub><sup>−</sup>",tag:"valence"},{t:"ナトリウムイオン Na<sup>+</sup>"}],a:0,
+ h:"陰イオンの価数は、電子を何個受け取ったかで決まります。16族の原子は何個受け取るか。",
+ e:"O は16族で、電子を2個受け取って <b>O<sup>2−</sup></b>（2価の陰イオン）となる。Cl<sup>−</sup> と NO<sub>3</sub><sup>−</sup> はどちらも1価。"},
+{kc:"K2",lv:2,q:"17族の原子が単原子イオンになるとき、どうなるか。",
+ c:[{t:"電子を1個受け取って、1価の陰イオンになる"},{t:"電子を1個放して、1価の陽イオンになる",tag:"valence"},{t:"電子を7個放して、7価の陽イオンになる",tag:"valence"},{t:"電子を2個受け取って、2価の陰イオンになる",tag:"valence"}],a:0,
+ h:"17族の価電子は7個です。あと何個受け取れば貴ガスと同じ配置になるか。",
+ e:"17族は価電子7個なので、電子を<b>1個受け取って</b>貴ガスと同じ配置になり、1価の陰イオンとなる。F<sup>−</sup>、Cl<sup>−</sup> など。"},
+{kc:"K2",lv:2,q:"F<sup>−</sup> の名称として正しいものはどれか。",
+ c:[{t:"フッ化物イオン"},{t:"フッ素イオン"},{t:"フッ化イオン"},{t:"フッ素化物イオン"}],a:0,
+ h:"単原子の陰イオンは、元素名にある語尾を付けて呼びます。塩素の場合と同じ付け方です。",
+ e:"単原子の陰イオンは元素名に「化物イオン」を付けて<b>フッ化物イオン</b>。Cl<sup>−</sup> は塩化物イオン、O<sup>2−</sup> は酸化物イオン。陽イオンは元素名＋「イオン」。"},
+{kc:"K2",lv:3,q:"原子番号16 の原子が単原子イオンになったとき、その化学式と名称の組合せとして正しいものはどれか。",
+ c:[{t:"S<sup>2−</sup>・硫化物イオン"},{t:"S<sup>2+</sup>・硫黄イオン",tag:"valence"},{t:"S<sup>−</sup>・硫化物イオン",tag:"valence"},{t:"SO<sub>4</sub><sup>2−</sup>・硫酸イオン",tag:"polyion"}],a:0,
+ h:"原子番号16 は硫黄です。第3周期の16族なので、電子をあと何個受け取れば Ar と同じ配置になるか。",
+ e:"原子番号16 は硫黄 S。16族なので電子を2個受け取って <b>S<sup>2−</sup>（硫化物イオン）</b>となる。SO<sub>4</sub><sup>2−</sup> は多原子イオンで別物。"},
+{kc:"K2",lv:3,q:"Fe<sup>3+</sup> の名称として正しいものはどれか。",
+ c:[{t:"鉄(III)イオン"},{t:"鉄(II)イオン",tag:"valence"},{t:"三鉄イオン",tag:"molecule"},{t:"鉄イオン",tag:"valence"}],a:0,
+ h:"鉄には2種類のイオンがあります。区別するための書き方を思い出します。",
+ e:"複数の価数をとる金属のイオンは、価数をローマ数字で示して<b>鉄(III)イオン</b>。Fe<sup>2+</sup> は鉄(II)イオン。"},
+{kc:"K2",lv:3,q:"次のうち、ネオン Ne と同じ電子配置をもつイオンはどれか。",
+ c:[{t:"Mg<sup>2+</sup>"},{t:"S<sup>2−</sup>",tag:"valence"},{t:"Cl<sup>−</sup>",tag:"valence"},{t:"Ca<sup>2+</sup>",tag:"valence"}],a:0,
+ h:"Ne の電子数は10 です。それぞれのイオンがもつ電子の総数を数えます。",
+ e:"Mg は電子12個で、2個放して10個となり<b>Ne と同じ配置</b>。S<sup>2−</sup>・Cl<sup>−</sup>・Ca<sup>2+</sup> はいずれも電子18個で Ar と同じ配置。"},
 
-  {q:"組成式で、陽イオンと陰イオンの個数の比が1：1のとき、その「1」はどう書くか？",
-   choices:["省略して書かない（例：NaCl）","必ず1と書く（例：Na₁Cl₁）","分数で表す","（　）に入れる"], a:0,
-   exp:"組成式では個数の比が1のときは数字を省略して書かない（例：NaCl）。"},
+/* ===== K3 多原子イオン（9問） ===== */
+{kc:"K3",lv:1,q:"硫酸イオンの化学式として正しいものはどれか。",
+ c:[{t:"SO<sub>4</sub><sup>2−</sup>"},{t:"SO<sub>4</sub><sup>−</sup>",tag:"valence"},{t:"SO<sub>3</sub><sup>2−</sup>",tag:"polyion"},{t:"S<sup>2−</sup>",tag:"polyion"}],a:0,
+ h:"硫酸 H<sub>2</sub>SO<sub>4</sub> から H<sup>+</sup> が2個とれた形を考えます。",
+ e:"硫酸イオンは <b>SO<sub>4</sub><sup>2−</sup></b>。H<sup>+</sup> が2個とれた形なので2価。S<sup>2−</sup>（硫化物イオン）と混同しないこと。"},
+{kc:"K3",lv:1,q:"NH<sub>4</sub><sup>+</sup> の名称として正しいものはどれか。",
+ c:[{t:"アンモニウムイオン"},{t:"アンモニアイオン",tag:"polyion"},{t:"窒素イオン",tag:"polyion"},{t:"水素イオン",tag:"polyion"}],a:0,
+ h:"アンモニア NH<sub>3</sub> に H<sup>+</sup> がくっついた形です。物質名とはイオン名が少し変わります。",
+ e:"NH<sub>4</sub><sup>+</sup> は<b>アンモニウムイオン</b>。非金属元素だけでできているのに陽イオンである点が特徴。"},
+{kc:"K3",lv:1,q:"炭酸イオンの化学式として正しいものはどれか。",
+ c:[{t:"CO<sub>3</sub><sup>2−</sup>"},{t:"CO<sub>2</sub><sup>2−</sup>",tag:"polyion"},{t:"CO<sub>3</sub><sup>−</sup>",tag:"valence"},{t:"C<sup>4−</sup>",tag:"polyion"}],a:0,
+ h:"炭酸 H<sub>2</sub>CO<sub>3</sub> から H<sup>+</sup> が2個とれた形です。",
+ e:"炭酸イオンは <b>CO<sub>3</sub><sup>2−</sup></b>（2価の陰イオン）。CaCO<sub>3</sub>（石灰石）や Na<sub>2</sub>CO<sub>3</sub> をつくる。"},
+{kc:"K3",lv:2,q:"水酸化物イオンの化学式と価数の組合せとして正しいものはどれか。",
+ c:[{t:"OH<sup>−</sup>・1価"},{t:"OH<sup>2−</sup>・2価",tag:"valence"},{t:"OH<sup>+</sup>・1価",tag:"polyion"},{t:"O<sup>2−</sup>・2価",tag:"polyion"}],a:0,
+ h:"水 H<sub>2</sub>O から H<sup>+</sup> が1個とれた形です。とれた個数が価数になります。",
+ e:"水酸化物イオンは <b>OH<sup>−</sup></b> で1価の陰イオン。酸化物イオン O<sup>2−</sup>（2価）とは別物。"},
+{kc:"K3",lv:2,q:"次のうち、硝酸イオンはどれか。",
+ c:[{t:"NO<sub>3</sub><sup>−</sup>"},{t:"NH<sub>4</sub><sup>+</sup>",tag:"polyion"},{t:"CO<sub>3</sub><sup>2−</sup>",tag:"polyion"},{t:"SO<sub>4</sub><sup>2−</sup>",tag:"polyion"}],a:0,
+ h:"硝酸 HNO<sub>3</sub> から H<sup>+</sup> が1個とれた形です。",
+ e:"硝酸イオンは <b>NO<sub>3</sub><sup>−</sup></b>（1価）。よく出る多原子イオンは、式・名称・価数の3点セットで覚える。"},
+{kc:"K3",lv:2,q:"リン酸イオンの化学式と価数の組合せとして正しいものはどれか。",
+ c:[{t:"PO<sub>4</sub><sup>3−</sup>・3価"},{t:"PO<sub>4</sub><sup>2−</sup>・2価",tag:"valence"},{t:"PO<sub>3</sub><sup>3−</sup>・3価",tag:"polyion"},{t:"P<sup>3−</sup>・3価",tag:"polyion"}],a:0,
+ h:"リン酸 H<sub>3</sub>PO<sub>4</sub> から H<sup>+</sup> が3個とれた形です。",
+ e:"リン酸イオンは <b>PO<sub>4</sub><sup>3−</sup></b>（3価の陰イオン）。化学基礎で扱う多原子イオンでは唯一の3価なので、組成式づくりでよく問われる。"},
+{kc:"K3",lv:3,q:"炭酸水素イオンの化学式として正しいものはどれか。",
+ c:[{t:"HCO<sub>3</sub><sup>−</sup>"},{t:"CO<sub>3</sub><sup>2−</sup>",tag:"polyion"},{t:"HCO<sub>3</sub><sup>2−</sup>",tag:"valence"},{t:"H<sub>2</sub>CO<sub>3</sub>",tag:"molecule"}],a:0,
+ h:"炭酸 H<sub>2</sub>CO<sub>3</sub> から H<sup>+</sup> が1個だけとれた形です。",
+ e:"<b>HCO<sub>3</sub><sup>−</sup></b>（1価）。H<sup>+</sup> が1個だけとれているので水素 H が1個残っている。NaHCO<sub>3</sub>（重曹）をつくる。"},
+{kc:"K3",lv:3,q:"次のうち、多原子イオンでありながら陽イオンであるものはどれか。",
+ c:[{t:"NH<sub>4</sub><sup>+</sup>"},{t:"OH<sup>−</sup>",tag:"polyion"},{t:"NO<sub>3</sub><sup>−</sup>",tag:"polyion"},{t:"SO<sub>4</sub><sup>2−</sup>",tag:"polyion"}],a:0,
+ h:"右肩の符号が＋になっているものを探します。",
+ e:"化学基礎で扱う多原子イオンのうち陽イオンは <b>NH<sub>4</sub><sup>+</sup>（アンモニウムイオン）</b>がほぼ唯一。他はすべて陰イオン。"},
+{kc:"K3",lv:3,q:"硫酸イオン SO<sub>4</sub><sup>2−</sup> の中で、S と O を結びつけている結合はどれか。",
+ c:[{t:"共有結合"},{t:"イオン結合",tag:"bondtype"},{t:"金属結合",tag:"bondtype"},{t:"水素結合",tag:"bondtype"}],a:0,
+ h:"S も O も非金属元素です。非金属どうしの結合は何か。",
+ e:"S も O も非金属元素なので、SO<sub>4</sub><sup>2−</sup> の内部は<b>共有結合</b>。このかたまりが全体として2−の電荷をもち、陽イオンとイオン結合する。"},
 
-  {q:"組成式CaCl₂からできる物質の名称として、「二塩化カルシウム」のように陰イオンの個数を表す数詞を名称に含めてよいか？",
-   choices:["含めない（「二塩化」「二水酸化」とは書かない）","必ず含める","個数が2以上のときのみ含める","陽イオン名の前にのみ含める"], a:0,
-   exp:"イオンからなる物質の名称には、「二塩化」「二水酸化」のように個数を表す数詞はつけない。"},
+/* ===== K4 組成式づくり（12問） ===== */
+{kc:"K4",lv:1,q:"Na<sup>+</sup> と Cl<sup>−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"NaCl"},{t:"NaCl<sub>2</sub>",tag:"cross"},{t:"Na<sub>2</sub>Cl",tag:"cross"},{t:"Na<sub>2</sub>Cl<sub>2</sub>",tag:"ratio"}],a:0,
+ h:"＋1 と −1 が打ち消しあうには、それぞれ何個ずつ必要かを考えます。",
+ e:"1×1＝1×1 なので Na：Cl＝1：1、<b>NaCl</b>。個数比が1：1のときは数字を書かない。"},
+{kc:"K4",lv:1,q:"イオンからなる物質について、必ず成り立つ関係式はどれか。",
+ c:[{t:"（陽イオンの価数）×（個数）＝（陰イオンの価数）×（個数）"},{t:"陽イオンの個数＝陰イオンの個数",tag:"valence"},{t:"陽イオンの価数＝陰イオンの価数",tag:"valence"},{t:"陽イオンの質量＝陰イオンの質量"}],a:0,
+ h:"物質全体が電気的に中性であるためには、＋の電気の総量と−の電気の総量がどうなればよいかを考えます。",
+ e:"イオンからなる物質は電気的に中性なので、<b>（価数）×（個数）</b>が陽イオン側と陰イオン側で等しくなる。組成式づくりはこの式から始まる。"},
+{kc:"K4",lv:1,q:"組成式を書くときの順番として正しいものはどれか。",
+ c:[{t:"陽イオン、陰イオンの順に書く"},{t:"陰イオン、陽イオンの順に書く",tag:"order"},{t:"価数の大きいイオンから書く"},{t:"アルファベット順に書く"}],a:0,
+ h:"名称を読むときの順番とは逆になります。",
+ e:"組成式は<b>陽イオン→陰イオン</b>の順に元素記号を書き、電荷の符号をとって個数比を右下に書く。"},
+{kc:"K4",lv:1,q:"Mg<sup>2+</sup> と Cl<sup>−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"MgCl<sub>2</sub>"},{t:"Mg<sub>2</sub>Cl",tag:"cross"},{t:"MgCl",tag:"valence"},{t:"Mg<sub>2</sub>Cl<sub>4</sub>",tag:"ratio"}],a:0,
+ h:"＋2 の電荷を打ち消すには、−1 のイオンが何個いるかを考えます。",
+ e:"2×1＝1×2 なので Mg：Cl＝1：2、<b>MgCl<sub>2</sub></b>。全体が電気的に中性になるように個数比を決める。"},
+{kc:"K4",lv:2,q:"K<sup>+</sup> と O<sup>2−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"K<sub>2</sub>O"},{t:"KO",tag:"valence"},{t:"KO<sub>2</sub>",tag:"cross"},{t:"K<sub>2</sub>O<sub>2</sub>",tag:"ratio"}],a:0,
+ h:"−2 の電荷を打ち消すには、＋1 のイオンが何個必要かを考えます。",
+ e:"1×2＝2×1 なので K：O＝2：1、<b>K<sub>2</sub>O</b>。価数の数字を相手の右下に書く（たすき掛け）と速い。"},
+{kc:"K4",lv:2,q:"Ca<sup>2+</sup> と OH<sup>−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"Ca(OH)<sub>2</sub>"},{t:"CaOH<sub>2</sub>",tag:"paren"},{t:"Ca<sub>2</sub>OH",tag:"cross"},{t:"CaOH",tag:"valence"}],a:0,
+ h:"2価の陽イオン1個に対して1価の陰イオンは何個必要か。そして多原子イオンが2個以上あるときの書き方に注意します。",
+ e:"Ca<sup>2+</sup>：OH<sup>−</sup>＝1：2。多原子イオンが2個以上あるときは括弧でくくって <b>Ca(OH)<sub>2</sub></b>。"},
+{kc:"K4",lv:2,q:"Ca<sup>2+</sup> と NO<sub>3</sub><sup>−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"Ca(NO<sub>3</sub>)<sub>2</sub>"},{t:"CaNO<sub>3</sub>",tag:"valence"},{t:"Ca<sub>2</sub>NO<sub>3</sub>",tag:"cross"},{t:"CaNO<sub>32</sub>",tag:"paren"}],a:0,
+ h:"NO<sub>3</sub><sup>−</sup> は1価です。2価の陽イオンに対して何個必要か。2個以上なら括弧が要ります。",
+ e:"Ca：NO<sub>3</sub>＝1：2 なので括弧でくくって <b>Ca(NO<sub>3</sub>)<sub>2</sub></b>。括弧がないと NO<sub>3</sub> の 3 と個数の 2 が並んで読めなくなる。"},
+{kc:"K4",lv:2,q:"Na<sup>+</sup> と CO<sub>3</sub><sup>2−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"Na<sub>2</sub>CO<sub>3</sub>"},{t:"NaCO<sub>3</sub>",tag:"valence"},{t:"Na(CO<sub>3</sub>)<sub>2</sub>",tag:"cross"},{t:"Na<sub>4</sub>(CO<sub>3</sub>)<sub>2</sub>",tag:"ratio"}],a:0,
+ h:"2価の陰イオン1個ぶんの電荷を打ち消すには、1価の陽イオンが何個いるかを考えます。",
+ e:"Na：CO<sub>3</sub>＝2：1 なので <b>Na<sub>2</sub>CO<sub>3</sub></b>。多原子イオンが1個のときは括弧をつけない。"},
+{kc:"K4",lv:2,q:"Al<sup>3+</sup> と O<sup>2−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"Al<sub>2</sub>O<sub>3</sub>"},{t:"Al<sub>3</sub>O<sub>2</sub>",tag:"cross"},{t:"AlO",tag:"valence"},{t:"Al<sub>6</sub>O<sub>9</sub>",tag:"ratio"}],a:0,
+ h:"（陽イオンの価数×個数）＝（陰イオンの価数×個数）。3×□＝2×△ を満たす最小の整数を探します。",
+ e:"3×2＝2×3 なので Al：O＝2：3、<b>Al<sub>2</sub>O<sub>3</sub></b>。たすき掛けの向きを取り違えないよう注意。"},
+{kc:"K4",lv:3,q:"NH<sub>4</sub><sup>+</sup> と SO<sub>4</sub><sup>2−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"(NH<sub>4</sub>)<sub>2</sub>SO<sub>4</sub>"},{t:"NH<sub>4</sub>SO<sub>4</sub>",tag:"valence"},{t:"NH<sub>4</sub>(SO<sub>4</sub>)<sub>2</sub>",tag:"cross"},{t:"NH<sub>42</sub>SO<sub>4</sub>",tag:"paren"}],a:0,
+ h:"1価の陽イオンが2個、2価の陰イオンが1個です。2個ある多原子イオンには括弧が必要です。",
+ e:"NH<sub>4</sub>：SO<sub>4</sub>＝2：1。NH<sub>4</sub><sup>+</sup> が2個なので括弧でくくって <b>(NH<sub>4</sub>)<sub>2</sub>SO<sub>4</sub></b>。陽イオン側に括弧がつく数少ない例。"},
+{kc:"K4",lv:3,q:"Fe<sup>3+</sup> と SO<sub>4</sub><sup>2−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"Fe<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>"},{t:"Fe<sub>3</sub>(SO<sub>4</sub>)<sub>2</sub>",tag:"cross"},{t:"FeSO<sub>4</sub>",tag:"valence"},{t:"Fe<sub>2</sub>SO<sub>43</sub>",tag:"paren"}],a:0,
+ h:"3価と2価の組合せです。3×□＝2×△ を満たす最小の整数の組を探し、括弧の要否も確かめます。",
+ e:"3×2＝2×3 なので Fe：SO<sub>4</sub>＝2：3。括弧でくくって <b>Fe<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub></b>。FeSO<sub>4</sub> は Fe<sup>2+</sup> の場合で別の物質。"},
+{kc:"K4",lv:3,q:"Mg<sup>2+</sup> と N<sup>3−</sup> からなる物質の組成式はどれか。",
+ c:[{t:"Mg<sub>3</sub>N<sub>2</sub>"},{t:"Mg<sub>2</sub>N<sub>3</sub>",tag:"cross"},{t:"MgN",tag:"valence"},{t:"Mg<sub>6</sub>N<sub>4</sub>",tag:"ratio"}],a:0,
+ h:"N は15族なので電子を3個受け取って3価の陰イオンになります。2×□＝3×△ の最小の整数を探します。",
+ e:"2×3＝3×2 なので Mg：N＝3：2、<b>Mg<sub>3</sub>N<sub>2</sub></b>（窒化マグネシウム）。Mg<sub>6</sub>N<sub>4</sub> でも中性になるが最も簡単な整数比で書く。"},
 
-  {q:"鉄のように複数の価数の陽イオンになる金属を含む物質を命名するときは、どのように区別するか？",
-   choices:["価数をローマ数字で元素名の後に（　）で示す（例：塩化鉄(II)）","元素名の前に価数の数字をそのまま書く","価数の情報は名称に含めない","陰イオン名の後に価数を示す"], a:0,
-   exp:"鉄Fe²⁺・Fe³⁺のように複数の価数をとる金属イオンを含む物質は、価数をローマ数字で示して区別する（例：塩化鉄(II)FeCl₂、塩化鉄(III)FeCl₃）。"},
-
-  {q:"カリウムイオンK⁺と塩化物イオンCl⁻からなる物質の組成式はどれか？",
-   choices:["KCl","K₂Cl","KCl₂","K₂Cl₂"], a:0,
-   exp:"K⁺とCl⁻はともに1価なので個数の比は1：1となり、組成式はKClとなる。"},
-
-  {q:"ナトリウムイオンNa⁺と炭酸イオンCO₃²⁻からなる物質の組成式はどれか？",
-   choices:["Na₂CO₃","NaCO₃","Na₂(CO₃)₂","Na(CO₃)₂"], a:0,
-   exp:"1価のNa⁺と2価のCO₃²⁻の個数の比は2：1となるため、組成式はNa₂CO₃となる。"},
-
-  {q:"カルシウムイオンCa²⁺と硝酸イオンNO₃⁻からなる物質の組成式はどれか？",
-   choices:["Ca(NO₃)₂","CaNO₃","Ca₂NO₃","Ca(NO₃)₃"], a:0,
-   exp:"2価のCa²⁺と1価のNO₃⁻の個数の比は1：2となり、多原子イオンNO₃⁻が2個あるので（　）をつけてCa(NO₃)₂となる。"},
-
-  {q:"鉄(II)イオンFe²⁺と硫化物イオンS²⁻からなる物質の組成式はどれか？",
-   choices:["FeS","Fe₂S","FeS₂","Fe₂S₂"], a:0,
-   exp:"Fe²⁺とS²⁻はともに2価なので個数の比は1：1となり、組成式はFeSとなる。"},
-
-  {q:"アンモニウムイオンNH₄⁺とリン酸イオンPO₄³⁻からなる物質の組成式はどれか？",
-   choices:["(NH₄)₃PO₄","NH₄PO₄","(NH₄)₃(PO₄)₃","NH₁₂PO₄"], a:0,
-   exp:"1価のNH₄⁺と3価のPO₄³⁻の個数の比は3：1となり、多原子イオンNH₄⁺が3個あるので（　）をつけて(NH₄)₃PO₄となる。"},
-
-  {q:"鉄(III)イオンFe³⁺と硫酸イオンSO₄²⁻からなる物質の組成式はどれか？",
-   choices:["Fe₂(SO₄)₃","Fe₃(SO₄)₂","FeSO₄","Fe₃SO₄"], a:0,
-   exp:"3価のFe³⁺と2価のSO₄²⁻の個数の比は2：3となるため、組成式はFe₂(SO₄)₃となる。"},
-
-  {q:"マグネシウムイオンMg²⁺と塩化物イオンCl⁻からなる物質の組成式はどれか？",
-   choices:["MgCl₂","MgCl","Mg₂Cl","Mg₂Cl₂"], a:0,
-   exp:"2価のMg²⁺と1価のCl⁻の個数の比は1：2となり、組成式はMgCl₂となる。"},
-
-  {q:"亜鉛イオンZn²⁺と硫化物イオンS²⁻からなる物質の組成式はどれか？",
-   choices:["ZnS","Zn₂S","ZnS₂","Zn₂S₂"], a:0,
-   exp:"Zn²⁺とS²⁻はともに2価なので個数の比は1：1となり、組成式はZnSとなる。"},
-
-  {q:"銀イオンAg⁺と硝酸イオンNO₃⁻からなる物質の組成式はどれか？",
-   choices:["AgNO₃","Ag(NO₃)₂","Ag₂NO₃","AgNO₂"], a:0,
-   exp:"Ag⁺とNO₃⁻はともに1価なので個数の比は1：1となり、組成式はAgNO₃となる。"},
-
-  {q:"アルミニウムイオンAl³⁺と水酸化物イオンOH⁻からなる物質の組成式はどれか？",
-   choices:["Al(OH)₃","AlOH₃","Al₃(OH)","Al₃OH"], a:0,
-   exp:"3価のAl³⁺と1価のOH⁻の個数の比は1：3となり、多原子イオンOH⁻が3個あるので（　）をつけてAl(OH)₃となる。"},
-
-  {q:"アルミニウムイオンAl³⁺と硫酸イオンSO₄²⁻からなる物質の組成式はどれか？",
-   choices:["Al₂(SO₄)₃","Al₃(SO₄)₂","AlSO₄","Al(SO₄)₃"], a:0,
-   exp:"3価のAl³⁺と2価のSO₄²⁻の個数の比は2：3となるため、組成式はAl₂(SO₄)₃となる。"},
-
-  {q:"カリウムイオンK⁺と炭酸イオンCO₃²⁻からなる物質の組成式はどれか？",
-   choices:["K₂CO₃","KCO₃","K₂(CO₃)₂","K(CO₃)₂"], a:0,
-   exp:"1価のK⁺と2価のCO₃²⁻の個数の比は2：1となるため、組成式はK₂CO₃となる。"},
-
-  {q:"カルシウムイオンCa²⁺とリン酸イオンPO₄³⁻からなる物質の組成式はどれか？",
-   choices:["Ca₃(PO₄)₂","CaPO₄","Ca₂PO₄","Ca₃PO₄"], a:0,
-   exp:"2価のCa²⁺と3価のPO₄³⁻の個数の比は3：2となるため、組成式はCa₃(PO₄)₂となる。"},
-
-  {q:"鉄(III)イオンFe³⁺と酸化物イオンO²⁻からなる物質の組成式はどれか？",
-   choices:["Fe₂O₃","FeO","Fe₃O₂","Fe₂O₂"], a:0,
-   exp:"3価のFe³⁺と2価のO²⁻の個数の比は2：3となるため、組成式はFe₂O₃となる。"},
-
-  {q:"ナトリウムイオンNa⁺と水酸化物イオンOH⁻からなる物質の名称はどれか？",
-   choices:["水酸化ナトリウム","ナトリウム水酸化物","水酸化ナトリウム酸","酸化ナトリウム"], a:0,
-   exp:"陰イオン、陽イオンの順に名称をつなげ、水酸化物イオンとナトリウムイオンから水酸化ナトリウムとなる。"},
-
-  {q:"カルシウムイオンCa²⁺と炭酸イオンCO₃²⁻からなる物質の名称はどれか？",
-   choices:["炭酸カルシウム","カルシウム炭酸塩","二炭酸カルシウム","炭酸カルシウム酸"], a:0,
-   exp:"炭酸イオンとカルシウムイオンから、炭酸カルシウムという名称になる。個数を表す数詞は名称につけない。"},
-
-  {q:"アルミニウムイオンAl³⁺と塩化物イオンCl⁻からなる物質（組成式AlCl₃）の名称はどれか？",
-   choices:["塩化アルミニウム","三塩化アルミニウム","アルミニウム塩化物","塩化アルミニウム(III)"], a:0,
-   exp:"塩化物イオンとアルミニウムイオンから塩化アルミニウムとなる。個数を表す数詞（三など）は名称には含めない。"},
-
-  {q:"鉄(II)イオンFe²⁺と塩化物イオンCl⁻からなる物質（組成式FeCl₂）の名称はどれか？",
-   choices:["塩化鉄(II)","塩化鉄(III)","二塩化鉄","鉄塩化物"], a:0,
-   exp:"Fe²⁺を含む物質は価数をローマ数字で示し、塩化鉄(II)とよぶ。"},
-
-  {q:"鉄(III)イオンFe³⁺と酸化物イオンO²⁻からなる物質（組成式Fe₂O₃）の名称はどれか？",
-   choices:["酸化鉄(III)","酸化鉄(II)","三酸化鉄","酸化鉄二"], a:0,
-   exp:"Fe³⁺を含む物質は価数をローマ数字で示し、酸化鉄(III)とよぶ。"},
-
-  {q:"アンモニウムイオンNH₄⁺と塩化物イオンCl⁻からなる物質の名称はどれか？",
-   choices:["塩化アンモニウム","アンモニウム塩化物","塩化アンモニア","アンモニア塩化物"], a:0,
-   exp:"塩化物イオンとアンモニウムイオンから塩化アンモニウムとなる。"},
-
-  {q:"亜鉛イオンZn²⁺と硫化物イオンS²⁻からなる物質（組成式ZnS）の名称はどれか？",
-   choices:["硫化亜鉛","亜鉛硫化物","二硫化亜鉛","硫酸亜鉛"], a:0,
-   exp:"硫化物イオンS²⁻と亜鉛イオンから硫化亜鉛となる。硫酸イオンSO₄²⁻からなる「硫酸亜鉛」と混同しないよう注意。"},
-
-  {q:"「硫化亜鉛」の組成式として正しいものはどれか？",
-   choices:["ZnS","ZnSO₄","ZnS₂","Zn₂S"], a:0,
-   exp:"硫化亜鉛は亜鉛イオンZn²⁺と硫化物イオンS²⁻（ともに2価）からなり、組成式はZnSとなる。"},
-
-  {q:"「硝酸銀」の組成式として正しいものはどれか？",
-   choices:["AgNO₃","Ag(NO₃)₂","Ag₂NO₃","AgNO₂"], a:0,
-   exp:"硝酸銀は銀イオンAg⁺と硝酸イオンNO₃⁻（ともに1価）からなり、組成式はAgNO₃となる。"},
-
-  {q:"「水酸化アルミニウム」の組成式として正しいものはどれか？",
-   choices:["Al(OH)₃","AlOH₃","Al₃(OH)","AlOH"], a:0,
-   exp:"水酸化アルミニウムはAl³⁺と3個のOH⁻からなるため、組成式はAl(OH)₃となる。"},
-
-  {q:"「酸化鉄(III)」の組成式として正しいものはどれか？",
-   choices:["Fe₂O₃","FeO","Fe₃O₂","FeO₃"], a:0,
-   exp:"酸化鉄(III)はFe³⁺とO²⁻からなり、個数の比2：3より組成式はFe₂O₃となる。"},
-
-  {q:"「硫酸アルミニウム」の組成式として正しいものはどれか？",
-   choices:["Al₂(SO₄)₃","Al₃(SO₄)₂","AlSO₄","Al(SO₄)₃"], a:0,
-   exp:"硫酸アルミニウムはAl³⁺（3価）とSO₄²⁻（2価）からなり、個数の比2：3より組成式はAl₂(SO₄)₃となる。"},
-
-  {q:"「塩化マグネシウム」の組成式として正しいものはどれか？",
-   choices:["MgCl₂","MgCl","Mg₂Cl","Mg₂Cl₂"], a:0,
-   exp:"塩化マグネシウムはMg²⁺（2価）とCl⁻（1価）からなり、個数の比1：2より組成式はMgCl₂となる。"},
-
-  {q:"「リン酸ナトリウム」の組成式として正しいものはどれか？",
-   choices:["Na₃PO₄","NaPO₄","Na₃(PO₄)₃","Na(PO₄)₃"], a:0,
-   exp:"リン酸ナトリウムはNa⁺（1価）とPO₄³⁻（3価）からなり、個数の比3：1より組成式はNa₃PO₄となる。"},
-
-  {q:"「炭酸カリウム」の組成式として正しいものはどれか？",
-   choices:["K₂CO₃","KCO₃","K₂(CO₃)₂","K(CO₃)₂"], a:0,
-   exp:"炭酸カリウムはK⁺（1価）とCO₃²⁻（2価）からなり、個数の比2：1より組成式はK₂CO₃となる。"},
-
-  {q:"「リン酸アンモニウム」の組成式として正しいものはどれか？",
-   choices:["(NH₄)₃PO₄","NH₄PO₄","(NH₄)₃(PO₄)₃","NH₄(PO₄)₃"], a:0,
-   exp:"リン酸アンモニウムはNH₄⁺（1価）とPO₄³⁻（3価）からなり、個数の比3：1で、多原子イオンが複数あるため（　）をつけて(NH₄)₃PO₄となる。"},
-
-  {q:"「水酸化マグネシウム」の組成式として正しいものはどれか？",
-   choices:["Mg(OH)₂","MgOH₂","Mg₂(OH)","MgOH"], a:0,
-   exp:"水酸化マグネシウムはMg²⁺（2価）とOH⁻（1価）からなり、個数の比1：2で、多原子イオンが複数あるため（　）をつけてMg(OH)₂となる。"},
-
-  {q:"陽イオンと陰イオンが静電気力（クーロン力）で引きあう結びつきを何というか？",
-   choices:["イオン結合","共有結合","金属結合","水素結合"], a:0,
-   exp:"陽イオンと陰イオンが静電気力（クーロン力）で引きあって結びつくことをイオン結合という。"},
-
-  {q:"静電気力の説明として正しいものはどれか？",
-   choices:["電荷の符号が異なれば引きあい、符号が同じなら反発しあう","電荷の符号に関わらず常に引きあう","電荷の符号が同じなら引きあい、異なれば反発しあう","電荷をもたない粒子の間にのみはたらく"], a:0,
-   exp:"静電気力は電荷をもつ粒子の間にはたらく力で、電荷の符号が異なる（正と負）なら引きあう力、符号が同じ（正と正または負と負）なら反発しあう力となる。"},
-
-  {q:"固体の塩化ナトリウムの中で、Na⁺とCl⁻を結びつけている力は何か？",
-   choices:["静電気力（クーロン力）","共有結合の力","分子間力","金属結合の力"], a:0,
-   exp:"固体の塩化ナトリウムの中では、Na⁺とCl⁻が静電気力（クーロン力）で引きあって結びついている（イオン結合）。"},
-
-  {q:"粒子が規則正しく配列している固体を何というか？",
-   choices:["結晶","分子","組成式","単体"], a:0,
-   exp:"粒子が規則的に配列している固体を結晶という。"},
-
-  {q:"イオン結合によってできる結晶を何というか？",
-   choices:["イオン結晶","分子結晶","共有結合の結晶","金属結晶"], a:0,
-   exp:"イオン結合によってできる結晶をイオン結晶という。"},
-
-  {q:"イオン結晶の一般的な性質として正しいものはどれか？",
-   choices:["融点が高く、硬い","融点が低く、やわらかい","電気を通しやすく、もろい","融点は高いが非常にやわらかい"], a:0,
-   exp:"イオン結合は強い結合なので、イオン結晶は一般に融点が高く、硬い。"},
-
-  {q:"イオン結晶に外部から強い力を加えると簡単に割れてしまうのはなぜか？",
-   choices:["陽イオンどうし・陰イオンどうしが反発しあう面ができるから","イオン結合がもともと非常に弱いから","イオンが結晶中を自由に動きまわっているから","結晶の融点が低いから"], a:0,
-   exp:"外部から強い力が加わると陽イオンと陰イオンの位置関係がずれ、陽イオンどうし・陰イオンどうしが反発しあう面ができて簡単に割れてしまう。"},
-
-  {q:"結晶が特定の面にそって割れることを何というか？",
-   choices:["へき開","電離","風解","潮解"], a:0,
-   exp:"結晶が特定の面にそって割れることをへき開という。イオン結晶以外の結晶でも、結合の弱い面があると起こることがある。"},
-
-  {q:"イオンからなる物質は、固体（結晶）の状態で電気を通すか？",
-   choices:["通さない（イオンが動けないため）","通す（イオンが自由に動けるため）","一部の物質のみ通す","金属光沢があるため通す"], a:0,
-   exp:"イオンからなる物質は結晶のままではイオンの位置が固定されて動けないため、電気を通さない。"},
-
-  {q:"塩化ナトリウムを水に溶かしたり融解させたりすると電気を通すようになるのはなぜか？",
-   choices:["陽イオンと陰イオンが分かれて自由に動けるようになるから","原子が電子を放出して金属になるから","結晶構造が保たれたままになるから","分子に変化するから"], a:0,
-   exp:"水に溶かしたり融解させたりすると、陽イオンと陰イオンが分かれて自由に動けるようになるので、電気を通す。"},
-
-  {q:"水溶液中などで物質がイオンに分かれることを何というか？",
-   choices:["電離","融解","潮解","風解"], a:0,
-   exp:"水溶液中などで物質がイオンに分かれることを電離という。"},
-
-  {q:"塩化ナトリウムのように、水に溶けたときに電離する物質を何というか？",
-   choices:["電解質","非電解質","結晶質","分子性物質"], a:0,
-   exp:"水に溶けたときに電離する物質を電解質という。"},
-
-  {q:"スクロース（ショ糖）やエタノールのように、水に溶けても電離しない物質を何というか？",
-   choices:["非電解質","電解質","イオン結晶","電離質"], a:0,
-   exp:"水に溶けても電離しない物質を非電解質という。非電解質の水溶液は電気を通さない。"},
-
-  {q:"次のうち、イオンからなる物質だが水に溶けにくいものはどれか？",
-   choices:["炭酸カルシウムCaCO₃","塩化ナトリウムNaCl","水酸化ナトリウムNaOH","塩化カルシウムCaCl₂"], a:0,
-   exp:"イオンからなる物質には水に溶けやすいものが多いが、炭酸カルシウムCaCO₃、塩化銀AgCl、硫酸バリウムBaSO₄などは水に溶けにくい。"}
+/* ===== K5 名称（11問） ===== */
+{kc:"K5",lv:1,q:"NaCl の名称として正しいものはどれか。",
+ c:[{t:"塩化ナトリウム"},{t:"ナトリウム塩化物",tag:"order"},{t:"一塩化ナトリウム",tag:"molecule"},{t:"塩素ナトリウム"}],a:0,
+ h:"陰イオン（塩化物イオン）から読み、「〜イオン」の部分をとってつなげます。",
+ e:"陰イオン→陽イオンの順に読んで<b>塩化ナトリウム</b>。組成式は陽イオンから、名称は陰イオンから、と順序が逆になる。"},
+{kc:"K5",lv:1,q:"イオンからなる物質の名称を書くときの順番として正しいものはどれか。",
+ c:[{t:"陰イオン、陽イオンの順に、「〜物イオン」「〜イオン」の部分をとってつなげる"},{t:"陽イオン、陰イオンの順に書く",tag:"order"},{t:"組成式と同じ順に書く",tag:"order"},{t:"価数の小さいイオンから書く"}],a:0,
+ h:"組成式の書き順とは逆になります。",
+ e:"名称は<b>陰イオン→陽イオン</b>の順。CaCl<sub>2</sub> は「塩化物イオン＋カルシウムイオン」で塩化カルシウム。"},
+{kc:"K5",lv:1,q:"CaCl<sub>2</sub> の名称として正しいものはどれか。",
+ c:[{t:"塩化カルシウム"},{t:"カルシウム塩化物",tag:"order"},{t:"二塩化カルシウム",tag:"molecule"},{t:"塩素カルシウム"}],a:0,
+ h:"組成式の数字は名称に入れません。陰イオンの名称から読みます。",
+ e:"<b>塩化カルシウム</b>。組成式の 2 は個数の比を表しているだけなので、「二」という数詞は付けない。"},
+{kc:"K5",lv:2,q:"MgO の名称として正しいものはどれか。",
+ c:[{t:"酸化マグネシウム"},{t:"マグネシウム酸化物",tag:"order"},{t:"一酸化マグネシウム",tag:"molecule"},{t:"酸素マグネシウム"}],a:0,
+ h:"O<sup>2−</sup> は酸化物イオンです。「物イオン」をとると何が残るか。",
+ e:"<b>酸化マグネシウム</b>。酸化物イオン→「酸化」、マグネシウムイオン→「マグネシウム」でつなげる。"},
+{kc:"K5",lv:2,q:"Al<sub>2</sub>O<sub>3</sub> の名称として正しいものはどれか。",
+ c:[{t:"酸化アルミニウム"},{t:"アルミニウム酸化物",tag:"order"},{t:"三酸化二アルミニウム",tag:"molecule"},{t:"酸素アルミニウム"}],a:0,
+ h:"組成式の数字は名称には入れません。",
+ e:"<b>酸化アルミニウム</b>。2 や 3 は比を表しているだけなので数詞は付けない。"},
+{kc:"K5",lv:2,q:"CaCO<sub>3</sub> の名称として正しいものはどれか。",
+ c:[{t:"炭酸カルシウム"},{t:"カルシウム炭酸",tag:"order"},{t:"炭化カルシウム",tag:"polyion"},{t:"三炭酸カルシウム",tag:"molecule"}],a:0,
+ h:"CO<sub>3</sub><sup>2−</sup> は炭酸イオンか、炭化物イオンか。",
+ e:"CO<sub>3</sub><sup>2−</sup>（炭酸イオン）＋Ca<sup>2+</sup> で<b>炭酸カルシウム</b>。石灰石・貝殻・チョークの主成分。"},
+{kc:"K5",lv:2,q:"(NH<sub>4</sub>)<sub>2</sub>SO<sub>4</sub> の名称として正しいものはどれか。",
+ c:[{t:"硫酸アンモニウム"},{t:"アンモニウム硫酸",tag:"order"},{t:"二硫酸アンモニウム",tag:"molecule"},{t:"硫化アンモニウム",tag:"polyion"}],a:0,
+ h:"陰イオンは SO<sub>4</sub><sup>2−</sup> です。この名称は硫酸イオンか硫化物イオンか。",
+ e:"陰イオン SO<sub>4</sub><sup>2−</sup>（硫酸イオン）→陽イオン NH<sub>4</sub><sup>+</sup> の順で<b>硫酸アンモニウム</b>。硫化アンモニウムは (NH<sub>4</sub>)<sub>2</sub>S で別物。"},
+{kc:"K5",lv:2,q:"KOH の名称として正しいものはどれか。",
+ c:[{t:"水酸化カリウム"},{t:"カリウム水酸化物",tag:"order"},{t:"酸化水素カリウム",tag:"polyion"},{t:"一水酸化カリウム",tag:"molecule"}],a:0,
+ h:"OH<sup>−</sup> は水酸化物イオンです。「物イオン」をとると何が残るか。",
+ e:"<b>水酸化カリウム</b>。水酸化物イオン→「水酸化」、カリウムイオン→「カリウム」でつなげる。"},
+{kc:"K5",lv:3,q:"Cu(OH)<sub>2</sub> の名称として正しいものはどれか。",
+ c:[{t:"水酸化銅(II)"},{t:"水酸化銅(I)",tag:"valence"},{t:"二水酸化銅",tag:"molecule"},{t:"銅水酸化物",tag:"order"}],a:0,
+ h:"銅には2種類のイオンがあります。OH<sup>−</sup> が2個ということは、銅イオンの価数はいくつか。",
+ e:"OH<sup>−</sup> 2個ぶんの電荷を打ち消しているので銅は Cu<sup>2+</sup>。ローマ数字を添えて<b>水酸化銅(II)</b>。"},
+{kc:"K5",lv:3,q:"FeCl<sub>3</sub> の名称として正しいものはどれか。",
+ c:[{t:"塩化鉄(III)"},{t:"塩化鉄(II)",tag:"valence"},{t:"三塩化鉄",tag:"molecule"},{t:"鉄塩化物",tag:"order"}],a:0,
+ h:"Cl<sup>−</sup> が3個あります。この電荷を打ち消す鉄イオンの価数を考えます。",
+ e:"Cl<sup>−</sup> 3個ぶん（−3）を打ち消すので鉄は Fe<sup>3+</sup>。よって<b>塩化鉄(III)</b>。FeCl<sub>2</sub> なら塩化鉄(II)。"},
+{kc:"K5",lv:3,q:"硝酸銀の組成式として正しいものはどれか。ただし銀イオンは Ag<sup>+</sup> である。",
+ c:[{t:"AgNO<sub>3</sub>"},{t:"Ag<sub>2</sub>NO<sub>3</sub>",tag:"cross"},{t:"Ag(NO<sub>3</sub>)<sub>2</sub>",tag:"valence"},{t:"AgNO<sub>2</sub>",tag:"polyion"}],a:0,
+ h:"名称は陰イオンから読むので、「硝酸」と「銀」がそれぞれどのイオンかを分けて考えます。",
+ e:"Ag<sup>+</sup>（1価）と NO<sub>3</sub><sup>−</sup>（1価）なので1：1、<b>AgNO<sub>3</sub></b>。名称から組成式を書くときは、まず名称を陰イオンと陽イオンに分ける。"}
 ];
 
-let session=[], idx=0, score=0, results=[], studentId="";
+POOL.push(
+/* ===== K6 イオン結晶の性質（9問） ===== */
+{kc:"K6",lv:1,q:"イオン結晶の性質として正しいものはどれか。",
+ c:[{t:"融点が高く、硬いが強い力を加えると割れやすい"},{t:"融点が低く、やわらかい",tag:"molecule"},{t:"たたくと薄く広がり、引き延ばすことができる",tag:"bondtype"},{t:"固体のままでも電気をよく通す",tag:"conduct"}],a:0,
+ h:"イオンが強い静電気力で規則正しく並んでいます。この構造から融点の高さともろさの両方が出てきます。",
+ e:"イオン結合は強いので<b>融点が高く硬い</b>が、面がずれると同符号のイオンが反発して<b>割れやすい</b>。展性・延性は金属結晶の性質。"},
+{kc:"K6",lv:1,q:"粒子が規則的に配列している固体を何というか。",
+ c:[{t:"結晶"},{t:"分子",tag:"molecule"},{t:"溶液"},{t:"合金"}],a:0,
+ h:"イオン結晶・金属結晶などに共通してつく語です。",
+ e:"粒子が規則的に配列している固体を<b>結晶</b>という。イオン結合によってできる結晶がイオン結晶。"},
+{kc:"K6",lv:1,q:"イオン結晶を水に溶かしたとき、水溶液中で起きていることはどれか。",
+ c:[{t:"陽イオンと陰イオンがばらばらに分かれて散らばる"},{t:"分子になって散らばる",tag:"molecule"},{t:"原子に分かれて散らばる",tag:"molecule"},{t:"自由電子が生じる",tag:"bondtype"}],a:0,
+ h:"もともと陽イオンと陰イオンからできています。水の中でそれらがどうなるかを考えます。",
+ e:"イオン結晶が水に溶けると<b>陽イオンと陰イオンに分かれて</b>水中を動き回る。だから水溶液は電気を通す。"},
+{kc:"K6",lv:2,q:"塩化ナトリウムが電気を通すのは、どのような状態のときか。",
+ c:[{t:"水に溶かした水溶液、または融かした液体のとき"},{t:"固体のときだけ",tag:"conduct"},{t:"どの状態でもよく通す",tag:"conduct"},{t:"どの状態でもまったく通さない",tag:"conduct"}],a:0,
+ h:"電気を通すには、電荷を運ぶ粒子が動ける必要があります。固体の中でイオンは動けるでしょうか。",
+ e:"固体ではイオンが決まった位置に固定されて動けないので通さない。<b>水に溶かすか融かす</b>とイオンが自由に動けるようになり、電気を通す。"},
+{kc:"K6",lv:2,q:"イオン結晶に強い力を加えると割れやすいのはなぜか。",
+ c:[{t:"面がずれると同符号のイオンが向かい合い、反発しあうから"},{t:"自由電子が結晶の中を動き回っているから",tag:"bondtype"},{t:"分子間力が弱いから",tag:"molecule"},{t:"イオンとイオンの間に隙間が多いから"}],a:0,
+ h:"陽イオンと陰イオンが交互に並んでいます。その並びを一段ずらすと、どのイオンどうしが隣り合うか。",
+ e:"配列が一段ずれると<b>同符号のイオンどうしが接して反発</b>し、その面で割れる。金属結晶が変形できるのと対照的。"},
+{kc:"K6",lv:2,q:"塩化ナトリウムの結晶についての記述として正しいものはどれか。",
+ c:[{t:"NaCl という分子は存在せず、組成式は Na と Cl の個数の比を表している"},{t:"NaCl という分子が多数集まってできている",tag:"molecule"},{t:"Na 原子と Cl 原子が共有結合してできている",tag:"bondtype"},{t:"自由電子が結晶全体を動き回っている",tag:"bondtype"}],a:0,
+ h:"結晶の中で、特定の Na と Cl がペアを組んでいるかどうかを考えます。",
+ e:"結晶中では Na<sup>+</sup> と Cl<sup>−</sup> が交互に並び続けており、特定のペアという単位がない。だから<b>分子式ではなく組成式</b>で表す。"},
+{kc:"K6",lv:3,q:"結晶が特定の面にそって割れることを何というか。",
+ c:[{t:"へき開"},{t:"電離",tag:"electrolyte"},{t:"潮解",tag:"usage"},{t:"昇華"}],a:0,
+ h:"イオン結晶が「もろい」性質を指す専門用語です。結晶以外でも、結合の弱い面ができると起こります。",
+ e:"結晶が特定の面にそって割れることを<b>へき開</b>という。イオン結晶以外でも、結合の弱い面ができると起こることがある。"},
+{kc:"K6",lv:3,q:"イオン結晶が「もろい」とは、どういう性質のことか。",
+ c:[{t:"強い力を加えると、特定の面にそって割れてしまうこと"},{t:"手で簡単に曲げられること"},{t:"加熱するとすぐに融けること",tag:"molecule"},{t:"水に溶けやすいこと",tag:"solubility"}],a:0,
+ h:"硬いという性質ともろいという性質は両立します。ガラスや石を思い浮かべてみます。",
+ e:"イオン結晶は硬い（傷がつきにくい）が、大きな力には耐えられず<b>特定の面にそって割れる</b>。硬さともろさは別の性質。"},
+{kc:"K6",lv:3,q:"融かした（融解した）塩化ナトリウムが電気を通すのはなぜか。",
+ c:[{t:"イオンが自由に動けるようになるから"},{t:"自由電子が生じるから",tag:"bondtype"},{t:"分子が壊れて原子になるから",tag:"molecule"},{t:"電子が共有されるようになるから",tag:"bondtype"}],a:0,
+ h:"電気を運んでいるのは電子か、それともイオンかを考えます。",
+ e:"融解すると規則正しい配列がくずれ、<b>イオンが動けるようになる</b>ため電気を通す。金属のように自由電子が流れるのとは仕組みが違う。"},
 
-document.getElementById("totalBadge").textContent="全"+ALL_Q.length+"問収録";
+/* ===== K7 静電気力と融点（7問） ===== */
+{kc:"K7",lv:1,q:"イオン結合は、何によって生じる結合か。",
+ c:[{t:"陽イオンと陰イオンの間にはたらく静電気力"},{t:"2つの原子が電子を出しあって共有する力",tag:"bondtype"},{t:"自由電子が金属イオンを結びつける力",tag:"bondtype"},{t:"分子どうしの間にはたらく弱い引力",tag:"molecule"}],a:0,
+ h:"＋の電気を帯びた粒子と−の電気を帯びた粒子の間にはたらく力は何かを考えます。",
+ e:"イオン結合は、陽イオンと陰イオンの間にはたらく<b>静電気力</b>による結合。共有結合や金属結合とは仕組みが違う。"},
+{kc:"K7",lv:1,q:"静電気力の別のよび方として正しいものはどれか。",
+ c:[{t:"クーロン力"},{t:"分子間力",tag:"molecule"},{t:"万有引力"},{t:"ファンデルワールス力",tag:"molecule"}],a:0,
+ h:"電荷をもつ粒子の間にはたらく力につけられた、人名に由来する名前です。",
+ e:"電荷をもつ粒子の間にはたらく力が静電気力で、<b>クーロン力</b>ともよばれる。符号が異なれば引きあい、同じなら反発する。"},
+{kc:"K7",lv:2,q:"静電気力について、正しい説明はどれか。",
+ c:[{t:"電荷の符号が異なれば引きあい、同じなら反発しあう"},{t:"電荷の符号が同じなら引きあい、異なれば反発しあう",tag:"conduct"},{t:"どの場合でも必ず引きあう"},{t:"どの場合でも必ず反発しあう"}],a:0,
+ h:"イオン結晶がもろい理由を思い出すと、同符号どうしがどうなるかが分かります。",
+ e:"静電気力は<b>符号が異なると引力、同じだと斥力</b>になる。イオン結晶がずれると割れるのは、同符号どうしが反発するため。"},
+{kc:"K7",lv:2,q:"イオン結晶の融点が一般に高いのはなぜか。",
+ c:[{t:"陽イオンと陰イオンが強い静電気力で結びついているから"},{t:"分子間力が強くはたらいているから",tag:"molecule"},{t:"自由電子が結晶を強く結びつけているから",tag:"bondtype"},{t:"原子どうしが共有結合しているから",tag:"bondtype"}],a:0,
+ h:"融かすということは粒子の並びをばらばらにすることです。それを妨げている力は何か。",
+ e:"イオン間の<b>静電気力が強い</b>ため、結晶をばらばらにするには多くの熱エネルギーが必要になる。NaCl の融点は801℃。"},
+{kc:"K7",lv:2,q:"NaCl の融点は801℃、MgO の融点は2572℃である。MgO の融点がこれほど高い主な理由はどれか。",
+ c:[{t:"イオンの価数が大きく、静電気力が強くはたらくから"},{t:"分子量が大きいから",tag:"molecule"},{t:"共有結合でできているから",tag:"bondtype"},{t:"イオン半径が大きいから"}],a:0,
+ h:"NaCl は Na<sup>+</sup> と Cl<sup>−</sup>、MgO は Mg<sup>2+</sup> と O<sup>2−</sup> です。イオンの電荷の大きさを比べます。",
+ e:"NaCl は1価どうし、MgO は<b>2価どうし</b>なので静電気力がはるかに強く、融点が高くなる。イオン結晶に分子は存在しないので分子量では説明できない。"},
+{kc:"K7",lv:3,q:"イオン結合の強さは、何によって決まるか。",
+ c:[{t:"イオンの価数が大きいほど、またイオン間の距離が小さいほど強い"},{t:"イオンの質量が大きいほど強い",tag:"molecule"},{t:"結晶中のイオンの総数が多いほど強い"},{t:"イオンがもつ中性子の数が多いほど強い"}],a:0,
+ h:"静電気力は、電気量が大きいほど、距離が近いほど強くはたらきます。",
+ e:"静電気力は<b>電荷（価数）が大きいほど強く、距離が離れるほど弱く</b>なる。だから2価どうしの MgO は1価どうしの NaCl より強く結びついている。"},
+{kc:"K7",lv:3,q:"塩化ナトリウム NaCl と塩化カリウム KCl では、NaCl のほうが融点が高い。その理由として最も適当なものはどれか。",
+ c:[{t:"K<sup>+</sup> は Na<sup>+</sup> よりイオン半径が大きく、イオン間の距離が大きいため静電気力が弱いから"},{t:"K のほうが原子量が大きいから",tag:"molecule"},{t:"KCl は共有結合でできているから",tag:"bondtype"},{t:"K<sup>+</sup> の価数が Na<sup>+</sup> より小さいから",tag:"valence"}],a:0,
+ h:"価数はどちらも1価どうしで同じです。では違うのは何かを考えます。",
+ e:"どちらも1価どうしなので、差を生むのは<b>イオン間の距離</b>。K<sup>+</sup> は Na<sup>+</sup> より電子殻が1つ多く半径が大きいため、静電気力がやや弱い。"},
 
-function shuffle(arr){
-  let a=[...arr];
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
+/* ===== K8 電離と電解質（10問） ===== */
+{kc:"K8",lv:1,q:"水溶液中などで物質がイオンに分かれることを何というか。",
+ c:[{t:"電離"},{t:"へき開",tag:"conduct"},{t:"潮解",tag:"usage"},{t:"昇華"}],a:0,
+ h:"塩化ナトリウムが水に溶けて Na<sup>+</sup> と Cl<sup>−</sup> に分かれる現象のことです。",
+ e:"水溶液中などで物質がイオンに分かれることを<b>電離</b>という。電離が起こるから水溶液が電気を通す。"},
+{kc:"K8",lv:1,q:"塩化ナトリウムのように、水に溶けたときに電離する物質を何というか。",
+ c:[{t:"電解質"},{t:"非電解質",tag:"electrolyte"},{t:"同素体"},{t:"結晶"}],a:0,
+ h:"その水溶液が電気を通すかどうかで分類した呼び名です。",
+ e:"水に溶けたときに電離する物質を<b>電解質</b>という。その水溶液は電気を通す。"},
+{kc:"K8",lv:1,q:"次のうち、非電解質にあたるものはどれか。",
+ c:[{t:"スクロース（ショ糖）"},{t:"塩化ナトリウム",tag:"electrolyte"},{t:"塩化カルシウム",tag:"electrolyte"},{t:"水酸化ナトリウム",tag:"electrolyte"}],a:0,
+ h:"水に溶けてもイオンに分かれない物質を探します。砂糖水は電気を通すでしょうか。",
+ e:"<b>スクロース</b>は水に溶けても電離しない<b>非電解質</b>。エタノールも同じ。非電解質の水溶液は電気を通さない。"},
+{kc:"K8",lv:2,q:"塩化ナトリウムの電気伝導性について、正しい組合せはどれか。",
+ c:[{t:"固体は通さない／水溶液は通す／融解した液体は通す"},{t:"固体は通す／水溶液は通さない／融解した液体は通さない",tag:"conduct"},{t:"固体も水溶液も融解した液体もすべて通す",tag:"conduct"},{t:"固体も水溶液も融解した液体もすべて通さない",tag:"conduct"}],a:0,
+ h:"イオンが動けるかどうかで決まります。3つの状態それぞれでイオンが動けるかを考えます。",
+ e:"固体ではイオンが固定されていて通さないが、<b>水溶液と融解した液体</b>ではイオンが自由に動けるので通す。"},
+{kc:"K8",lv:2,q:"イオン結晶が固体のままでは電気を通さないのはなぜか。",
+ c:[{t:"イオンが決まった位置に固定されていて動けないから"},{t:"イオンが存在しないから",tag:"molecule"},{t:"自由電子がないから",tag:"bondtype"},{t:"電荷をもつ粒子がないから",tag:"conduct"}],a:0,
+ h:"電気を通すには、電荷を運ぶ粒子が移動できる必要があります。固体の結晶中でイオンは移動できるでしょうか。",
+ e:"固体の結晶中ではイオンが規則正しい位置に<b>固定されて動けない</b>ため、電荷を運べず電気を通さない。イオン自体はちゃんと存在している。"},
+{kc:"K8",lv:2,q:"電解質の水溶液が電気を通すのはなぜか。",
+ c:[{t:"電離して生じた陽イオンと陰イオンが、水溶液中を自由に動けるから"},{t:"水の分子が電気を運ぶから"},{t:"自由電子が水溶液中を動くから",tag:"bondtype"},{t:"溶けた物質が分子のまま動くから",tag:"molecule"}],a:0,
+ h:"何が電荷を運んでいるのかを考えます。金属の場合とは運び手が違います。",
+ e:"電解質は水に溶けると電離し、生じた<b>イオンが自由に動いて電荷を運ぶ</b>ので電気を通す。"},
+{kc:"K8",lv:2,q:"非電解質の水溶液について、正しい説明はどれか。",
+ c:[{t:"水に溶けても電離しないので、電気を通さない"},{t:"水に溶けて電離するが、電気は通さない",tag:"electrolyte"},{t:"水に溶けないので、電気を通さない",tag:"solubility"},{t:"水に溶けて電離し、電気をよく通す",tag:"electrolyte"}],a:0,
+ h:"電気を通すかどうかを決めるのは、溶けるかどうかではなく、イオンに分かれるかどうかです。",
+ e:"スクロースやエタノールは水によく溶けるが<b>電離しない</b>ので、水溶液は電気を通さない。溶けることと電離することは別。"},
+{kc:"K8",lv:3,q:"塩化ナトリウムの水溶液は電気を通すが、スクロースの水溶液は通さない。この違いの説明として正しいものはどれか。",
+ c:[{t:"塩化ナトリウムは電離してイオンを生じるが、スクロースは溶けても分子のままだから"},{t:"塩化ナトリウムは水に溶けるが、スクロースは水に溶けないから",tag:"solubility"},{t:"塩化ナトリウムには自由電子があるから",tag:"bondtype"},{t:"スクロースのほうが分子量が大きいから",tag:"molecule"}],a:0,
+ h:"どちらも水にはよく溶けます。違いは溶けたあとの粒子の状態にあります。",
+ e:"NaCl は電離して Na<sup>+</sup> と Cl<sup>−</sup> を生じるので電気を通す。スクロースは溶けても<b>分子のまま</b>で電荷を運ぶ粒子ができないため通さない。"},
+{kc:"K8",lv:3,q:"イオンからなる物質のうち、水に溶けにくいものの組合せとして正しいものはどれか。",
+ c:[{t:"炭酸カルシウム CaCO<sub>3</sub>・硫酸バリウム BaSO<sub>4</sub>・塩化銀 AgCl"},{t:"塩化ナトリウム NaCl・塩化カリウム KCl・硝酸ナトリウム NaNO<sub>3</sub>",tag:"solubility"},{t:"水酸化ナトリウム NaOH・炭酸ナトリウム Na<sub>2</sub>CO<sub>3</sub>・塩化カルシウム CaCl<sub>2</sub>",tag:"solubility"},{t:"すべてのイオン結晶は水によく溶ける",tag:"solubility"}],a:0,
+ h:"石灰石が雨水で簡単に溶けてなくならないことを思い出します。例外として覚える3つがあります。",
+ e:"イオンからなる物質には水に溶けやすいものが多いが、<b>CaCO<sub>3</sub>・BaSO<sub>4</sub>・AgCl</b> は溶けにくい例外。"},
+{kc:"K8",lv:3,q:"塩化カルシウム CaCl<sub>2</sub> が水に溶けて電離するようすを表した式として正しいものはどれか。",
+ c:[{t:"CaCl<sub>2</sub> → Ca<sup>2+</sup> ＋ 2Cl<sup>−</sup>"},{t:"CaCl<sub>2</sub> → Ca<sup>+</sup> ＋ 2Cl<sup>−</sup>",tag:"valence"},{t:"CaCl<sub>2</sub> → Ca<sup>2+</sup> ＋ Cl<sub>2</sub><sup>−</sup>",tag:"polyion"},{t:"CaCl<sub>2</sub> → Ca ＋ Cl<sub>2</sub>",tag:"electrolyte"}],a:0,
+ h:"組成式に含まれるイオンの種類と個数を、そのまま右辺に書き出します。電荷の合計も左右で合わせます。",
+ e:"CaCl<sub>2</sub> は Ca<sup>2+</sup> 1個と Cl<sup>−</sup> 2個からできているので、<b>Ca<sup>2+</sup> ＋ 2Cl<sup>−</sup></b> に電離する。両辺の電荷の合計はどちらも0。"},
+
+/* ===== K9 所在と用途（9問） ===== */
+{kc:"K9",lv:1,q:"食塩の主成分であり、水酸化ナトリウムや炭酸ナトリウムを工業的に製造するときの原料にもなる物質はどれか。",
+ c:[{t:"塩化ナトリウム NaCl"},{t:"炭酸水素ナトリウム NaHCO<sub>3</sub>",tag:"usage"},{t:"塩化カルシウム CaCl<sub>2</sub>",tag:"usage"},{t:"炭酸カルシウム CaCO<sub>3</sub>",tag:"usage"}],a:0,
+ h:"海水に多く含まれ、調味料としても使われる物質です。",
+ e:"<b>塩化ナトリウム NaCl</b>。海水に多く含まれ、NaOH や Na<sub>2</sub>CO<sub>3</sub> の原料にもなる。融点は801℃。"},
+{kc:"K9",lv:1,q:"天然には石灰石や大理石として存在し、貝殻や卵の殻の主成分でもある物質はどれか。",
+ c:[{t:"炭酸カルシウム CaCO<sub>3</sub>"},{t:"酸化カルシウム CaO",tag:"usage"},{t:"硫酸カルシウム CaSO<sub>4</sub>",tag:"usage"},{t:"塩化カルシウム CaCl<sub>2</sub>",tag:"usage"}],a:0,
+ h:"石灰水に二酸化炭素を吹きこんだときに生じる白色沈殿の成分でもあります。",
+ e:"<b>炭酸カルシウム CaCO<sub>3</sub></b>。石灰石・大理石・貝殻の主成分で、水に溶けにくい。チョークやセメントの原料にもなる。"},
+{kc:"K9",lv:1,q:"重曹とよばれ、胃薬やベーキングパウダーに利用される物質はどれか。",
+ c:[{t:"炭酸水素ナトリウム NaHCO<sub>3</sub>"},{t:"炭酸ナトリウム Na<sub>2</sub>CO<sub>3</sub>",tag:"usage"},{t:"水酸化ナトリウム NaOH",tag:"usage"},{t:"塩化ナトリウム NaCl",tag:"usage"}],a:0,
+ h:"加熱すると分解して二酸化炭素が生じるので、菓子をふくらませるのに使われます。",
+ e:"<b>炭酸水素ナトリウム NaHCO<sub>3</sub></b>（重曹）。加熱すると Na<sub>2</sub>CO<sub>3</sub> と CO<sub>2</sub> と H<sub>2</sub>O に分解する。炭酸ナトリウムとは別物。"},
+{kc:"K9",lv:2,q:"乾燥剤や凍結防止剤としてよく用いられ、炭酸ナトリウムの工業的製造で副産物として得られる物質はどれか。",
+ c:[{t:"塩化カルシウム CaCl<sub>2</sub>"},{t:"炭酸カルシウム CaCO<sub>3</sub>",tag:"usage"},{t:"硫酸カルシウム CaSO<sub>4</sub>",tag:"usage"},{t:"水酸化カルシウム Ca(OH)<sub>2</sub>",tag:"usage"}],a:0,
+ h:"空気中の水分を吸収して溶ける性質（潮解）をもつ物質です。冬の道路にまかれます。",
+ e:"<b>塩化カルシウム CaCl<sub>2</sub></b>。潮解性があり、乾燥剤や凍結防止剤に利用される。"},
+{kc:"K9",lv:2,q:"生石灰ともよばれ、水と反応して水酸化カルシウムになる物質はどれか。",
+ c:[{t:"酸化カルシウム CaO"},{t:"炭酸カルシウム CaCO<sub>3</sub>",tag:"usage"},{t:"塩化カルシウム CaCl<sub>2</sub>",tag:"usage"},{t:"硫酸カルシウム CaSO<sub>4</sub>",tag:"usage"}],a:0,
+ h:"水と反応するときに熱を出すので、発熱剤や乾燥剤に利用されます。",
+ e:"<b>酸化カルシウム CaO</b>（生石灰）。水と反応して Ca(OH)<sub>2</sub> になる。融点2572℃と非常に高い。"},
+{kc:"K9",lv:2,q:"消石灰ともよばれ、その水溶液が石灰水として二酸化炭素の検出に利用される物質はどれか。",
+ c:[{t:"水酸化カルシウム Ca(OH)<sub>2</sub>"},{t:"酸化カルシウム CaO",tag:"usage"},{t:"炭酸カルシウム CaCO<sub>3</sub>",tag:"usage"},{t:"水酸化ナトリウム NaOH",tag:"usage"}],a:0,
+ h:"石灰水に二酸化炭素を吹きこむと白くにごります。その石灰水の溶質にあたる物質です。",
+ e:"<b>水酸化カルシウム Ca(OH)<sub>2</sub></b>（消石灰）。水溶液が石灰水で、酸性土壌の中和剤や漆喰の原料にも使われる。"},
+{kc:"K9",lv:3,q:"結晶が空気中の水分を徐々に吸収して溶ける現象を何というか。また、その性質をもつ物質はどれか。",
+ c:[{t:"潮解といい、水酸化ナトリウムや塩化カルシウムがこの性質をもつ"},{t:"風解といい、炭酸ナトリウム十水和物がこの性質をもつ",tag:"usage"},{t:"電離といい、塩化ナトリウムがこの性質をもつ",tag:"electrolyte"},{t:"へき開といい、塩化ナトリウムがこの性質をもつ",tag:"conduct"}],a:0,
+ h:"乾燥剤に使われる物質がもつ性質です。水を吸って自分が溶けてしまいます。",
+ e:"空気中の水分を吸収して溶ける現象が<b>潮解</b>。NaOH（苛性ソーダ）や CaCl<sub>2</sub> がこの性質をもつ。水和水を失うほうは風解。"},
+{kc:"K9",lv:3,q:"炭酸ナトリウム十水和物の結晶が、空気中で徐々に水和水の一部を失う現象を何というか。",
+ c:[{t:"風解"},{t:"潮解",tag:"usage"},{t:"電離",tag:"electrolyte"},{t:"融解"}],a:0,
+ h:"潮解とは逆に、水を失っていく現象です。",
+ e:"水和水の一部を失う現象を<b>風解</b>という。炭酸ナトリウム十水和物がその例。水を吸う潮解と取り違えないこと。"},
+{kc:"K9",lv:3,q:"二水和物がセッコウとして天然に存在し、建築材料や医療用ギプスに利用される物質はどれか。",
+ c:[{t:"硫酸カルシウム CaSO<sub>4</sub>"},{t:"炭酸カルシウム CaCO<sub>3</sub>",tag:"usage"},{t:"酸化カルシウム CaO",tag:"usage"},{t:"塩化カルシウム CaCl<sub>2</sub>",tag:"usage"}],a:0,
+ h:"石膏像の材料になる物質です。水に溶けにくい塩のひとつでもあります。",
+ e:"<b>硫酸カルシウム CaSO<sub>4</sub></b>。二水和物がセッコウで、水に溶けにくい。建築材料や医療用ギプスに使われる。"}
+);
+
+const STEPS=[
+/* ---- 穴埋め版（S1・S2 を提示） ---- */
+{kc:"K4",lv:2,fill:true,
+ stem:"カルシウムイオン Ca<sup>2+</sup> と リン酸イオン PO<sub>4</sub><sup>3−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[{label:"S1 価数",text:"Ca<sup>2+</sup> は<b>2価の陽イオン</b>、PO<sub>4</sub><sup>3−</sup> は<b>3価の陰イオン</b>"},
+        {label:"S2 個数比",text:"2×3 ＝ 3×2 より　Ca：PO<sub>4</sub> ＝ <b>3：2</b>"}],
+ steps:[
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub>"},{t:"Ca<sub>2</sub>(PO<sub>4</sub>)<sub>3</sub>",tag:"cross"},{t:"Ca<sub>3</sub>PO<sub>42</sub>",tag:"paren"},{t:"CaPO<sub>4</sub>",tag:"valence"}],a:0,
+   h:"個数比の数字をそのまま右下に書きます。多原子イオンが2個以上あるときは括弧を忘れずに。",
+   e:"Ca が3個、PO<sub>4</sub> が2個。多原子イオンが2個あるので括弧でくくり、<b>Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub></b>。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"リン酸カルシウム"},{t:"カルシウムリン酸",tag:"order"},{t:"二リン酸三カルシウム",tag:"molecule"},{t:"リン化カルシウム",tag:"polyion"}],a:0,
+   h:"名称は陰イオンから読みます。PO<sub>4</sub><sup>3−</sup> の名前を思い出します。",
+   e:"陰イオン（リン酸イオン）→陽イオン（カルシウムイオン）の順で<b>リン酸カルシウム</b>。骨や歯の主成分でもある。"}]},
+
+{kc:"K4",lv:2,fill:true,
+ stem:"アルミニウムイオン Al<sup>3+</sup> と 硫酸イオン SO<sub>4</sub><sup>2−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[{label:"S1 価数",text:"Al<sup>3+</sup> は<b>3価の陽イオン</b>、SO<sub>4</sub><sup>2−</sup> は<b>2価の陰イオン</b>"},
+        {label:"S2 個数比",text:"3×2 ＝ 2×3 より　Al：SO<sub>4</sub> ＝ <b>2：3</b>"}],
+ steps:[
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>"},{t:"Al<sub>3</sub>(SO<sub>4</sub>)<sub>2</sub>",tag:"cross"},{t:"Al<sub>2</sub>SO<sub>43</sub>",tag:"paren"},{t:"AlSO<sub>4</sub>",tag:"valence"}],a:0,
+   h:"個数比どおりに書きます。多原子イオンが3個あるので括弧が必要です。",
+   e:"<b>Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub></b>。括弧を付けないと SO<sub>4</sub> の 4 と個数の 3 が並んで読めなくなる。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"硫酸アルミニウム"},{t:"アルミニウム硫酸",tag:"order"},{t:"三硫酸二アルミニウム",tag:"molecule"},{t:"硫化アルミニウム",tag:"polyion"}],a:0,
+   h:"SO<sub>4</sub><sup>2−</sup> は硫酸イオンです。名称は陰イオンから読みます。",
+   e:"<b>硫酸アルミニウム</b>。硫化アルミニウム Al<sub>2</sub>S<sub>3</sub> とは別の物質。"}]},
+
+{kc:"K4",lv:2,fill:true,
+ stem:"マグネシウムイオン Mg<sup>2+</sup> と 硝酸イオン NO<sub>3</sub><sup>−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[{label:"S1 価数",text:"Mg<sup>2+</sup> は<b>2価の陽イオン</b>、NO<sub>3</sub><sup>−</sup> は<b>1価の陰イオン</b>"},
+        {label:"S2 個数比",text:"2×1 ＝ 1×2 より　Mg：NO<sub>3</sub> ＝ <b>1：2</b>"}],
+ steps:[
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"Mg(NO<sub>3</sub>)<sub>2</sub>"},{t:"Mg<sub>2</sub>NO<sub>3</sub>",tag:"cross"},{t:"MgNO<sub>32</sub>",tag:"paren"},{t:"MgNO<sub>3</sub>",tag:"valence"}],a:0,
+   h:"NO<sub>3</sub> が2個あります。多原子イオンが2個以上あるときの書き方を思い出します。",
+   e:"<b>Mg(NO<sub>3</sub>)<sub>2</sub></b>。括弧でくくってから、その外の右下に個数を書く。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"硝酸マグネシウム"},{t:"マグネシウム硝酸",tag:"order"},{t:"二硝酸マグネシウム",tag:"molecule"},{t:"窒化マグネシウム",tag:"polyion"}],a:0,
+   h:"NO<sub>3</sub><sup>−</sup> は硝酸イオンです。",
+   e:"<b>硝酸マグネシウム</b>。窒化マグネシウム Mg<sub>3</sub>N<sub>2</sub> とは別物。"}]},
+
+{kc:"K4",lv:2,fill:true,
+ stem:"アンモニウムイオン NH<sub>4</sub><sup>+</sup> と 炭酸イオン CO<sub>3</sub><sup>2−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[{label:"S1 価数",text:"NH<sub>4</sub><sup>+</sup> は<b>1価の陽イオン</b>、CO<sub>3</sub><sup>2−</sup> は<b>2価の陰イオン</b>"},
+        {label:"S2 個数比",text:"1×2 ＝ 2×1 より　NH<sub>4</sub>：CO<sub>3</sub> ＝ <b>2：1</b>"}],
+ steps:[
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"(NH<sub>4</sub>)<sub>2</sub>CO<sub>3</sub>"},{t:"NH<sub>4</sub>(CO<sub>3</sub>)<sub>2</sub>",tag:"cross"},{t:"NH<sub>42</sub>CO<sub>3</sub>",tag:"paren"},{t:"NH<sub>4</sub>CO<sub>3</sub>",tag:"valence"}],a:0,
+   h:"陽イオンのほうが2個になります。多原子イオンが2個以上なら括弧でくくります。",
+   e:"NH<sub>4</sub><sup>+</sup> が2個なので括弧でくくって <b>(NH<sub>4</sub>)<sub>2</sub>CO<sub>3</sub></b>。陽イオン側に括弧がつく例。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"炭酸アンモニウム"},{t:"アンモニウム炭酸",tag:"order"},{t:"二炭酸アンモニウム",tag:"molecule"},{t:"炭化アンモニウム",tag:"polyion"}],a:0,
+   h:"CO<sub>3</sub><sup>2−</sup> は炭酸イオンです。名称は陰イオンから読みます。",
+   e:"<b>炭酸アンモニウム</b>。炭化物イオンではなく炭酸イオンである点に注意。"}]},
+
+{kc:"K4",lv:2,fill:true,
+ stem:"カリウムイオン K<sup>+</sup> と 硫化物イオン S<sup>2−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[{label:"S1 価数",text:"K<sup>+</sup> は<b>1価の陽イオン</b>、S<sup>2−</sup> は<b>2価の陰イオン</b>"},
+        {label:"S2 個数比",text:"1×2 ＝ 2×1 より　K：S ＝ <b>2：1</b>"}],
+ steps:[
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"K<sub>2</sub>S"},{t:"KS<sub>2</sub>",tag:"cross"},{t:"KS",tag:"valence"},{t:"K<sub>4</sub>S<sub>2</sub>",tag:"ratio"}],a:0,
+   h:"K が2個、S が1個です。多原子イオンではないので括弧は不要です。",
+   e:"<b>K<sub>2</sub>S</b>。個数が1のときは数字を書かないので S には何もつけない。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"硫化カリウム"},{t:"カリウム硫化物",tag:"order"},{t:"硫酸カリウム",tag:"polyion"},{t:"二硫化カリウム",tag:"molecule"}],a:0,
+   h:"S<sup>2−</sup> は硫化物イオンです。硫酸イオンとの違いに注意します。",
+   e:"<b>硫化カリウム</b>。硫酸カリウムは K<sub>2</sub>SO<sub>4</sub> で別の物質。"}]},
+
+/* ---- 自力版（S1 から） ---- */
+{kc:"K4",lv:3,fill:false,
+ stem:"鉄(III)イオン Fe<sup>3+</sup> と 水酸化物イオン OH<sup>−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 価数",q:"2つのイオンの価数の組合せとして正しいものを選べ。",
+   c:[{t:"3価の陽イオンと1価の陰イオン"},{t:"1価の陽イオンと3価の陰イオン",tag:"cross"},{t:"3価の陽イオンと3価の陰イオン",tag:"valence"},{t:"2価の陽イオンと1価の陰イオン",tag:"valence"}],a:0,
+   h:"右肩の数字がそのまま価数を表します。ローマ数字の (III) も手がかりになります。",
+   e:"Fe<sup>3+</sup> は3価の陽イオン、OH<sup>−</sup> は1価の陰イオン。まずここを書き出すのが組成式づくりの出発点。"},
+  {label:"S2 個数比",q:"電気的に中性になる、最も簡単な個数比を選べ。",
+   c:[{t:"Fe：OH ＝ 1：3"},{t:"Fe：OH ＝ 3：1",tag:"cross"},{t:"Fe：OH ＝ 1：1",tag:"valence"},{t:"Fe：OH ＝ 2：6",tag:"ratio"}],a:0,
+   h:"（陽イオンの価数×個数）＝（陰イオンの価数×個数）。3×□＝1×△ を満たす最小の整数を探します。",
+   e:"3×1＝1×3 なので <b>Fe：OH＝1：3</b>。2：6 でも中性になるが、組成式は最も簡単な整数比で表す。"},
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"Fe(OH)<sub>3</sub>"},{t:"FeOH<sub>3</sub>",tag:"paren"},{t:"Fe<sub>3</sub>OH",tag:"cross"},{t:"Fe(OH)<sub>2</sub>",tag:"valence"}],a:0,
+   h:"OH が3個あります。多原子イオンが2個以上あるときの書き方を思い出します。",
+   e:"<b>Fe(OH)<sub>3</sub></b>。括弧がないと O が1個、H が3個という意味になってしまう。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"水酸化鉄(III)"},{t:"水酸化鉄(II)",tag:"valence"},{t:"三水酸化鉄",tag:"molecule"},{t:"鉄水酸化物",tag:"order"}],a:0,
+   h:"鉄には2種類の価数があります。価数が複数ある金属の名称の書き方を思い出します。",
+   e:"<b>水酸化鉄(III)</b>。鉄や銅のように複数の価数をとる金属は、ローマ数字で価数を示す。"}]},
+
+{kc:"K4",lv:3,fill:false,
+ stem:"銅(II)イオン Cu<sup>2+</sup> と 硝酸イオン NO<sub>3</sub><sup>−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 価数",q:"2つのイオンの価数の組合せとして正しいものを選べ。",
+   c:[{t:"2価の陽イオンと1価の陰イオン"},{t:"1価の陽イオンと2価の陰イオン",tag:"cross"},{t:"2価の陽イオンと2価の陰イオン",tag:"valence"},{t:"1価の陽イオンと1価の陰イオン",tag:"valence"}],a:0,
+   h:"名称のローマ数字が陽イオンの価数を教えてくれます。硝酸イオンの価数も確かめます。",
+   e:"Cu<sup>2+</sup> は2価の陽イオン、NO<sub>3</sub><sup>−</sup> は1価の陰イオン。ローマ数字 (II) は価数を表している。"},
+  {label:"S2 個数比",q:"電気的に中性になる、最も簡単な個数比を選べ。",
+   c:[{t:"Cu：NO<sub>3</sub> ＝ 1：2"},{t:"Cu：NO<sub>3</sub> ＝ 2：1",tag:"cross"},{t:"Cu：NO<sub>3</sub> ＝ 1：1",tag:"valence"},{t:"Cu：NO<sub>3</sub> ＝ 2：4",tag:"ratio"}],a:0,
+   h:"2×□＝1×△ を満たす最小の整数の組を探します。",
+   e:"2×1＝1×2 なので <b>Cu：NO<sub>3</sub>＝1：2</b>。2：4 は約分できるので使わない。"},
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"Cu(NO<sub>3</sub>)<sub>2</sub>"},{t:"CuNO<sub>32</sub>",tag:"paren"},{t:"Cu<sub>2</sub>NO<sub>3</sub>",tag:"cross"},{t:"CuNO<sub>3</sub>",tag:"valence"}],a:0,
+   h:"NO<sub>3</sub> が2個あります。括弧でくくってから個数を書きます。",
+   e:"<b>Cu(NO<sub>3</sub>)<sub>2</sub></b>。多原子イオンが2個以上あるときは必ず括弧でくくる。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"硝酸銅(II)"},{t:"硝酸銅(I)",tag:"valence"},{t:"二硝酸銅",tag:"molecule"},{t:"銅硝酸",tag:"order"}],a:0,
+   h:"銅の価数は分かっています。ローマ数字を添えて書きます。",
+   e:"<b>硝酸銅(II)</b>。組成式から逆に、NO<sub>3</sub><sup>−</sup> 2個ぶんを打ち消す＝Cu は2価、と読み取れるようにしておく。"}]},
+
+{kc:"K4",lv:3,fill:false,
+ stem:"鉄(II)イオン Fe<sup>2+</sup> と 硫酸イオン SO<sub>4</sub><sup>2−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 価数",q:"2つのイオンの価数の組合せとして正しいものを選べ。",
+   c:[{t:"2価の陽イオンと2価の陰イオン"},{t:"3価の陽イオンと2価の陰イオン",tag:"valence"},{t:"2価の陽イオンと1価の陰イオン",tag:"valence"},{t:"1価の陽イオンと2価の陰イオン",tag:"valence"}],a:0,
+   h:"名称のローマ数字が陽イオンの価数を表します。硫酸イオンの価数も確かめます。",
+   e:"Fe<sup>2+</sup> は2価の陽イオン、SO<sub>4</sub><sup>2−</sup> は2価の陰イオン。どちらも2価という組合せ。"},
+  {label:"S2 個数比",q:"電気的に中性になる、最も簡単な個数比を選べ。",
+   c:[{t:"Fe：SO<sub>4</sub> ＝ 1：1"},{t:"Fe：SO<sub>4</sub> ＝ 2：2",tag:"ratio"},{t:"Fe：SO<sub>4</sub> ＝ 2：1",tag:"cross"},{t:"Fe：SO<sub>4</sub> ＝ 1：2",tag:"cross"}],a:0,
+   h:"2×□＝2×△ の形になります。たすき掛けで出た数字をそのまま使うと約分が必要になります。",
+   e:"2×1＝2×1 なので <b>1：1</b>。たすき掛けで 2：2 と出たら、必ず最も簡単な整数比に直すこと。ここを忘れる誤りが多い。"},
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"FeSO<sub>4</sub>"},{t:"Fe<sub>2</sub>(SO<sub>4</sub>)<sub>2</sub>",tag:"ratio"},{t:"Fe<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>",tag:"valence"},{t:"Fe(SO<sub>4</sub>)<sub>2</sub>",tag:"cross"}],a:0,
+   h:"個数比が1：1なので数字は書きません。多原子イオンが1個なら括弧も不要です。",
+   e:"<b>FeSO<sub>4</sub></b>。多原子イオンが1個のときは括弧を付けない。Fe<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub> は Fe<sup>3+</sup> の場合。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"硫酸鉄(II)"},{t:"硫酸鉄(III)",tag:"valence"},{t:"硫化鉄(II)",tag:"polyion"},{t:"鉄硫酸",tag:"order"}],a:0,
+   h:"鉄の価数を確かめます。陰イオンが硫酸イオンか硫化物イオンかにも注意します。",
+   e:"<b>硫酸鉄(II)</b>。硫化鉄(II) は FeS で別の物質。多原子イオンと単原子イオンの名称の違いに注意。"}]},
+
+{kc:"K4",lv:2,fill:false,
+ stem:"バリウムイオン Ba<sup>2+</sup> と 水酸化物イオン OH<sup>−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 価数",q:"2つのイオンの価数の組合せとして正しいものを選べ。",
+   c:[{t:"2価の陽イオンと1価の陰イオン"},{t:"1価の陽イオンと2価の陰イオン",tag:"cross"},{t:"2価の陽イオンと2価の陰イオン",tag:"valence"},{t:"1価の陽イオンと1価の陰イオン",tag:"valence"}],a:0,
+   h:"Ba は2族の元素です。水酸化物イオンの価数も確かめます。",
+   e:"Ba は2族なので Ba<sup>2+</sup> の2価の陽イオン、OH<sup>−</sup> は1価の陰イオン。"},
+  {label:"S2 個数比",q:"電気的に中性になる、最も簡単な個数比を選べ。",
+   c:[{t:"Ba：OH ＝ 1：2"},{t:"Ba：OH ＝ 2：1",tag:"cross"},{t:"Ba：OH ＝ 1：1",tag:"valence"},{t:"Ba：OH ＝ 2：4",tag:"ratio"}],a:0,
+   h:"＋2 の電荷を打ち消すには −1 のイオンが何個必要かを考えます。",
+   e:"2×1＝1×2 なので <b>Ba：OH＝1：2</b>。"},
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"Ba(OH)<sub>2</sub>"},{t:"BaOH<sub>2</sub>",tag:"paren"},{t:"Ba<sub>2</sub>OH",tag:"cross"},{t:"BaOH",tag:"valence"}],a:0,
+   h:"OH が2個あります。多原子イオンが2個以上なら括弧が必要です。",
+   e:"<b>Ba(OH)<sub>2</sub></b>。BaOH<sub>2</sub> と書くと O が1個、H が2個という意味になってしまう。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"水酸化バリウム"},{t:"バリウム水酸化物",tag:"order"},{t:"二水酸化バリウム",tag:"molecule"},{t:"酸化バリウム",tag:"polyion"}],a:0,
+   h:"OH<sup>−</sup> は水酸化物イオンです。名称は陰イオンから読みます。",
+   e:"<b>水酸化バリウム</b>。酸化バリウム BaO とは別の物質なので注意。"}]},
+
+{kc:"K4",lv:2,fill:false,
+ stem:"銀イオン Ag<sup>+</sup> と 硝酸イオン NO<sub>3</sub><sup>−</sup> からできる物質について、組成式と名称を答えよ。",
+ given:[],
+ steps:[
+  {label:"S1 価数",q:"2つのイオンの価数の組合せとして正しいものを選べ。",
+   c:[{t:"1価の陽イオンと1価の陰イオン"},{t:"2価の陽イオンと1価の陰イオン",tag:"valence"},{t:"1価の陽イオンと2価の陰イオン",tag:"valence"},{t:"2価の陽イオンと2価の陰イオン",tag:"valence"}],a:0,
+   h:"それぞれの化学式の右肩を見ます。符号だけで数字が書かれていないときの価数は何か。",
+   e:"Ag<sup>+</sup> も NO<sub>3</sub><sup>−</sup> も、右肩に数字がないので<b>どちらも1価</b>。"},
+  {label:"S2 個数比",q:"電気的に中性になる、最も簡単な個数比を選べ。",
+   c:[{t:"Ag：NO<sub>3</sub> ＝ 1：1"},{t:"Ag：NO<sub>3</sub> ＝ 1：2",tag:"cross"},{t:"Ag：NO<sub>3</sub> ＝ 2：1",tag:"cross"},{t:"Ag：NO<sub>3</sub> ＝ 2：2",tag:"ratio"}],a:0,
+   h:"1×□＝1×△ なので、最も簡単な組を選びます。",
+   e:"1×1＝1×1 なので <b>1：1</b>。2：2 でも中性になるが最も簡単な整数比に直す。"},
+  {label:"S3 組成式",q:"組成式として正しいものを選べ。",
+   c:[{t:"AgNO<sub>3</sub>"},{t:"Ag(NO<sub>3</sub>)<sub>2</sub>",tag:"valence"},{t:"Ag<sub>2</sub>NO<sub>3</sub>",tag:"cross"},{t:"AgNO<sub>2</sub>",tag:"polyion"}],a:0,
+   h:"個数比が1：1なので数字は書きません。多原子イオンが1個なら括弧も不要です。",
+   e:"<b>AgNO<sub>3</sub></b>。多原子イオンが1個のときは括弧を付けない。"},
+  {label:"S4 名称",q:"この物質の名称を選べ。",
+   c:[{t:"硝酸銀"},{t:"銀硝酸",tag:"order"},{t:"硝酸銀(II)",tag:"valence"},{t:"亜硝酸銀",tag:"polyion"}],a:0,
+   h:"NO<sub>3</sub><sup>−</sup> は硝酸イオンです。銀は価数が1種類なのでローマ数字は不要です。",
+   e:"<b>硝酸銀</b>。銀は Ag<sup>+</sup> しかとらないので、価数を示すローマ数字は付けない。"}]}
+];
+
+const SUMMARY=`<table class="sum">
+<thead><tr><th></th><th>塩化物イオン Cl<sup>−</sup></th><th>硫酸イオン SO<sub>4</sub><sup>2−</sup></th><th>リン酸イオン PO<sub>4</sub><sup>3−</sup></th></tr></thead>
+<tbody>
+<tr><th>Na<sup>+</sup>（1価）</th><td>NaCl<br>塩化ナトリウム</td><td>Na<sub>2</sub>SO<sub>4</sub><br>硫酸ナトリウム</td><td>Na<sub>3</sub>PO<sub>4</sub><br>リン酸ナトリウム</td></tr>
+<tr><th>Ca<sup>2+</sup>（2価）</th><td>CaCl<sub>2</sub><br>塩化カルシウム</td><td>CaSO<sub>4</sub><br>硫酸カルシウム</td><td>Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub><br>リン酸カルシウム</td></tr>
+<tr><th>Al<sup>3+</sup>（3価）</th><td>AlCl<sub>3</sub><br>塩化アルミニウム</td><td>Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub><br>硫酸アルミニウム</td><td>AlPO<sub>4</sub><br>リン酸アルミニウム</td></tr>
+<tr><th>作り方</th><td colspan="3">①（陽イオンの価数）×（個数）＝（陰イオンの価数）×（個数）から<b>最も簡単な個数比</b>を出す　②<b>陽イオン→陰イオン</b>の順に書き、個数を右下に　③多原子イオンが2個以上なら<b>括弧</b>　④名称は<b>陰イオン→陽イオン</b>の逆順</td></tr>
+</tbody></table>`;
+
+/* ===== 出題エンジン（211〜214 と共通） ===== */
+// 結果送信をする場合のみ Apps Script の URL を入れる（空なら送信しない）
+const GAS_URL="https://script.google.com/macros/s/AKfycbzpQloDrnluceZVUFyLruPKE8PVOENnG-u_yfrsGx90bqVSfDtxNdxViJ1JhfQA7Bv3Dw/exec";
+const PASS_RATE=0.8, N_L1=3, N_L2=4, N_L3=3;
+let session=[], idx=0, records=[], studentId="", attempt=1;
+
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function el(id){return document.getElementById(id);}
+
+function pickLevel(lv,n,used,usedKc){
+  const pool=shuffle(POOL.map((it,i)=>i).filter(i=>POOL[i].lv===lv&&used.indexOf(i)<0));
+  const out=[];
+  // まだ出ていないKCを優先
+  pool.forEach(i=>{ if(out.length<n && usedKc.indexOf(POOL[i].kc)<0){out.push(i);usedKc.push(POOL[i].kc);} });
+  pool.forEach(i=>{ if(out.length<n && out.indexOf(i)<0) out.push(i); });
+  out.forEach(i=>used.push(i));
+  return out.slice(0,n);
+}
+function mkMcq(i){
+  const it=POOL[i], order=shuffle(it.c.map((_,j)=>j));
+  return {type:"mcq",src:it,order:order,a:order.indexOf(it.a)};
+}
+function mkStep(def){
+  return {type:"step",src:def,sub:0,subResults:[],
+    steps:def.steps.map(st=>{const o=shuffle(st.c.map((_,j)=>j));return {src:st,order:o,a:o.indexOf(st.a)};})};
+}
+function buildSession(){
+  const used=[],usedKc=[];
+  const l1=pickLevel(1,N_L1,used,usedKc), l2=pickLevel(2,N_L2,used,usedKc), l3=pickLevel(3,N_L3,used,usedKc);
+  const fill=shuffle(STEPS.filter(s=>s.fill))[0], free=shuffle(STEPS.filter(s=>!s.fill))[0];
+  const s=[];
+  l1.forEach(i=>s.push(mkMcq(i)));
+  l2.forEach(i=>s.push(mkMcq(i)));
+  s.push(mkStep(fill));
+  l3.forEach(i=>s.push(mkMcq(i)));
+  s.push(mkStep(free));
+  return s;
 }
 
-function shuffleChoices(q){
-  const order=shuffle([0,1,2,3]);
-  return {...q, choices:order.map(i=>q.choices[i]), a:order.indexOf(q.a)};
-}
+window.addEventListener('DOMContentLoaded',()=>{
+  el('uTitle').textContent=UNIT.code+" "+UNIT.title;
+  el('uSub').innerHTML=UNIT.sub;
+  el('kcPreview').innerHTML=Object.keys(KC).map(k=>`<li>${KC[k].name}</li>`).join('');
+  el('totalBadge').textContent=`全${POOL.length+STEPS.length}問収録`;
+  // 学籍番号の引き継ぎ：一覧ページや前回の利用で登録した番号を初期表示する
+  try{ const saved=localStorage.getItem('quizStudentId'); if(saved) el('studentId').value=saved; }catch(e){}
+});
 
-function showOnly(id){
-  ["start","quiz","result"].forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
-}
-
-function toHalfWidthDigits(s){
-  return s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
-}
-
+function toHalfWidthDigits(s){return s.replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);});}
 function startQuiz(){
-  const idInput=document.getElementById("studentId");
-  const normalized=toHalfWidthDigits(idInput.value.trim());
-  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(normalized)){
+  studentId=toHalfWidthDigits((el('studentId').value||'').trim());
+  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(studentId)){
     alert("学籍番号が正しくありません。\n1桁目は学年「1」、2桁目は組「1〜6」、3・4桁目は出席番号「01〜40」です（例：1年1組4番→1104）。");
-    idInput.focus();
-    return;
+    el('studentId').focus(); return;
   }
-  idInput.value=normalized;
-  studentId=normalized;
-  try{localStorage.setItem('quizStudentId',normalized);}catch(e){}
-  session=shuffle(ALL_Q).slice(0,10).map(shuffleChoices);
-  idx=0; score=0; results=[];
-  showOnly("quiz");
-  renderQ();
+  el('studentId').value=studentId;
+  try{localStorage.setItem('quizStudentId',studentId);}catch(e){}
+  session=buildSession(); idx=0; records=[];
+  el('start').classList.add('hidden'); el('result').classList.add('hidden');
+  el('quiz').classList.remove('hidden');
+  window.scrollTo(0,0); render();
+}
+function lvChip(lv){return `<span class="chip l${lv}">${lv===1?'基本':(lv===2?'標準':'発展')}</span>`;}
+function figHtml(key){
+  if(!key||!FIGS[key]) return '';
+  return `<img class="qfig" src="${FIGS[key].src}" alt="${FIGS[key].alt}">`;
 }
 
-function renderQ(){
-  const q=session[idx];
-  document.getElementById("pbar").style.width=((idx)/10*100)+"%";
-  document.getElementById("qnum").textContent=(idx+1)+"/10";
-  document.getElementById("qtext").textContent=q.q;
-  document.getElementById("exp").style.display="none";
-  document.getElementById("nextBtn").style.display="none";
-
-  const ci=document.getElementById("choices");
-  ci.innerHTML="";
-  q.choices.forEach((c,i)=>{
-    const btn=document.createElement("button");
-    btn.className="choice-btn";
-    btn.textContent=c;
-    btn.onclick=()=>select(i);
-    ci.appendChild(btn);
+function render(){
+  const item=session[idx]; attempt=1;
+  el('pbar').style.width=(idx/session.length*100)+'%';
+  el('qnum').textContent=`${idx+1} / ${session.length}`;
+  el('hint').style.display='none'; el('exp').style.display='none';
+  el('nextBtn').style.display='none';
+  el('stepDone').innerHTML=''; el('stemBox').innerHTML=''; el('figBox').innerHTML='';
+  if(item.type==='mcq'){
+    const it=item.src;
+    el('metaRow').innerHTML=`<span class="chip kc">${KC[it.kc].short}</span>${lvChip(it.lv)}`;
+    el('figBox').innerHTML=figHtml(it.fig);
+    el('qtext').innerHTML=it.q;
+    el('choices').innerHTML=item.order.map((oi,k)=>
+      `<button class="choice-btn" data-k="${k}" onclick="answerMcq(${k})">${it.c[oi].t}</button>`).join('');
+  }else{ renderStep(); }
+}
+function renderStep(){
+  const item=session[idx], def=item.src, st=item.steps[item.sub];
+  el('metaRow').innerHTML=`<span class="chip kc">${KC[def.kc].short}</span>${lvChip(def.lv)}`+
+    (def.fill?`<span class="chip fill">穴埋め（S1・S2 は提示）</span>`:`<span class="chip fill">ステップ分解</span>`);
+  el('stemBox').innerHTML=`<div class="stem">${def.stem}</div>`;
+  el('figBox').innerHTML=figHtml(def.fig);
+  let done=(def.given||[]).map(g=>`<div class="step-row given"><span class="step-tag">${g.label}</span><span>${g.text}</span></div>`);
+  item.subResults.forEach((r,i)=>{
+    const s=item.steps[i];
+    done.push(`<div class="step-row ${r.score<1?'miss':''}"><span class="step-tag">${s.src.label}</span><span>${s.src.c[s.src.a].t}${r.score<1?'　<b>（誤答→修正）</b>':''}</span></div>`);
+  });
+  el('stepDone').innerHTML=done.join('');
+  el('qtext').innerHTML=`<span style="color:#6b46c1">［${st.src.label}］</span> ${st.src.q}`;
+  el('choices').innerHTML=st.order.map((oi,k)=>
+    `<button class="choice-btn" data-k="${k}" onclick="answerStep(${k})">${st.src.c[oi].t}</button>`).join('');
+}
+function judge(chosenK, srcQ, orderArr, correctK, onDone){
+  const btns=[...el('choices').querySelectorAll('.choice-btn')];
+  if(chosenK===correctK){
+    btns.forEach(b=>b.disabled=true); btns[chosenK].classList.add('correct');
+    onDone(attempt===1?1:0.5,null); showExp(srcQ); return;
+  }
+  const tag=srcQ.c[orderArr[chosenK]].tag||null;
+  btns[chosenK].classList.add('wrong'); btns[chosenK].disabled=true;
+  if(attempt===1){
+    attempt=2;
+    el('hint').innerHTML=`<span class="hl">ヒント</span>${srcQ.h}`;
+    el('hint').style.display='block';
+    onDone(null,tag);
+  }else{
+    btns.forEach(b=>b.disabled=true); btns[correctK].classList.add('correct');
+    onDone(0,tag); showExp(srcQ);
+  }
+}
+function showExp(srcQ){
+  el('exp').innerHTML=`<b>解説</b>　${srcQ.e}`;
+  el('exp').style.display='block';
+  el('nextBtn').style.display='block';
+  el('nextBtn').textContent=(idx===session.length-1&&!isMidStep())?'結果を見る →':'次へ →';
+}
+function isMidStep(){const it=session[idx];return it.type==='step'&&it.sub<it.steps.length-1;}
+function answerMcq(k){
+  const item=session[idx], it=item.src;
+  if(!item.tags) item.tags=[];
+  judge(k,it,item.order,item.a,(score,tag)=>{
+    if(tag) item.tags.push(tag);
+    if(score!==null) records.push({kc:it.kc,lv:it.lv,q:it.q,fig:it.fig,correct:it.c[it.a].t,score:score,tags:item.tags.slice(),exp:it.e,label:null});
   });
 }
-
-function select(chosen){
-  const q=session[idx];
-  const btns=document.querySelectorAll(".choice-btn");
-  btns.forEach(b=>b.disabled=true);
-  btns[chosen].classList.add(chosen===q.a?"correct":"wrong");
-  if(chosen!==q.a) btns[q.a].classList.add("correct");
-
-  if(chosen===q.a) score++;
-  results.push({q:q.q,correct:chosen===q.a,yourAns:q.choices[chosen],rightAns:q.choices[q.a],exp:q.exp});
-
-  const expBox=document.getElementById("exp");
-  expBox.textContent=q.exp;
-  expBox.style.display="block";
-  document.getElementById("nextBtn").style.display="block";
-  document.getElementById("nextBtn").textContent=idx===9?"結果を見る":"次の問題へ →";
+function answerStep(k){
+  const item=session[idx], st=item.steps[item.sub];
+  if(!st.tags) st.tags=[];
+  judge(k,st.src,st.order,st.a,(score,tag)=>{
+    if(tag) st.tags.push(tag);
+    if(score!==null) item.subResults.push({score:score,tags:st.tags.slice()});
+  });
 }
-
 function next(){
+  const item=session[idx];
+  if(item.type==='step'&&item.sub<item.steps.length-1){
+    item.sub++; attempt=1;
+    el('hint').style.display='none'; el('exp').style.display='none'; el('nextBtn').style.display='none';
+    renderStep(); return;
+  }
+  if(item.type==='step'){
+    const sc=item.subResults.map(r=>r.score);
+    const avg=sc.reduce((a,b)=>a+b,0)/sc.length;
+    const tags=item.subResults.reduce((a,r)=>a.concat(r.tags),[]);
+    const detail=item.steps.map((s,i)=>`${s.src.label}：${item.subResults[i].score===1?'○':(item.subResults[i].score===0.5?'△':'×')}`).join('　');
+    records.push({kc:item.src.kc,lv:item.src.lv,q:item.src.stem,fig:item.src.fig,correct:detail,score:avg,tags:tags,exp:item.steps[item.steps.length-1].src.e,label:'ステップ問題'});
+  }
   idx++;
-  if(idx>=10){showResult();return;}
-  renderQ();
+  if(idx>=session.length){ showResult(); return; }
+  render();
 }
-
+function stripTags(x){return String(x).replace(/<[^>]+>/g,"");}
+function send(pt,full){
+  const st=el('submitStatus');
+  if(!GAS_URL){ if(st) st.textContent="※送信先が未設定のため、この結果は記録されていません"; return; }
+  const payload={studentId:studentId,quizName:UNIT.code+" "+UNIT.title,score:pt,total:full,
+    passed:(full&&pt/full>=PASS_RATE)?"合格":"不合格",timestamp:new Date().toISOString(),
+    missed:records.filter(r=>r.score<1).map(r=>stripTags(r.q))};
+  try{
+    fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)});
+    if(st) st.textContent="学籍番号: "+studentId+"｜記録しました";
+  }catch(err){ if(st) st.textContent="※通信エラーのため記録できませんでした"; }
+}
 function showResult(){
-  showOnly("result");
-  document.getElementById("scoreBig").textContent=score;
+  el('quiz').classList.add('hidden'); el('result').classList.remove('hidden');
+  window.scrollTo(0,0);
+  const total=records.length;
+  const raw=records.reduce((a,r)=>a+r.score,0);
+  const score=Math.round(raw*2)/2, rate=score/total;
+  el('scoreBig').textContent=score+'点';
+  el('scoreSub').textContent=`/ ${total}点（正答率 ${Math.round(rate*100)}%）`;
+  el('donutArc').setAttribute('stroke-dasharray',`${(rate*100).toFixed(1)} ${(100-rate*100).toFixed(1)}`);
+  const pass=rate>=PASS_RATE;
+  const pb=el('passBadge');
+  pb.textContent=pass?'合格':'もう一度'; pb.className='pass-badge '+(pass?'pass':'fail');
 
-  const pct=score/10*100;
-  const color=score>=8?"#48bb78":score>=6?"#4299e1":score>=4?"#ed8936":"#fc8181";
-  const arc=document.getElementById("donut-arc");
-  arc.setAttribute("stroke",color);
-  arc.setAttribute("stroke-dasharray",pct+" "+(100-pct));
+  const agg={};
+  records.forEach(r=>{(agg[r.kc]=agg[r.kc]||{s:0,n:0});agg[r.kc].s+=r.score;agg[r.kc].n++;});
+  el('kcList').innerHTML=Object.keys(KC).filter(k=>agg[k]).map(k=>{
+    const p=agg[k].s/agg[k].n;
+    const cls=p>=0.8?'ok':(p>=0.5?'mid':'ng'), mark=p>=0.8?'○':(p>=0.5?'△':'×');
+    const col=p>=0.8?'#48bb78':(p>=0.5?'#ed8936':'#f56565');
+    return `<div class="kc-row"><div class="kc-mark ${cls}">${mark}</div>
+      <div class="kc-body"><div class="kc-name">${KC[k].name}</div>
+      <div class="kc-bar"><i style="width:${Math.round(p*100)}%;background:${col}"></i></div></div>
+      <div class="kc-score">${Math.round(agg[k].s*10)/10}/${agg[k].n}</div></div>`;
+  }).join('');
 
-  const passed=score>=PASS_THRESHOLD;
-  const passBadge=document.getElementById("passBadge");
-  passBadge.textContent=passed?"合格":"不合格";
-  passBadge.className="pass-badge "+(passed?"pass":"fail");
+  const tc={};
+  records.forEach(r=>r.tags.forEach(t=>{tc[t]=(tc[t]||0)+1;}));
+  const tags=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]).slice(0,3);
+  el('tagList').innerHTML=tags.length?tags.map(t=>
+    `<div class="tag-row"><div class="tag-head"><span class="tag-name">${TAG[t].name}</span><span class="tag-count">${tc[t]}回</span></div>
+     <div class="tag-advice">${TAG[t].advice}<br><span style="opacity:.7">戻る先：${KC[TAG[t].back].name}</span></div></div>`).join('')
+    :`<div class="empty">今回、決まった型のミスは見つかりませんでした。</div>`;
 
-  const list=document.getElementById("reviewList");
-  list.innerHTML="";
-  results.forEach((r,i)=>{
-    const div=document.createElement("div");
-    div.className="review-item"+(r.correct?"":" miss");
-    div.innerHTML=`<div class="rq">${i+1}. ${r.q}</div>
-      <div class="ra">${r.correct?"✓ 正解："+r.rightAns:"✗ あなたの答え："+r.yourAns+" → 正解："+r.rightAns}</div>
-      <div class="ra" style="margin-top:4px;color:#7b341e">${r.exp}</div>`;
-    list.appendChild(div);
-  });
-
-  submitResult();
-}
-
-function submitResult(){
-  const statusEl=document.getElementById("submitStatus");
-  if(!SUBMIT_URL){
-    statusEl.textContent="※送信先が未設定のため、この結果は記録されていません";
-    return;
+  const weak=Object.keys(KC).filter(k=>agg[k]&&agg[k].s/agg[k].n<0.8);
+  let todo='';
+  if(pass&&weak.length===0){
+    todo=`合格ラインを超え、測定したすべての力が8割に届いています。<b>3日後にもう一度</b>挑戦して、別の日に2回続けて合格できるか確かめましょう。それで「定着」と判定します。`;
+  }else if(pass){
+    todo=`合格ラインは超えています。ただし次の力はまだ8割に届いていません。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+`<br><br>次の回では、この力を優先して出題します。`;
+  }else{
+    todo=`合格ライン（正答率80%）に届きませんでした。まず次の力から復習しましょう。<br>`+
+      weak.map(k=>`・<b>${KC[k].name}</b>`).join('<br>')+`<br><br><b>明日もう一度</b>、この回に挑戦してください。`;
   }
-  const payload={
-    studentId:studentId,
-    quizName:QUIZ_NAME,
-    score:score,
-    total:10,
-    passed:score>=PASS_THRESHOLD?"合格":"不合格",
-    timestamp:new Date().toISOString(),
-    missed:results.filter(r=>!r.correct).map(r=>r.q)
-  };
-  try{
-    fetch(SUBMIT_URL,{
-      method:"POST",
-      mode:"no-cors",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify(payload)
-    });
-    statusEl.textContent="学籍番号: "+studentId+"｜記録しました";
-  }catch(err){
-    statusEl.textContent="※通信エラーのため記録できませんでした";
-  }
-}
+  if(tags.length) todo+=`<br><br>特に <b>${TAG[tags[0]].name}</b> の直し方を、板書ノートで確認しておくこと。`;
+  el('todoBox').innerHTML=todo;
 
-/* 学籍番号の引き継ぎ：前回このブラウザで入力した番号を初期表示する */
-(function(){
-  try{
-    var saved=localStorage.getItem('quizStudentId');
-    if(saved) document.getElementById('studentId').value=saved;
-  }catch(e){}
-})();
+  el('sumSec').innerHTML = (typeof SUMMARY!=='undefined'&&SUMMARY)
+    ? `<div class="sec-title">要点まとめ</div><div class="sum-wrap">${SUMMARY}</div>` : '';
+
+  send(score,total);
+
+  el('reviewList').innerHTML=records.map((r,i)=>{
+    const cls=r.score===1?'':(r.score>0?'half':'miss');
+    const mark=r.score===1?'○':(r.score>0?'△':'×');
+    return `<div class="review-item ${cls}">
+      <div class="rq">${mark} Q${i+1}${r.label?`（${r.label}）`:''}　${r.q}</div>
+      <div class="ra"><b>正解：</b>${r.correct}<br>${r.exp}</div></div>`;
+  }).join('');
+}
 </script>
 </body>
 </html>
