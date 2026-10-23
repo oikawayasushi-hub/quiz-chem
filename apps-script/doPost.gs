@@ -24,7 +24,10 @@ function doPost(e) {
     const sheet = ss.getSheetByName("Responses") || ss.insertSheet("Responses");
 
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["受信日時", "学籍番号", "クイズ名", "得点", "問題数", "合否", "誤答した問題", "クラス"]);
+      sheet.appendRow(["受信日時", "学籍番号", "クイズ名", "得点", "問題数", "合否", "誤答した問題", "クラス", "補足"]);
+    } else if (sheet.getRange(1, 9).getValue() === "") {
+      // 既存のシートに「補足」列（定着度・ドリルのタイム）の見出しを追加
+      sheet.getRange(1, 9).setValue("補足");
     }
 
     const studentId = String(data.studentId);
@@ -38,7 +41,8 @@ function doPost(e) {
       data.total,
       data.passed,
       (data.missed || []).join(" / "),
-      className
+      className,
+      data.note || ""   // 例: 定着★14/24（K1:2 K2:1 …）／ タイム 52.3 秒
     ]);
 
     return ContentService

@@ -87,6 +87,30 @@ td.c{text-align:center;width:4em;font-weight:700;font-size:1.05rem}
 .mark{font-weight:800;margin-right:6px}
 .hide{display:none}
 .foot{text-align:center;color:var(--sub);font-size:.78rem;margin-top:26px}
+/* 定着度 */
+.stars{color:#e0a100;letter-spacing:.05em;white-space:nowrap;font-size:1rem}
+.stars .off{color:#d5dbe1}
+.my-sum{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 10px}
+.my-sum div{flex:1 1 30%;min-width:90px;background:#f6f8fa;border:1px solid var(--line);border-radius:9px;padding:7px 8px;text-align:center}
+.my-sum b{display:block;font-size:1.25rem;line-height:1.3}
+.my-sum span{font-size:.74rem;color:var(--sub)}
+.gauge{height:10px;background:#e6eaef;border-radius:99px;overflow:hidden;margin:4px 0 12px}
+.gauge>i{display:block;height:100%;background:linear-gradient(90deg,#f0c040,#e0a100);border-radius:99px}
+.kcrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.86rem}
+.kcrow:last-child{border-bottom:0}
+.kcrow .nm{flex:1}
+.kcrow em{font-style:normal;font-size:.72rem;font-weight:700;border-radius:99px;padding:1px 8px;white-space:nowrap}
+.kcrow em.due{background:#fff1e8;color:#c2521a}
+.kcrow em.wait{background:#eef4ff;color:var(--accent)}
+.kcrow em.done{background:#eaf7ef;color:var(--ok)}
+.todo{background:#fff6e5;border:1px solid #f0d9a8;border-radius:10px;padding:10px 12px;font-size:.88rem;margin-top:10px}
+.todo.clear{background:#eaf7ef;border-color:#b9e2c8}
+.up{color:var(--ok);font-weight:800;font-size:.8rem}
+.down{color:var(--ng);font-weight:800;font-size:.8rem}
+button.main.alt{background:#fff;color:var(--accent);border:2px solid var(--accent);margin-top:10px}
+button.main.alt:hover{background:#eef4ff}
+.tm{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.big-time{font-size:1.1rem;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -106,6 +130,7 @@ td.c{text-align:center;width:4em;font-weight:700;font-size:1.05rem}
       <li>まちがえたら、すぐに答えを出さずに<b>ヒント</b>が出ます。もう一度考えて答えましょう。</li>
       <li>ヒントを見て正解した問題は 0.5 点、2回ともまちがえた問題は 0 点です。</li>
       <li>合格ラインは <b>正答率 80 ％</b>。毎回ちがう問題が出るので、くり返し使えます。</li>
+      <li>力ごとに<b>定着度（★3つ）</b>を記録します。★は<b>別の日にくり返し正解する</b>と増えます。苦手な力ほど多く出題されます。</li>
     </ul>
 
     <div class="flow">
@@ -115,8 +140,11 @@ td.c{text-align:center;width:4em;font-weight:700;font-size:1.05rem}
     <label class="fld">学籍番号（学年・組・出席番号を半角4桁で）</label>
     <input type="text" id="sid" inputmode="numeric" maxlength="4" placeholder="例）1305">
 
-    <button class="main" id="go">スタート</button>
+    <button class="main" id="go">スタート（12問）</button>
+    <button class="main alt" id="godrill">mol 換算スピードドリル（10問・タイム計測）</button>
   </div>
+
+  <div class="card hide" id="my"></div>
   <p class="foot">212 物質量／収録 131 問</p>
 </section>
 
@@ -132,6 +160,31 @@ td.c{text-align:center;width:4em;font-weight:700;font-size:1.05rem}
   </div>
 </section>
 
+<!-- ============ DRILL ============ -->
+<section id="drill" class="hide">
+  <div class="meta"><span id="dpg"></span><span class="tm" id="dtm">0.0 秒</span></div>
+  <div class="bar"><i id="dbar"></i></div>
+  <div class="card">
+    <div class="qtext" id="dqt"></div>
+    <div id="dbody"></div>
+    <div class="fb" id="dfb"></div>
+    <button class="main hide" id="dnext">次へ →</button>
+  </div>
+</section>
+
+<section id="dres" class="hide">
+  <h1>ドリルの結果</h1>
+  <div class="card">
+    <div class="score"><div class="n" id="dsc"></div><div class="big-time" id="dtime"></div><div><span class="judge" id="djd"></span></div></div>
+    <div class="todo" id="dbest" style="text-align:center"></div>
+  </div>
+  <h2>まちがえた問題</h2>
+  <div class="card" id="drev"></div>
+  <button class="main" id="dagain">もう一度ドリル</button>
+  <button class="main alt" onclick="location.reload()">スタート画面に戻る</button>
+  <p class="foot" id="dsubmit"></p>
+</section>
+
 <!-- ============ RESULT ============ -->
 <section id="result" class="hide">
   <h1>結果</h1>
@@ -140,9 +193,9 @@ td.c{text-align:center;width:4em;font-weight:700;font-size:1.05rem}
   </div>
 
   <h2>力ごとの定着</h2>
-  <div class="card"><table id="kct"></table>
-    <p class="sub" style="margin:9px 0 0">◯＝この場では正しく使えた／△＝ヒントが要る／×＝もう一度確認<br>
-    画面の◯は目安です。本当に身についたかは「別の日にもう一度やって、続けて正解できるか」で決まります。</p>
+  <div class="card"><div id="mysum"></div><table id="kct"></table>
+    <p class="sub" style="margin:9px 0 0">今回：◯＝ヒントなしで正解／△＝ヒントが要る／×＝もう一度確認<br>
+    定着度：★1＝正解できた　★2＝<b>別の日</b>にも正解　★3＝<b>3日以上あけて</b>また正解。×があると★が1つ減ります。</p>
   </div>
 
   <h2>つまずきの型</h2>
@@ -165,6 +218,7 @@ td.c{text-align:center;width:4em;font-weight:700;font-size:1.05rem}
   <div class="card" id="rev"></div>
 
   <button class="main" onclick="location.reload()">もう一度やる</button>
+  <button class="main alt" id="godrill2">mol 換算スピードドリルをやる</button>
   <p class="foot" id="submitStatus"></p>
   <p class="foot"><a href="index.html">← クイズ一覧に戻る</a></p>
 </section>
@@ -189,17 +243,106 @@ const PLAN=[
 ];
 
 /* ====== 状態 ====== */
-let queue=[], idx=0, score=0, log=[], kcStat={}, tagCnt={};
+let queue=[], idx=0, score=0, log=[], kcStat={}, tagCnt={}, sessEv=[];
 const $=id=>document.getElementById(id);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
 
 $("go").onclick=start;
+$("godrill").onclick=startDrill;
+$("godrill2").onclick=()=>{ $("result").classList.add("hide"); startDrill(); };
+$("dagain").onclick=()=>{ $("dres").classList.add("hide"); startDrill(); };
 
-function pick(){
+/* ====== 定着度の記録（この端末に、学籍番号ごとに保存） ======
+   力（KC）ごとに「日付と結果」を記録し、日ごとにまとめて★を計算する。
+   ★1：正解（ヒントなし）　★2：別の日にも正解　★3：★2の日から3日以上あけて正解
+   その日に×があれば★を1つ下げる。★3の力は7日ごとに確認として出題する。 */
+const DOW="日月火水木金土";
+const today=()=>{const d=new Date();return Math.round(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);};
+const dayLabel=n=>{const d=new Date(n*864e5);return (d.getUTCMonth()+1)+"月"+d.getUTCDate()+"日（"+DOW[d.getUTCDay()]+"）";};
+const storeKey=sid=>"chem"+CODE+"_"+sid;
+function loadSt(sid){
+  try{const v=JSON.parse(localStorage.getItem(storeKey(sid))||"null"); if(v&&v.v===1) return v;}catch(e){}
+  return {v:1, ev:{}, ses:[], drill:{runs:0, best:null, hist:[]}};
+}
+function saveSt(sid,st){ try{localStorage.setItem(storeKey(sid),JSON.stringify(st));}catch(e){} }
+function kcState(evs){
+  const byDay={};
+  (evs||[]).forEach(([d,r])=>{ const c=byDay[d]; byDay[d]=(c==="x"||r==="x")?"x":(c==="o"||r==="o")?"o":"t"; });
+  let lv=0, up=null, last=null;
+  Object.keys(byDay).map(Number).sort((a,b)=>a-b).forEach(d=>{
+    const r=byDay[d]; last=r;
+    if(r==="x"){ if(lv>0){ lv--; up=d; } }
+    else if(r==="o"){
+      if(lv===0){ lv=1; up=d; }
+      else if(lv===1 && d>up){ lv=2; up=d; }
+      else if(lv===2 && d-up>=3){ lv=3; up=d; }
+      else if(lv===3){ up=d; }
+    }
+  });
+  const nextDay = lv===0||up===null ? today() : up+[0,1,3,7][lv];
+  return {lv, up, last, nextDay};
+}
+function states(st){ const o={}; Object.keys(KC).forEach(k=>o[k]=kcState(st.ev[k])); return o; }
+function stars(lv){ return '<span class="stars">'+"★".repeat(lv)+'<span class="off">'+"★".repeat(3-lv)+'</span></span>'; }
+function streak(st){
+  const days=[...new Set(st.ses.map(x=>x[0]))].sort((a,b)=>b-a);
+  if(!days.length) return 0;
+  let t=today(), n=0;
+  if(days[0]<t-1) return 0;
+  let cur=days[0];
+  for(const d of days){ if(d===cur){ n++; cur--; } else break; }
+  return n;
+}
+/* 出題の優先度：★が少ない・前回×・復習の時期が来た力ほど高い */
+function needOf(stt){
+  const t=today(), due=stt.nextDay<=t;
+  return (due?[3,2,2,1]:[3,0.6,0.6,0.2])[stt.lv] + (stt.last==="x"?2:0);
+}
+function getSid(){
+  const sid=toHalfWidthDigits($("sid").value.trim());
+  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(sid)){
+    alert("学籍番号が正しくありません。\n1桁目は学年「1」、2桁目は組「1〜6」、3・4桁目は出席番号「01〜40」です（例：1年1組4番→1104）。");
+    $("sid").focus();
+    return null;
+  }
+  $("sid").value=sid;
+  try{localStorage.setItem('quizStudentId',sid);}catch(e){}
+  return sid;
+}
+
+/* スタート画面の「あなたの定着度」 */
+function renderMy(){
+  const sid=toHalfWidthDigits($("sid").value.trim());
+  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(sid)){ $("my").classList.add("hide"); return; }
+  const st=loadSt(sid), S=states(st), t=today(), ks=Object.keys(KC);
+  const total=ks.reduce((a,k)=>a+S[k].lv,0), max=ks.length*3;
+  let h='<h2 style="margin-top:2px">あなたの定着度（'+sid+'）</h2>';
+  h+='<div class="my-sum"><div><b>★ '+total+' / '+max+'</b><span>定着度</span></div><div><b>'+st.ses.length+' 回</b><span>取り組み</span></div><div><b>'+streak(st)+' 日</b><span>連続</span></div></div>';
+  h+='<div class="gauge"><i style="width:'+(total/max*100)+'%"></i></div>';
+  ks.forEach(k=>{
+    const x=S[k];
+    const tag = x.lv===3 ? (x.nextDay<=t?'<em class="due">確認</em>':'<em class="done">定着</em>')
+              : x.nextDay<=t ? '<em class="due">今日やる</em>' : '<em class="wait">'+dayLabel(x.nextDay).replace(/（.）/,"")+'〜</em>';
+    h+='<div class="kcrow"><span class="nm">'+KC[k]+'</span>'+stars(x.lv)+tag+'</div>';
+  });
+  const dueK=ks.filter(k=>S[k].nextDay<=t);
+  if(total===max) h+='<div class="todo clear"><b>212 物質量　定着完了！</b>　1週間ごとに解いて、★をキープしましょう。</div>';
+  else if(dueK.length) h+='<div class="todo"><b>今日やるべき力：'+dueK.length+'つ</b>　スタートすると、これらの力が多めに出題されます。</div>';
+  else{ const nd=Math.min(...ks.filter(k=>S[k].lv<3).map(k=>S[k].nextDay)); h+='<div class="todo clear"><b>今日の分はできています。</b>　次は <b>'+dayLabel(nd)+'</b> にやると★が増えます。</div>'; }
+  if(st.drill.runs) h+='<p class="sub" style="margin:10px 0 0">換算ドリル：挑戦 '+st.drill.runs+' 回／自己ベスト '+(st.drill.best?(st.drill.best/1000).toFixed(1)+' 秒（全問正解）':'まだ全問正解なし')+'</p>';
+  $("my").innerHTML=h; $("my").classList.remove("hide");
+}
+$("sid").addEventListener("input",renderMy);
+
+function pick(sid){
   const out=[], used=new Set(), usedKc=new Set();
   const byLv={1:[],2:[],3:[]};
   ITEMS.forEach(x=>{ (byLv[x.lv]=byLv[x.lv]||[]).push(x); });
-  const F=shuffle(STEPS.filter(s=>s.mode==="fill")), S=shuffle(STEPS.filter(s=>s.mode==="self"));
+  // 定着度から力ごとの優先度を出し、優先度＋ゆらぎの大きい順に並べる
+  const ST=states(loadSt(sid)), need={};
+  Object.keys(KC).forEach(k=>need[k]=needOf(ST[k]));
+  const byNeed=arr=>arr.map(x=>[x,(need[x.kc]||1)+Math.random()*1.5]).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+  const F=byNeed(shuffle(STEPS.filter(s=>s.mode==="fill"))), S=byNeed(shuffle(STEPS.filter(s=>s.mode==="self")));
   let fi=0, si=0;
 
   PLAN.forEach(p=>{
@@ -209,8 +352,8 @@ function pick(){
       return;
     }
     // そのレベルから、計算問題の枠（calc）を確保しつつ、まだ出ていない力（KC）を優先して選ぶ
-    let pool=shuffle((byLv[p.lv]||[]).filter(x=>!used.has(x)));
-    if(!pool.length) pool=shuffle(ITEMS.filter(x=>!used.has(x)));
+    let pool=byNeed(shuffle((byLv[p.lv]||[]).filter(x=>!used.has(x))));
+    if(!pool.length) pool=byNeed(shuffle(ITEMS.filter(x=>!used.has(x))));
     let calcLeft=p.calc||0;
     for(let i=0;i<p.n;i++){
       let cand=pool.filter(x=>!used.has(x));
@@ -230,15 +373,8 @@ function toHalfWidthDigits(s){
 }
 
 function start(){
-  const sid=toHalfWidthDigits($("sid").value.trim());
-  if(!/^(20(0[0-9]|10)|1[1-6](0[1-9]|[1-3][0-9]|40))$/.test(sid)){
-    alert("学籍番号が正しくありません。\n1桁目は学年「1」、2桁目は組「1〜6」、3・4桁目は出席番号「01〜40」です（例：1年1組4番→1104）。");
-    $("sid").focus();
-    return;
-  }
-  $("sid").value=sid;
-  try{localStorage.setItem('quizStudentId',sid);}catch(e){}
-  queue=pick(); idx=0; score=0; log=[]; kcStat={}; tagCnt={};
+  const sid=getSid(); if(!sid) return;
+  queue=pick(sid); idx=0; score=0; log=[]; kcStat={}; tagCnt={}; sessEv=[];
   $("start").classList.add("hide"); $("quiz").classList.remove("hide");
   render();
 }
@@ -359,6 +495,7 @@ function say(kind,title,text){
 }
 function mark(kc,r){
   const s=kcStat[kc]=kcStat[kc]||{o:0,t:0,x:0}; s[r]++;
+  sessEv.push([kc,r]);
 }
 function done(){
   $("next").classList.remove("hide");
@@ -375,12 +512,22 @@ function result(){
   $("jd").className="judge "+(pass?"pass":"fail");
   $("jd").textContent=pass?"合格ライン（80％）に到達":"あと少し。下の「次にやること」へ";
 
+  // 定着度を更新して保存
+  const sid=$("sid").value.trim(), t=today(), st=loadSt(sid), before=states(st);
+  sessEv.forEach(([k,r])=>{ (st.ev[k]=st.ev[k]||[]).push([t,r]); if(st.ev[k].length>80) st.ev[k]=st.ev[k].slice(-80); });
+  st.ses.push([t,pt,full]); if(st.ses.length>200) st.ses=st.ses.slice(-200);
+  saveSt(sid,st);
+  const after=states(st), ks=Object.keys(KC);
+  const total=ks.reduce((a,k)=>a+after[k].lv,0), max=ks.length*3, total0=ks.reduce((a,k)=>a+before[k].lv,0);
+  $("mysum").innerHTML='<div class="my-sum"><div><b>★ '+total+' / '+max+'</b><span>定着度'+(total!==total0?'（'+(total>total0?'+':'')+(total-total0)+'）':'')+'</span></div><div><b>'+st.ses.length+' 回</b><span>取り組み</span></div><div><b>'+streak(st)+' 日</b><span>連続</span></div></div><div class="gauge"><i style="width:'+(total/max*100)+'%"></i></div>';
+
   // KC別
-  let h="<tr><th>この単元で使う力</th><th class='c'>判定</th></tr>";
-  Object.keys(KC).forEach(k=>{
-    const s=kcStat[k]; if(!s) return;
-    const m = s.x>0 ? "<span class='x'>×</span>" : s.t>0 ? "<span class='t'>△</span>" : "<span class='o'>◯</span>";
-    h+="<tr><td>"+KC[k]+"</td><td class='c'>"+m+"</td></tr>";
+  let h="<tr><th>この単元で使う力</th><th class='c'>今回</th><th style='width:6.5em;text-align:center'>定着度</th></tr>";
+  ks.forEach(k=>{
+    const s=kcStat[k];
+    const m = !s ? "<span class='sub'>−</span>" : s.x>0 ? "<span class='x'>×</span>" : s.t>0 ? "<span class='t'>△</span>" : "<span class='o'>◯</span>";
+    const d=after[k].lv-before[k].lv;
+    h+="<tr><td>"+KC[k]+"</td><td class='c'>"+m+"</td><td style='text-align:center'>"+stars(after[k].lv)+(d>0?" <span class='up'>UP</span>":d<0?" <span class='down'>DOWN</span>":"")+"</td></tr>";
   });
   $("kct").innerHTML=h;
 
@@ -396,10 +543,17 @@ function result(){
   let n2="";
   if(weak.length) n2+="<p style='margin:0 0 8px'><b>まず確認する</b><br>"+weak.map(k=>"・"+KC[k]).join("<br>")+"</p>";
   if(soso.length) n2+="<p style='margin:0 0 8px'><b>もう一度なぞる</b><br>"+soso.map(k=>"・"+KC[k]).join("<br>")+"</p>";
-  n2+="<p style='margin:0'>"+(pass
-    ? "今日はここまでで大丈夫です。<b>3日後</b>にもう一度、同じモードで解いてみましょう。"
-    : "教科書の該当ページを読み直してから、<b>今日中にもう一度</b>解いてみましょう。")+"</p>";
+  const rest=ks.filter(k=>after[k].lv<3);
+  if(!pass) n2+="<p style='margin:0 0 8px'>教科書の該当ページを読み直してから、<b>今日中にもう一度</b>解いてみましょう。</p>";
+  if(!rest.length){
+    n2+="<div class='todo clear'><b>212 物質量　定着完了！</b>　<b>"+dayLabel(t+7)+"</b> ごろにもう一度解いて、★をキープしましょう。</div>";
+  }else{
+    const nd=Math.max(t+1, Math.min(...rest.map(k=>after[k].nextDay)));
+    const up=rest.filter(k=>after[k].nextDay<=nd);
+    n2+="<div class='todo'><b>次は "+dayLabel(nd)+" にやろう</b><br>この日に正解すると★が増える力："+up.length+"つ（★ "+total+" → 最大 "+(total+up.length)+"）<br><span class='sub'>★は同じ日に何回やっても1つまでしか増えません。日をあけてくり返すのが、定着のいちばんの近道です。</span></div>";
+  }
   $("next2").innerHTML=n2;
+  window._mastery="定着★"+total+"/"+max+"（"+ks.map(k=>k+":"+after[k].lv).join(" ")+"）";
 
   // 全問の確認
   $("rev").innerHTML=log.map((l,i)=>{
@@ -432,7 +586,8 @@ function send(pt,full){
     total:full,
     passed:(full && pt/full>=0.8)?"合格":"不合格",
     timestamp:new Date().toISOString(),
-    missed:log.filter(l=>l.res!=="o").map(l=>stripTags(l.q))
+    missed:log.filter(l=>l.res!=="o").map(l=>stripTags(l.q)),
+    note:window._mastery||""
   };
   try{
     fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
@@ -443,11 +598,133 @@ function send(pt,full){
   }
 }
 
+/* ====== mol 換算スピードドリル ======
+   数値を毎回ランダムに作るので、何度でも新しい問題で練習できる。
+   10問＝換算10パターン（個・g・L ⇄ mol、g・L・個どうし）を1問ずつ。 */
+const NA=6.0e23, DRILL_GOAL=90;
+const SUBS=[
+  {f:"H₂O",nm:"水",M:18,p:"分子"},{f:"CO₂",nm:"二酸化炭素",M:44,p:"分子",gas:1},
+  {f:"O₂",nm:"酸素",M:32,p:"分子",gas:1},{f:"N₂",nm:"窒素",M:28,p:"分子",gas:1},
+  {f:"CH₄",nm:"メタン",M:16,p:"分子",gas:1},{f:"NH₃",nm:"アンモニア",M:17,p:"分子",gas:1},
+  {f:"H₂",nm:"水素",M:2.0,Ms:"2.0",p:"分子",gas:1},{f:"C",nm:"炭素",M:12,p:"原子"},
+  {f:"Mg",nm:"マグネシウム",M:24,p:"原子"},{f:"Fe",nm:"鉄",M:56,p:"原子"},
+  {f:"Al",nm:"アルミニウム",M:27,p:"原子"},{f:"Cu",nm:"銅",M:64,p:"原子"},
+  {f:"NaCl",nm:"塩化ナトリウム",M:58.5},{f:"NaOH",nm:"水酸化ナトリウム",M:40},
+  {f:"CaCO₃",nm:"炭酸カルシウム",M:100}
+];
+const MOLS=[0.020,0.025,0.050,0.10,0.15,0.20,0.25,0.30,0.40,0.50,0.75,1.5,2.0,2.5,3.0,4.0,5.0];
+const SUP={"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹","-":"⁻"};
+function sci(x,sig){
+  let e=Math.floor(Math.log10(Math.abs(x))), m=Number((x/Math.pow(10,e)).toFixed(sig-1));
+  if(m>=10){ m/=10; e++; }
+  return m.toFixed(sig-1)+"×10"+String(e).split("").map(c=>SUP[c]).join("");
+}
+function fmt(x,sig){ const a=Math.abs(x); if(a>=1e4||a<1e-2) return sci(x,sig); let s=x.toPrecision(sig); return s.includes("e")?String(Number(s)):s; }
+function giv(x){ // 有効数字2けた以上、必要なら3けたで表す
+  const a=Math.abs(x); if(a>=1e4||a<1e-2) return sci(x,2);
+  const p=Number(x.toPrecision(3))===Number(x.toPrecision(2)) ? 2 : 3, t=x.toPrecision(p);
+  return t.includes("e") ? String(Number(t)) : t;
+}
+const clean=x=>Math.abs(Number(x.toPrecision(3))-x)<1e-9*Math.max(1,Math.abs(x));
+
+function genDrill(type){
+  const gasT=[4,5,6,7].includes(type), partT=[0,1,8,9].includes(type);
+  const pool=SUBS.filter(s=>(!gasT||s.gas)&&(!partT||s.p));
+  for(let tries=0;tries<200;tries++){
+    const s=pool[Math.random()*pool.length|0], n=MOLS[Math.random()*MOLS.length|0];
+    const m=n*s.M, V=n*22.4, N=n*NA;
+    if(!clean(m)||!clean(V)||m<0.01) continue;
+    const Ms=s.Ms||String(s.M), sub=s.nm+" "+s.f, mm="（"+s.f+"＝"+Ms+"）", na="（N_A＝6.0×10²³/mol）";
+    const fN=x=>sci(x,2)+" 個", fn=x=>fmt(x,2)+" mol", fg=x=>giv(x)+" g", fV=x=>giv(x)+" L";
+    let q,a,w,f,e;
+    switch(type){
+      case 0: q=sub+" の"+s.p+" "+sci(N,2)+" 個は何 mol か。"+na; a=n; w=[N*NA,n*10,n/10]; f=fn; e=sci(N,2)+" ÷ 6.0×10²³ ＝ "+fn(n); break;
+      case 1: q=sub+" "+fmt(n,2)+" mol に含まれる"+s.p+"の数はいくらか。"+na; a=N; w=[n/NA,N*10,N/10]; f=fN; e=fmt(n,2)+" × 6.0×10²³ ＝ "+fN(N); break;
+      case 2: q=sub+" "+giv(m)+" g の物質量は何 mol か。"+mm; a=n; w=[m*s.M,s.M/m,n*10]; f=fn; e=giv(m)+" ÷ "+Ms+" ＝ "+fn(n); break;
+      case 3: q=sub+" "+fmt(n,2)+" mol の質量は何 g か。"+mm; a=m; w=[n/s.M,s.M/n,m*10]; f=fg; e=fmt(n,2)+" × "+Ms+" ＝ "+fg(m); break;
+      case 4: q="標準状態の"+sub+" "+giv(V)+" L の物質量は何 mol か。"; a=n; w=[V*22.4,22.4/V,n*10]; f=fn; e=giv(V)+" ÷ 22.4 ＝ "+fn(n); break;
+      case 5: q=sub+" "+fmt(n,2)+" mol は、標準状態で何 L か。"; a=V; w=[n/22.4,22.4/n,V*10]; f=fV; e=fmt(n,2)+" × 22.4 ＝ "+fV(V); break;
+      case 6: q=sub+" "+giv(m)+" g は、標準状態で何 L か。"+mm; a=V; w=[m*22.4,m*s.M/22.4,V*10]; f=fV; e=giv(m)+" ÷ "+Ms+" ＝ "+fn(n)+"　→　× 22.4 ＝ "+fV(V); break;
+      case 7: q="標準状態の"+sub+" "+giv(V)+" L の質量は何 g か。"+mm; a=m; w=[V*s.M,V*22.4/s.M,m*10]; f=fg; e=giv(V)+" ÷ 22.4 ＝ "+fn(n)+"　→　× "+Ms+" ＝ "+fg(m); break;
+      case 8: q=sub+" "+giv(m)+" g に含まれる"+s.p+"の数はいくらか。"+mm+na; a=N; w=[m*NA,N*10,N/10]; f=fN; e=giv(m)+" ÷ "+Ms+" ＝ "+fn(n)+"　→　× 6.0×10²³ ＝ "+fN(N); break;
+      case 9: q=sub+" の"+s.p+" "+sci(N,2)+" 個の質量は何 g か。"+mm+na; a=m; w=[n,n/s.M,m*10]; f=fg; e=sci(N,2)+" ÷ 6.0×10²³ ＝ "+fn(n)+"　→　× "+Ms+" ＝ "+fg(m); break;
+    }
+    const ans=f(a), opts=[ans];
+    w.concat([a*2,a/2,a*100,a/100]).forEach(x=>{ const t=f(x); if(opts.length<4 && !opts.includes(t)) opts.push(t); });
+    if(opts.length<4) continue;
+    return {q, c:opts, a:0, exp:e};
+  }
+}
+
+let dq=[], di=0, dok=0, dt0=0, dtimer=null, dmiss=[], dsid="";
+function startDrill(){
+  dsid=getSid(); if(!dsid) return;
+  dq=shuffle([0,1,2,3,4,5,6,7,8,9]).map(genDrill); di=0; dok=0; dmiss=[];
+  $("start").classList.add("hide"); $("drill").classList.remove("hide");
+  dt0=performance.now(); clearInterval(dtimer);
+  dtimer=setInterval(()=>{ $("dtm").textContent=((performance.now()-dt0)/1000).toFixed(1)+" 秒"; },100);
+  drillRender();
+}
+function drillRender(){
+  const d=dq[di];
+  $("dpg").textContent="換算ドリル　"+(di+1)+" / "+dq.length;
+  $("dbar").style.width=(di/dq.length*100)+"%";
+  $("dfb").className="fb"; $("dfb").innerHTML=""; $("dnext").classList.add("hide");
+  $("dqt").textContent=d.q;
+  const box=document.createElement("div"); box.className="choices";
+  shuffle([0,1,2,3]).forEach(oi=>{
+    const b=document.createElement("button"); b.className="ch"; b.type="button"; b.textContent=d.c[oi];
+    b.onclick=()=>{
+      box.querySelectorAll(".ch").forEach(e=>{ e.disabled=true; if(e.textContent===d.c[d.a]) e.classList.add("correct"); });
+      if(oi===d.a){ dok++; setTimeout(drillNext,350); }
+      else{
+        b.classList.add("wrong"); dmiss.push(d);
+        $("dfb").className="fb show ng"; $("dfb").innerHTML="<b>正解は「"+d.c[d.a]+"」</b>"+d.exp;
+        $("dnext").classList.remove("hide"); $("dnext").onclick=drillNext;
+      }
+    };
+    box.appendChild(b);
+  });
+  $("dbody").innerHTML=""; $("dbody").appendChild(box);
+  window.scrollTo(0,0);
+}
+function drillNext(){ di++; di<dq.length ? drillRender() : drillEnd(); }
+function drillEnd(){
+  clearInterval(dtimer);
+  const ms=Math.round(performance.now()-dt0), sec=(ms/1000).toFixed(1), perfect=dok===dq.length;
+  $("drill").classList.add("hide"); $("dres").classList.remove("hide");
+  const st=loadSt(dsid), prev=st.drill.best;
+  st.drill.runs++; st.drill.hist.push([today(),dok,ms]); if(st.drill.hist.length>100) st.drill.hist=st.drill.hist.slice(-100);
+  const newBest=perfect && (!prev || ms<prev); if(newBest) st.drill.best=ms;
+  saveSt(dsid,st);
+  $("dsc").innerHTML=dok+' <small>/ '+dq.length+' 問</small>';
+  $("dtime").textContent="タイム　"+sec+" 秒";
+  const goal=perfect && ms<=DRILL_GOAL*1000;
+  $("djd").className="judge "+(goal?"pass":"fail");
+  $("djd").textContent=goal?"目標達成（全問正解・"+DRILL_GOAL+"秒以内）":perfect?"全問正解！ 次は "+DRILL_GOAL+" 秒以内をめざそう":"全問正解をめざそう";
+  $("dbest").innerHTML = newBest ? "<b>自己ベスト更新！</b>"+(prev?"（前回のベスト "+(prev/1000).toFixed(1)+" 秒）":"")
+    : st.drill.best ? "自己ベスト　<b>"+(st.drill.best/1000).toFixed(1)+" 秒</b>（全問正解のときだけ記録）"
+    : "全問正解すると、自己ベストのタイムが記録されます。";
+  $("dbest").innerHTML+="<br><span class='sub'>挑戦 "+st.drill.runs+" 回目</span>";
+  $("drev").innerHTML = dmiss.length ? dmiss.map(d=>'<div class="rev"><div class="q">'+d.q+'</div><div class="a">答　<b>'+d.c[d.a]+'</b></div><div class="e">'+d.exp+'</div></div>').join("")
+    : '<p class="sub" style="margin:0">まちがえた問題はありません。</p>';
+  // 先生用の記録（取り組み状況のページには表示されない別名で送る）
+  if(GAS_URL){
+    try{
+      fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({studentId:dsid, quizName:CODE+" "+UNIT+"（換算ドリル）", score:dok, total:dq.length,
+          passed:goal?"合格":"不合格", timestamp:new Date().toISOString(), missed:dmiss.map(d=>d.q), note:"タイム "+sec+" 秒"})});
+      $("dsubmit").textContent="学籍番号: "+dsid+"｜記録しました";
+    }catch(e){ $("dsubmit").textContent="※通信エラーのため記録できませんでした"; }
+  }
+  window.scrollTo(0,0);
+}
+
 /* 学籍番号の引き継ぎ：前回このブラウザで入力した番号を初期表示する */
 (function(){
   try{
     var saved=localStorage.getItem('quizStudentId');
-    if(saved) $("sid").value=saved;
+    if(saved){ $("sid").value=saved; renderMy(); }
   }catch(e){}
 })();
 </script>
